@@ -34,7 +34,6 @@ export const siteConfig = {
       { label: "Denim Fabrics", href: "/category/denim-fabric" },
       { label: "Apparel Industry", href: "/industry/apparel" },
       { label: "Textile Industry", href: "/industry/home-textile" },
-      { label: "Compare Fabrics", href: "/compare/cotton-vs-polyester" },
       { label: "Terms & Conditions", href: "/terms-and-conditions" },
       { label: "Careers", href: "/careers" },
       { label: "Sitemap", href: "/sitemap" },
