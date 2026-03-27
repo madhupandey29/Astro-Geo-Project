@@ -1,17 +1,20 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { categories } from "../../data/categories";
-import { products } from "../../data/products";
+import { fetchProducts } from "../../data/products";
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
+  const products = await fetchProducts();
   return categories.map((category) => ({
     params: { categorySlug: category.slug },
-    props: { category },
+    props: {
+      category,
+      categoryProducts: products.filter((p) => p.categorySlug === category.slug),
+    },
   }));
 }
 
-const { category } = Astro.props;
-const categoryProducts = products.filter((p) => p.categorySlug === category.slug);
+const { category, categoryProducts } = Astro.props;
 ---
 
 <BaseLayout

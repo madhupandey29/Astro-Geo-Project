@@ -1,16 +1,17 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { locations } from "../../data/locations";
-import { products } from "../../data/products";
+import { fetchProducts } from "../../data/products";
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
+  const products = await fetchProducts();
   return locations.map((location) => ({
     params: { citySlug: location.slug },
-    props: { location },
+    props: { location, products },
   }));
 }
 
-const { location } = Astro.props;
+const { location, products } = Astro.props;
 ---
 
 <BaseLayout
