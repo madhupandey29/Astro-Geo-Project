@@ -106,6 +106,13 @@ function buildCertifications(finish: string[]) {
   }));
 }
 
+/** Returns null if the URL is a known fallback/placeholder image */
+function sanitizeImageUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (/ProductFallBack/i.test(url)) return null;
+  return url;
+}
+
 export function mapApiProduct(p: ApiProduct): Product {
   return {
     id: p.id,
@@ -113,8 +120,8 @@ export function mapApiProduct(p: ApiProduct): Product {
     seriesLabel: p.collectionName,
     name: p.productTitle ?? p.name,
     shortDesc: stripHtml(p.shortProductDescription) || p.productTagline || "",
-    image: p.image1CloudUrlCard ?? p.image1CloudUrl ?? p.image1CloudUrlWeb ?? "",
-    imageLarge: p.image1CloudUrlHero ?? p.image1CloudUrl ?? p.image1CloudUrlWeb ?? "",
+    image: sanitizeImageUrl(p.image1CloudUrlCard) ?? sanitizeImageUrl(p.image1CloudUrl) ?? sanitizeImageUrl(p.image1CloudUrlWeb) ?? "",
+    imageLarge: sanitizeImageUrl(p.image1CloudUrlHero) ?? sanitizeImageUrl(p.image1CloudUrl) ?? sanitizeImageUrl(p.image1CloudUrlWeb) ?? "",
     imageAlt: p.altTextImage1 ?? p.name,
     rating: p.ratingValue,
     ratingCount: p.ratingCount,
@@ -159,15 +166,15 @@ export function mapApiProduct(p: ApiProduct): Product {
     collectionId: p.collectionId,
     collectionName: p.collectionName,
     collectionDescription: p.collection?.description ?? "",
-    image1: p.image1CloudUrl ?? p.image1CloudUrlWeb ?? "",
-    image2: p.image2CloudUrl ?? null,
-    image3: p.image3CloudUrl ?? null,
+    image1: sanitizeImageUrl(p.image1CloudUrl) ?? sanitizeImageUrl(p.image1CloudUrlWeb) ?? "",
+    image2: sanitizeImageUrl(p.image2CloudUrl),
+    image3: sanitizeImageUrl(p.image3CloudUrl),
     imageAlt2: p.altTextImage2 ?? null,
     imageAlt3: p.altTextImage3 ?? null,
     videoURL: p.videoURL ?? null,
-    collectionImage: p.collection?.collectionImage1CloudUrlBase
-      ?? p.collection?.collectionImage1CloudUrl
-      ?? p.collection?.collectionImage1CloudUrlWeb
+    collectionImage: sanitizeImageUrl(p.collection?.collectionImage1CloudUrlBase)
+      ?? sanitizeImageUrl(p.collection?.collectionImage1CloudUrl)
+      ?? sanitizeImageUrl(p.collection?.collectionImage1CloudUrlWeb)
       ?? null,
     collectionImageAlt: p.collection?.altTextCollectionImage1 ?? null,
     collectionVideoURL: p.collection?.collectionvideoURL ?? null,

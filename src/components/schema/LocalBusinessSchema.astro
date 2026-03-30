@@ -1,0 +1,74 @@
+---
+import { getCompanyInfo, getSiteSettings } from "../../lib/api";
+
+const company = await getCompanyInfo("AGE");
+const site = await getSiteSettings("eCatalogue");
+
+const siteBase = import.meta.env.PUBLIC_SITE_URL ?? "https://www.amrita-fashions.com";
+
+if (!company) return;
+
+const sameAs = [
+  company.linkedinUrl,
+  company.instagramUrl,
+  company.facebookUrl,
+  company.youtubeUrl,
+  company.xUrl,
+  company.pinterestUrl,
+].filter(Boolean);
+
+const contactPoints = [];
+if (company.phone1) {
+  contactPoints.push({
+    "@type": "ContactPoint",
+    telephone: company.phone1,
+    contactType: (company.phone1Dept ?? "sales").toLowerCase(),
+    areaServed: company.areaServed?.length ? company.areaServed : ["Worldwide"],
+    availableLanguage: company.languages ?? ["en"],
+  });
+}
+if (company.phone2) {
+  contactPoints.push({
+    "@type": "ContactPoint",
+    telephone: company.phone2,
+    contactType: (company.phone2Dept ?? "customer support").toLowerCase(),
+    areaServed: company.areaServed?.length ? company.areaServed : ["Worldwide"],
+    availableLanguage: company.languages ?? ["en"],
+  });
+}
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Corporation",
+  "@id": `${siteBase}/#org`,
+  name: company.legalName,
+  alternateName: company.alternateName ?? [],
+  url: `${siteBase}/`,
+  logo: {
+    "@type": "ImageObject",
+    url: company.faviconUrl ?? undefined,
+    image: company.defaultOgImage ?? undefined,
+  },
+  description: company.description ?? undefined,
+  telephone: company.phone1 ?? undefined,
+  email: company.primaryEmail ?? undefined,
+  areaServed: company.areaServed?.length ? company.areaServed : ["Worldwide"],
+  contactPoint: contactPoints,
+  sameAs,
+  knowsAbout: site?.knowsAbout ?? [],
+  foundingDate: company.foundingYear ? String(company.foundingYear) : undefined,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: company.addressStreet ?? undefined,
+    addressLocality: company.addressCity ?? undefined,
+    addressRegion: company.addressState ?? undefined,
+    postalCode: company.addressPostalCode ?? undefined,
+    addressCountry: {
+      "@type": "Country",
+      name: company.addressCountry ?? "India",
+    },
+  },
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />
