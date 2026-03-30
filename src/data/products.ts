@@ -106,8 +106,13 @@ function buildCertifications(finish: string[]) {
   }));
 }
 
-/** Returns null if the URL is a known fallback/placeholder image */
-function sanitizeImageUrl(url: string | null | undefined): string | null {
+/** Returns null only if the URL is truly empty/null (keeps fallback images) */
+function nullIfEmpty(url: string | null | undefined): string | null {
+  return url || null;
+}
+
+/** Returns null if the URL is a secondary slot fallback (not the primary image) */
+function sanitizeSecondaryImage(url: string | null | undefined): string | null {
   if (!url) return null;
   if (/ProductFallBack/i.test(url)) return null;
   return url;
@@ -120,8 +125,8 @@ export function mapApiProduct(p: ApiProduct): Product {
     seriesLabel: p.collectionName,
     name: p.productTitle ?? p.name,
     shortDesc: stripHtml(p.shortProductDescription) || p.productTagline || "",
-    image: sanitizeImageUrl(p.image1CloudUrlCard) ?? sanitizeImageUrl(p.image1CloudUrl) ?? sanitizeImageUrl(p.image1CloudUrlWeb) ?? "",
-    imageLarge: sanitizeImageUrl(p.image1CloudUrlHero) ?? sanitizeImageUrl(p.image1CloudUrl) ?? sanitizeImageUrl(p.image1CloudUrlWeb) ?? "",
+    image: nullIfEmpty(p.image1CloudUrlCard) ?? nullIfEmpty(p.image1CloudUrlWeb) ?? nullIfEmpty(p.image1CloudUrl) ?? "",
+    imageLarge: nullIfEmpty(p.image1CloudUrlHero) ?? nullIfEmpty(p.image1CloudUrl) ?? nullIfEmpty(p.image1CloudUrlWeb) ?? "",
     imageAlt: p.altTextImage1 ?? p.name,
     rating: p.ratingValue,
     ratingCount: p.ratingCount,
@@ -166,15 +171,15 @@ export function mapApiProduct(p: ApiProduct): Product {
     collectionId: p.collectionId,
     collectionName: p.collectionName,
     collectionDescription: p.collection?.description ?? "",
-    image1: sanitizeImageUrl(p.image1CloudUrl) ?? sanitizeImageUrl(p.image1CloudUrlWeb) ?? "",
-    image2: sanitizeImageUrl(p.image2CloudUrl),
-    image3: sanitizeImageUrl(p.image3CloudUrl),
+    image1: nullIfEmpty(p.image1CloudUrlHero) ?? nullIfEmpty(p.image1CloudUrlWeb) ?? nullIfEmpty(p.image1CloudUrlCard) ?? nullIfEmpty(p.image1CloudUrl) ?? "",
+    image2: sanitizeSecondaryImage(p.image2CloudUrl),
+    image3: sanitizeSecondaryImage(p.image3CloudUrl),
     imageAlt2: p.altTextImage2 ?? null,
     imageAlt3: p.altTextImage3 ?? null,
     videoURL: p.videoURL ?? null,
-    collectionImage: sanitizeImageUrl(p.collection?.collectionImage1CloudUrlBase)
-      ?? sanitizeImageUrl(p.collection?.collectionImage1CloudUrl)
-      ?? sanitizeImageUrl(p.collection?.collectionImage1CloudUrlWeb)
+    collectionImage: nullIfEmpty(p.collection?.collectionImage1CloudUrlBase)
+      ?? nullIfEmpty(p.collection?.collectionImage1CloudUrl)
+      ?? nullIfEmpty(p.collection?.collectionImage1CloudUrlWeb)
       ?? null,
     collectionImageAlt: p.collection?.altTextCollectionImage1 ?? null,
     collectionVideoURL: p.collection?.collectionvideoURL ?? null,

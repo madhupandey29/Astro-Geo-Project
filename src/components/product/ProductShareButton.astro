@@ -48,11 +48,13 @@ const shareText = `${product.name}\nGSM: ${gsmRounded} | Material: ${product.spe
       </div>
 
       <!-- Product image with zigzag clip -->
-      {product.image1 && (
+      {product.image && (
       <div class="zigzag-share-frame bg-[#f3f4f5]">
         <img
-          src={product.image1}
+          src={product.image}
           alt={product.imageAlt ?? product.name}
+          width="400"
+          height="208"
           class="w-full h-52 object-cover"
           loading="lazy"
         />
