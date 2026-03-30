@@ -49,9 +49,8 @@ const resolvedTwitterTitle = twitterTitle ?? resolvedOgTitle;
 const resolvedTwitterDesc = twitterDescription ?? resolvedOgDesc;
 const resolvedTwitterImage = twitterImage ?? ogImage;
 
-// robots: if site is Under Development OR noindex prop → noindex
-const isUnderDev = site?.siteStatus === "Under Development";
-const robotsContent = (noindex || isUnderDev)
+// robots: noindex prop overrides, otherwise use API robotsPolicy or default to index, follow
+const robotsContent = noindex
   ? "noindex, nofollow"
   : (site?.robotsPolicy ?? "index, follow");
 

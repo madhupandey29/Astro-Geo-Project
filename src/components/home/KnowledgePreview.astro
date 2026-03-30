@@ -37,6 +37,10 @@ const post = posts[0];
             class="w-full h-full object-cover brightness-90"
             src={post.blogimage1CloudURL ?? ""}
             alt={post.altimage1 ?? post.title}
+            title={post.altimage1 ?? post.title}
+            width="800"
+            height="600"
+            loading="lazy"
           />
         </div>
 

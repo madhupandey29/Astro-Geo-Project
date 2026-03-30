@@ -17,7 +17,7 @@ const products = [
       {products.map((product) => (
         <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all border border-[#edeeef]">
           <div class="aspect-square bg-[#f3f4f5] overflow-hidden">
-            <img class="w-full h-full object-cover" src={product.image} alt={product.title} />
+            <img class="w-full h-full object-cover" src={product.image} alt={product.title} title={product.title} width="400" height="400" loading="lazy" />
           </div>
           <div class="p-4 md:p-6">
             <span class="font-label text-[9px] md:text-[10px] text-[#775a19] font-bold uppercase tracking-widest">{product.label}</span>
