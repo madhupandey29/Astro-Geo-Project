@@ -3,6 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProductDetailHero from "../../components/product/ProductDetailHero.astro";
 import ProductDetailBody from "../../components/product/ProductDetailBody.astro";
 import ProductDetailRelated from "../../components/product/ProductDetailRelated.astro";
+import BreadcrumbSchema from "../../components/schema/BreadcrumbSchema.astro";
 import { fetchProducts, type Product } from "../../data/products";
 import { getCompanyInfo } from "../../lib/api";
 
@@ -31,7 +32,9 @@ const canonicalUrl = `${siteBase}/fabric/${product.slug}`;
 const productSchema = {
   "@context": "https://schema.org",
   "@type": "Product",
+  "@id": canonicalUrl,
   name: product.name,
+  url: canonicalUrl,
   description: product.shortDesc,
   image: [product.image1, product.image2, product.image3].filter(Boolean),
   sku: product.slug,
@@ -39,25 +42,38 @@ const productSchema = {
     "@type": "Brand",
     name: "Amrita Global Enterprises",
   },
-  aggregateRating: product.ratingCount > 0
-    ? {
-        "@type": "AggregateRating",
-        ratingValue: product.rating,
-        reviewCount: product.ratingCount,
-        bestRating: 5,
-        worstRating: 1,
-      }
-    : undefined,
+  material: product.content,
+  color: product.colorNames.join(", "),
+  ...(product.ratingCount > 0 ? {
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: product.rating,
+      ratingCount: product.ratingCount,
+      bestRating: 5,
+      worstRating: 1,
+    },
+  } : {}),
   offers: {
     "@type": "Offer",
-    availability: "https://schema.org/InStock",
+    "@id": `${canonicalUrl}#offer`,
+    url: canonicalUrl,
     priceCurrency: "INR",
+    price: 0,
+    availability: "https://schema.org/InStock",
     seller: {
       "@type": "Organization",
       name: "Amrita Global Enterprises",
     },
   },
 };
+
+// ── JSON-LD: BreadcrumbList schema ─────────────────────────────────────────────
+const breadcrumbItems = [
+  { name: "Home", url: `${siteBase}/` },
+  { name: "Fabric", url: `${siteBase}/fabric` },
+  { name: product.category, url: `${siteBase}/category/${product.categorySlug}` },
+  { name: product.name },
+];
 
 // ── JSON-LD: FAQPage schema ────────────────────────────────────────────────────
 const faqSchema = product.faq.length > 0
@@ -97,7 +113,8 @@ const schemas = [productSchema, faqSchema].filter(Boolean);
   twitterImage={product.imageLarge || product.image1 || undefined}
   schemaMarkup={schemas}
 >
-  <!-- Breadcrumb -->
+  <BreadcrumbSchema items={breadcrumbItems} />
+  <!-- Breadcrumb UI -->
   <div class="max-w-7xl mx-auto px-4 lg:px-8 py-4 overflow-x-auto whitespace-nowrap hide-scrollbar">
     <nav class="flex items-center space-x-2 text-sm font-sans text-[#44474d]">
       <a href="/" class="hover:text-[#041632]">Home</a>
