@@ -90,11 +90,11 @@ const schemas = [productSchema, faqSchema].filter(Boolean);
   keywords={product.keywords}
   ogTitle={product.name}
   ogDescription={product.shortDesc}
-  ogImage={product.image1 ?? undefined}
+  ogImage={product.imageLarge || product.image1 || undefined}
   ogType="product"
   twitterTitle={product.name}
   twitterDescription={product.shortDesc}
-  twitterImage={product.image1 ?? undefined}
+  twitterImage={product.imageLarge || product.image1 || undefined}
   schemaMarkup={schemas}
 >
   <!-- Breadcrumb -->

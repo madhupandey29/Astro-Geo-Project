@@ -9,6 +9,7 @@ export interface Product {
   name: string;
   shortDesc: string;
   image: string;
+  imageLarge: string;   // full-size for OG sharing
   imageAlt: string;
   rating: number;
   ratingCount: number;
@@ -113,6 +114,7 @@ export function mapApiProduct(p: ApiProduct): Product {
     name: p.productTitle ?? p.name,
     shortDesc: stripHtml(p.shortProductDescription) || p.productTagline || "",
     image: p.image1CloudUrl ?? p.image1CloudUrlWeb ?? "",
+    imageLarge: p.image1CloudUrlHero ?? p.image1CloudUrl ?? p.image1CloudUrlWeb ?? "",
     imageAlt: p.altTextImage1 ?? p.name,
     rating: p.ratingValue,
     ratingCount: p.ratingCount,
