@@ -67,7 +67,7 @@ const staticDepts = [
           {dynamicAuthor.designation && (
             <p class="font-sans text-xs uppercase tracking-widest text-[#775a19] mb-2">{dynamicAuthor.designation}</p>
           )}
-          <h5 class="font-serif text-lg text-[#041632] mb-4">{dynamicAuthor.name}</h5>
+          <h3 class="font-serif text-lg text-[#041632] mb-4">{dynamicAuthor.name}</h3>
           <a
             href={dynamicAuthor.authorLinkedinURL ?? `mailto:${salesEmail ?? "#"}`}
             target={dynamicAuthor.authorLinkedinURL ? "_blank" : undefined}
@@ -83,7 +83,7 @@ const staticDepts = [
             <span class="material-symbols-outlined text-[#1B2B48]">person</span>
           </div>
           <p class="font-sans text-xs uppercase tracking-widest text-[#775a19] mb-2">Director</p>
-          <h5 class="font-serif text-lg text-[#041632] mb-4">Management</h5>
+          <h3 class="font-serif text-lg text-[#041632] mb-4">Management</h3>
           <a href={`mailto:${salesEmail ?? "#"}`} class="inline-flex items-center gap-1 text-[#1B2B48] text-xs font-bold font-sans uppercase tracking-widest hover:text-[#775a19] transition-colors">
             Contact <span class="material-symbols-outlined text-sm">arrow_outward</span>
           </a>
@@ -97,7 +97,7 @@ const staticDepts = [
             <span class="material-symbols-outlined text-[#1B2B48]">{dept.icon}</span>
           </div>
           <p class="font-sans text-xs uppercase tracking-widest text-[#775a19] mb-2">{dept.designation}</p>
-          <h5 class="font-serif text-lg text-[#041632] mb-3">{dept.name}</h5>
+          <h3 class="font-serif text-lg text-[#041632] mb-3">{dept.name}</h3>
           <a
             href={dept.href}
             class="inline-flex items-center justify-center gap-1.5 text-[#1B2B48] text-xs font-sans hover:text-[#775a19] transition-colors mb-4 break-all"
