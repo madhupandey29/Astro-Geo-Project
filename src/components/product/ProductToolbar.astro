@@ -14,8 +14,8 @@ const { total, showingStart, showingEnd } = Astro.props;
   </span>
 
   <div class="flex w-full items-center justify-between gap-4 sm:w-auto">
-    <span class="text-xs font-label uppercase tracking-widest text-slate-500">Sort By:</span>
-    <select class="border-none bg-transparent text-sm font-bold text-[#041632] focus:ring-0 cursor-pointer">
+    <span class="text-xs font-label uppercase tracking-widest text-slate-500" id="sort-label">Sort By:</span>
+    <select aria-labelledby="sort-label" class="border-none bg-transparent text-sm font-bold text-[#041632] focus:ring-0 cursor-pointer">
       <option>Latest Arrivals</option>
       <option>GSM: High to Low</option>
       <option>GSM: Low to High</option>

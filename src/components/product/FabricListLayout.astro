@@ -86,6 +86,10 @@ interface Props {
   showGuide?: boolean;
   /** Show the CTA section (default: true) */
   showCTA?: boolean;
+  /** Guide section image URL (image2CloudUrl from topicpage API) */
+  guideImageUrl?: string | null;
+  /** Guide section image alt text */
+  guideImageAlt?: string | null;
 }
 
 const {
@@ -100,6 +104,8 @@ const {
   preSelectedCategory,
   showGuide = true,
   showCTA = true,
+  guideImageUrl,
+  guideImageAlt,
 } = Astro.props;
 
 const pageCount = products.length;
@@ -177,7 +183,7 @@ const pageCount = products.length;
 {showCTA && <ProductCTA />}
 
 <!-- Optional Buyer Guide -->
-{showGuide && <ProductGuide />}
+{showGuide && <ProductGuide imageUrl={guideImageUrl} imageAlt={guideImageAlt ?? undefined} />}
 
 <!-- FAQ — only rendered when items are provided -->
 {faqItems.length > 0 && <ProductFAQ items={faqItems} />}
