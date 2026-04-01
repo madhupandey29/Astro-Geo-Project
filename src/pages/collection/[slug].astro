@@ -41,6 +41,7 @@ const products: FabricProduct[] = rawProducts
     width: p.specs.width,
     color: p.hex?.[0] ?? "#041632",
     image: p.image,
+    imageSrcset: p.image1Srcset || undefined,
     href: p.slug ? `/collection/${slug}/${p.slug}` : null,
     filterCategory: p.category,
     filterColor: p.colorNames.join("|"),

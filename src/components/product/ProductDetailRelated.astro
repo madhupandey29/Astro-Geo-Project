@@ -33,7 +33,7 @@ const hasMore = collectionProducts.length > 4;
             class="group block flex-none snap-start"
             style="width: calc(25% - 12px); min-width: 180px;"
           >
-            <div class="aspect-[3/4] bg-[#e7e8e9] mb-3 overflow-hidden group-hover:opacity-80 transition-opacity">
+            <div class="aspect-[3/2] bg-[#e7e8e9] mb-3 overflow-hidden group-hover:opacity-80 transition-opacity">
               {rel.image1 ? (
                 <img
                   src={rel.image || rel.image1}
@@ -41,10 +41,11 @@ const hasMore = collectionProducts.length > 4;
                   sizes="(max-width: 768px) 50vw, 25vw"
                   alt={rel.imageAlt ?? rel.name}
                   title={rel.imageAlt ?? rel.name}
-                  width="200"
+                  width="400"
                   height="267"
                   class="w-full h-full object-cover"
                   loading="lazy"
+                  decoding="async"
                 />
               ) : (
                 <div class="w-full h-full flex items-center justify-center">

@@ -44,9 +44,10 @@ const { product } = Astro.props;
         alt={product.name}
         title={product.name}
         width="400"
-        height="256"
+        height="267"
         class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
         loading="lazy"
+        decoding="async"
       />
       <span class="absolute right-4 top-4 bg-[#041632] px-2 py-1 text-[10px] font-mono uppercase tracking-widest text-white">
         ID: {product.id}

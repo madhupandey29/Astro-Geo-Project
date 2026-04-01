@@ -61,28 +61,33 @@ export function getPostImage(post: ApiBlogPost): string {
 }
 
 /**
+ * Rewrites a Cloudinary URL with an exact width using c_limit (no crop).
+ * Strips any existing transform segments and injects clean ones.
+ */
+function buildCloudinaryUrl(url: string, width: number): string {
+  const uploadIdx = url.indexOf("/upload/");
+  if (uploadIdx === -1) return url;
+
+  const base = url.slice(0, uploadIdx + "/upload/".length);
+  const segments = url.slice(base.length).split("/");
+
+  let i = 0;
+  while (i < segments.length) {
+    const seg = segments[i];
+    if (/^v\d+$/.test(seg)) break;
+    if (seg.includes(",") || /^[fqwchgbdeo]_/.test(seg)) { i++; }
+    else break;
+  }
+
+  const publicPart = segments.slice(i).join("/");
+  return `${base}f_auto,q_auto,w_${width},c_limit/${publicPart}`;
+}
+
+/**
  * Generates a Cloudinary srcset string for responsive images.
- * Inserts width transformation (w_N) into the Cloudinary URL.
- * Works for URLs containing /upload/ (standard Cloudinary pattern).
+ * Each candidate uses an exact width that matches its w descriptor.
  */
 export function cloudinarySrcset(url: string, widths: number[] = [400, 800, 1200]): string {
-  return widths
-    .map((w) => {
-      const transformed = url.replace(
-        /\/upload\/((?:[^/]+\/)*)?(v\d+\/)/,
-        (_, transforms, version) => {
-          if (transforms) {
-            const t = transforms.replace(/\/$/, "");
-            const cleaned = t
-              .replace(/,w_\d+/g, "")
-              .replace(/w_\d+,/g, "")
-              .replace(/w_\d+/g, "");
-            return `/upload/${cleaned}${cleaned ? "," : ""}w_${w}/${version}`;
-          }
-          return `/upload/w_${w}/${version}`;
-        }
-      );
-      return `${transformed} ${w}w`;
-    })
-    .join(", ");
+  if (!url) return "";
+  return widths.map((w) => `${buildCloudinaryUrl(url, w)} ${w}w`).join(", ");
 }

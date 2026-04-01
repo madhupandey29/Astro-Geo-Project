@@ -126,7 +126,57 @@ function sanitizeSecondaryImage(url: string | null | undefined): string | null {
   return url;
 }
 
-/** Build a srcset string from [url, width] pairs, skipping nulls */
+/**
+ * Extract the Cloudinary base (cloud name + upload path) and the versioned public ID
+ * from any Cloudinary URL, then rebuild it with exact width/height transforms.
+ *
+ * Input:  https://res.cloudinary.com/age-fabric/image/upload/f_auto,q_auto,w_300,h_300,c_fill/v1773729784/1ProductFallBack_uhxkjr.jpg
+ * Output: https://res.cloudinary.com/age-fabric/image/upload/f_auto,q_auto,w_400,h_256,c_fill,g_auto/v1773729784/1ProductFallBack_uhxkjr.jpg
+ */
+function buildCloudinaryUrl(
+  url: string,
+  width: number,
+  height: number,
+): string {
+  const uploadIdx = url.indexOf("/upload/");
+  if (uploadIdx === -1) return url;
+
+  const base = url.slice(0, uploadIdx + "/upload/".length);
+  const segments = url.slice(base.length).split("/");
+
+  // Skip Cloudinary transform segments (contain commas or known param prefixes: f_, q_, w_, h_, c_, g_, etc.)
+  // Stop at version segments (v + digits) or the public ID start
+  let i = 0;
+  while (i < segments.length) {
+    const seg = segments[i];
+    if (/^v\d+$/.test(seg)) break; // version segment — keep from here
+    if (seg.includes(",") || /^[fqwchgbdeo]_/.test(seg)) {
+      i++; // transform segment — skip
+    } else {
+      break; // public ID start
+    }
+  }
+
+  const publicPart = segments.slice(i).join("/");
+  return `${base}f_auto,q_auto,w_${width},c_limit/${publicPart}`;
+}
+
+/**
+ * Build a correct srcset string from a source Cloudinary URL.
+ * Each candidate uses an exact width that matches its w descriptor.
+ * Aspect ratio is preserved from the supplied width/height.
+ */
+export function buildCloudinarySrcset(
+  sourceUrl: string | null | undefined,
+  widths: number[],
+): string {
+  if (!sourceUrl) return "";
+  return widths
+    .map((w) => `${buildCloudinaryUrl(sourceUrl, w, 0)} ${w}w`)
+    .join(", ");
+}
+
+/** Build a srcset string from [url, width] pairs, skipping nulls (legacy helper) */
 function buildSrcset(entries: [string | null, number][]): string {
   return entries
     .filter((e): e is [string, number] => !!e[0])
@@ -141,8 +191,8 @@ export function mapApiProduct(p: ApiProduct): Product {
     seriesLabel: p.collectionName,
     name: p.productTitle ?? p.name,
     shortDesc: stripHtml(p.shortProductDescription) || p.productTagline || "",
-    image: nullIfEmpty(p.image1CloudUrlCard) ?? nullIfEmpty(p.image1CloudUrlWeb) ?? nullIfEmpty(p.image1CloudUrl) ?? "",
-    imageLarge: nullIfEmpty(p.image1CloudUrlHero) ?? nullIfEmpty(p.image1CloudUrl) ?? nullIfEmpty(p.image1CloudUrlWeb) ?? "",
+    image: nullIfEmpty(p.image1CloudUrl) ?? "",
+    imageLarge: nullIfEmpty(p.image1CloudUrlHero) ?? nullIfEmpty(p.image1CloudUrl) ?? "",
     imageAlt: p.altTextImage1 ?? p.name,
     rating: p.ratingValue,
     ratingCount: p.ratingCount,
@@ -191,28 +241,23 @@ export function mapApiProduct(p: ApiProduct): Product {
     collectionId: p.collectionId,
     collectionName: p.collectionName,
     collectionDescription: p.collection?.description ?? "",
-    image1: nullIfEmpty(p.image1CloudUrlHero) ?? nullIfEmpty(p.image1CloudUrlWeb) ?? nullIfEmpty(p.image1CloudUrlCard) ?? nullIfEmpty(p.image1CloudUrl) ?? "",
+    image1: nullIfEmpty(p.image1CloudUrl) ?? "",
     image1Card: nullIfEmpty(p.image1CloudUrlCard),
     image1Web: nullIfEmpty(p.image1CloudUrlWeb),
-    image1Srcset: buildSrcset([
-      [nullIfEmpty(p.image1CloudUrlCard), 400],
-      [nullIfEmpty(p.image1CloudUrlWeb),  800],
-      [nullIfEmpty(p.image1CloudUrlHero), 1200],
-    ]),
+    image1Srcset: buildCloudinarySrcset(
+      nullIfEmpty(p.image1CloudUrl),
+      [400, 800, 1200],
+    ),
     image2: sanitizeSecondaryImage(p.image2CloudUrl),
     image3: sanitizeSecondaryImage(p.image3CloudUrl),
     imageAlt2: p.altTextImage2 ?? null,
     imageAlt3: p.altTextImage3 ?? null,
     videoURL: p.videoURL ?? null,
-    collectionImage: nullIfEmpty(p.collection?.collectionImage1CloudUrlBase)
-      ?? nullIfEmpty(p.collection?.collectionImage1CloudUrl)
-      ?? nullIfEmpty(p.collection?.collectionImage1CloudUrlWeb)
-      ?? null,
-    collectionImageSrcset: buildSrcset([
-      [nullIfEmpty(p.collection?.collectionImage1CloudUrlCard),  400],
-      [nullIfEmpty(p.collection?.collectionImage1CloudUrlWeb),   800],
-      [nullIfEmpty(p.collection?.collectionImage1CloudUrlBase),  1200],
-    ]),
+    collectionImage: nullIfEmpty(p.collection?.collectionImage1CloudUrl) ?? null,
+    collectionImageSrcset: buildCloudinarySrcset(
+      nullIfEmpty(p.collection?.collectionImage1CloudUrl),
+      [400, 800, 1200],
+    ),
     collectionImageAlt: p.collection?.altTextCollectionImage1 ?? null,
     collectionVideoURL: p.collection?.collectionvideoURL ?? null,
   };

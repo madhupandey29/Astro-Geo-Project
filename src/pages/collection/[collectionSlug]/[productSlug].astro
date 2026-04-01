@@ -39,6 +39,9 @@ const { product, collectionProducts, collectionName } = Astro.props as {
 };
 
 const { collectionSlug } = Astro.params;
+
+const siteBase = import.meta.env.PUBLIC_SITE_URL ?? "https://www.amrita-fashions.com";
+const canonicalUrl = `${siteBase}/collection/${collectionSlug}/${product.slug}`;
 ---
 
 <style>
@@ -46,7 +49,19 @@ const { collectionSlug } = Astro.params;
   .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 
-<BaseLayout title={`${product.name} | Amrita Global Enterprises`} description={product.shortDesc}>
+<BaseLayout
+  title={`${product.name} | Amrita Global Enterprises`}
+  description={product.shortDesc}
+  canonical={canonicalUrl}
+  keywords={product.keywords}
+  ogTitle={`${product.name} | Amrita Global Enterprises`}
+  ogDescription={product.shortDesc}
+  ogImage={product.imageLarge || product.image1 || undefined}
+  ogType="product"
+  twitterTitle={`${product.name} | Amrita Global Enterprises`}
+  twitterDescription={product.shortDesc}
+  twitterImage={product.imageLarge || product.image1 || undefined}
+>
   <!-- Breadcrumb — collection context -->
   <div class="max-w-7xl mx-auto px-4 lg:px-8 py-4 overflow-x-auto whitespace-nowrap hide-scrollbar">
     <nav class="flex items-center space-x-2 text-sm font-sans text-[#44474d]">

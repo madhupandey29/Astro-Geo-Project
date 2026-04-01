@@ -66,9 +66,10 @@ const slides = slots.filter((s): s is Exclude<Slot, { type: "empty" }> => s.type
                 alt={slide.alt}
                 title={slide.alt}
                 width="800"
-                height="600"
+                height="533"
                 class="w-full h-[350px] lg:h-[600px] object-cover"
                 loading={i === 0 ? "eager" : "lazy"}
+                decoding={i === 0 ? "sync" : "async"}
               />
             ) : slide.type === "youtube" ? (
               <iframe
