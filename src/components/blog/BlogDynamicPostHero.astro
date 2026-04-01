@@ -1,6 +1,6 @@
 ---
 import type { ApiBlogPost } from "../../lib/blog";
-import { formatDate, getPostImage } from "../../lib/blog";
+import { formatDate, getPostImage, cloudinarySrcset } from "../../lib/blog";
 
 interface Props { post: ApiBlogPost }
 const { post } = Astro.props;
@@ -43,6 +43,8 @@ const { post } = Astro.props;
   <div class="relative h-[300px] md:h-[500px] w-full overflow-hidden rounded-xl shadow-lg">
     <img
       src={getPostImage(post)}
+      srcset={cloudinarySrcset(getPostImage(post), [400, 800, 1200])}
+      sizes="(max-width: 768px) 100vw, 960px"
       alt={post.featuredImageAlt ?? post.title}
       title={post.featuredImageAlt ?? post.title}
       width="960"

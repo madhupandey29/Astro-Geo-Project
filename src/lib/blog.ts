@@ -59,3 +59,30 @@ export function formatDate(dateStr: string): string {
 export function getPostImage(post: ApiBlogPost): string {
   return post.featuredImageUrl || post.blogimage1CloudURL || FALLBACK_IMAGE;
 }
+
+/**
+ * Generates a Cloudinary srcset string for responsive images.
+ * Inserts width transformation (w_N) into the Cloudinary URL.
+ * Works for URLs containing /upload/ (standard Cloudinary pattern).
+ */
+export function cloudinarySrcset(url: string, widths: number[] = [400, 800, 1200]): string {
+  return widths
+    .map((w) => {
+      const transformed = url.replace(
+        /\/upload\/((?:[^/]+\/)*)?(v\d+\/)/,
+        (_, transforms, version) => {
+          if (transforms) {
+            const t = transforms.replace(/\/$/, "");
+            const cleaned = t
+              .replace(/,w_\d+/g, "")
+              .replace(/w_\d+,/g, "")
+              .replace(/w_\d+/g, "");
+            return `/upload/${cleaned}${cleaned ? "," : ""}w_${w}/${version}`;
+          }
+          return `/upload/w_${w}/${version}`;
+        }
+      );
+      return `${transformed} ${w}w`;
+    })
+    .join(", ");
+}

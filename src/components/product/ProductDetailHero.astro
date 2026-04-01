@@ -11,7 +11,7 @@ function getYouTubeId(url: string): string | null {
 }
 
 type Slot =
-  | { type: "image"; src: string; alt: string }
+  | { type: "image"; src: string; srcset: string; alt: string }
   | { type: "youtube"; embedSrc: string; thumbSrc: string; alt: string }
   | { type: "video"; src: string; alt: string }
   | { type: "empty" };
@@ -29,16 +29,16 @@ function makeVideoSlot(url: string, alt: string): Slot {
 
 const slots: Slot[] = [
   product.image1
-    ? { type: "image", src: product.image1, alt: product.imageAlt ?? product.name }
+    ? { type: "image", src: product.image1, srcset: product.image1Srcset, alt: product.imageAlt ?? product.name }
     : { type: "empty" },
   product.image2
-    ? { type: "image", src: product.image2, alt: product.imageAlt2 ?? product.name }
+    ? { type: "image", src: product.image2, srcset: "", alt: product.imageAlt2 ?? product.name }
     : { type: "empty" },
   product.image3
-    ? { type: "image", src: product.image3, alt: product.imageAlt3 ?? product.name }
+    ? { type: "image", src: product.image3, srcset: "", alt: product.imageAlt3 ?? product.name }
     : { type: "empty" },
   product.collectionImage
-    ? { type: "image", src: product.collectionImage, alt: product.collectionImageAlt ?? product.collectionName }
+    ? { type: "image", src: product.collectionImage, srcset: product.collectionImageSrcset, alt: product.collectionImageAlt ?? product.collectionName }
     : { type: "empty" },
   product.collectionVideoURL
     ? makeVideoSlot(product.collectionVideoURL, "Collection Video")
@@ -61,6 +61,8 @@ const slides = slots.filter((s): s is Exclude<Slot, { type: "empty" }> => s.type
             {slide.type === "image" ? (
               <img
                 src={slide.src}
+                srcset={slide.srcset || undefined}
+                sizes="(max-width: 1024px) 100vw, 58vw"
                 alt={slide.alt}
                 title={slide.alt}
                 width="800"

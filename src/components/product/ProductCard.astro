@@ -7,6 +7,7 @@ interface Product {
   width: string;
   color: string;
   image: string;
+  imageSrcset?: string;
   href: string | null;
   filterCategory?: string;
   filterColor?: string;
@@ -38,6 +39,8 @@ const { product } = Astro.props;
     <div class="relative h-64 overflow-hidden">
       <img
         src={product.image}
+        srcset={product.imageSrcset || undefined}
+        sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
         alt={product.name}
         title={product.name}
         width="400"

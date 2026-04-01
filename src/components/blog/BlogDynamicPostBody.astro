@@ -1,6 +1,6 @@
 ---
 import type { ApiBlogPost } from "../../lib/blog";
-import { getPostImage } from "../../lib/blog";
+import { getPostImage, cloudinarySrcset } from "../../lib/blog";
 
 interface Props { post: ApiBlogPost }
 const { post } = Astro.props;
@@ -46,6 +46,8 @@ const faqs = [
         <div class="my-8 rounded-xl overflow-hidden shadow-md">
           <img
             src={post.blogimage1CloudURL}
+            srcset={cloudinarySrcset(post.blogimage1CloudURL, [400, 800])}
+            sizes="(max-width: 768px) 100vw, 800px"
             alt={post.altimage1 ?? post.title}
             title={post.altimage1 ?? post.title}
             width="800"
@@ -64,6 +66,8 @@ const faqs = [
         <div class="my-8 rounded-xl overflow-hidden shadow-md">
           <img
             src={post.blogimage2CloudURL}
+            srcset={cloudinarySrcset(post.blogimage2CloudURL, [400, 800])}
+            sizes="(max-width: 768px) 100vw, 800px"
             alt={post.altimage2 ?? post.title}
             title={post.altimage2 ?? post.title}
             width="800"

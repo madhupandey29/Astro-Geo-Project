@@ -22,6 +22,7 @@ const products = rawProducts.map((p) => ({
   width: p.specs.width,
   color: p.hex?.[0] ?? "#041632",
   image: p.image,
+  imageSrcset: p.image1Srcset || undefined,
   href: p.slug ? `/fabric/${p.slug}` : null,
   filterCategory: p.category,
   filterColor: p.colorNames.join("|"),

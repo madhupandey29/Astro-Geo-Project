@@ -34,12 +34,16 @@ export interface Product {
   related: { name: string; slug: string; gsm: string; weave: string }[];
   // media
   image1: string;
+  image1Card: string | null;   // ~400px card size
+  image1Web: string | null;    // ~800px web size
+  image1Srcset: string;        // ready-to-use srcset string
   image2: string | null;
   image3: string | null;
   imageAlt2: string | null;
   imageAlt3: string | null;
   videoURL: string | null;
   collectionImage: string | null;
+  collectionImageSrcset: string; // ready-to-use srcset for collection image
   collectionImageAlt: string | null;
   collectionVideoURL: string | null;
   // extras from API
@@ -122,6 +126,14 @@ function sanitizeSecondaryImage(url: string | null | undefined): string | null {
   return url;
 }
 
+/** Build a srcset string from [url, width] pairs, skipping nulls */
+function buildSrcset(entries: [string | null, number][]): string {
+  return entries
+    .filter((e): e is [string, number] => !!e[0])
+    .map(([url, w]) => `${url} ${w}w`)
+    .join(", ");
+}
+
 export function mapApiProduct(p: ApiProduct): Product {
   return {
     id: p.id,
@@ -180,6 +192,13 @@ export function mapApiProduct(p: ApiProduct): Product {
     collectionName: p.collectionName,
     collectionDescription: p.collection?.description ?? "",
     image1: nullIfEmpty(p.image1CloudUrlHero) ?? nullIfEmpty(p.image1CloudUrlWeb) ?? nullIfEmpty(p.image1CloudUrlCard) ?? nullIfEmpty(p.image1CloudUrl) ?? "",
+    image1Card: nullIfEmpty(p.image1CloudUrlCard),
+    image1Web: nullIfEmpty(p.image1CloudUrlWeb),
+    image1Srcset: buildSrcset([
+      [nullIfEmpty(p.image1CloudUrlCard), 400],
+      [nullIfEmpty(p.image1CloudUrlWeb),  800],
+      [nullIfEmpty(p.image1CloudUrlHero), 1200],
+    ]),
     image2: sanitizeSecondaryImage(p.image2CloudUrl),
     image3: sanitizeSecondaryImage(p.image3CloudUrl),
     imageAlt2: p.altTextImage2 ?? null,
@@ -189,6 +208,11 @@ export function mapApiProduct(p: ApiProduct): Product {
       ?? nullIfEmpty(p.collection?.collectionImage1CloudUrl)
       ?? nullIfEmpty(p.collection?.collectionImage1CloudUrlWeb)
       ?? null,
+    collectionImageSrcset: buildSrcset([
+      [nullIfEmpty(p.collection?.collectionImage1CloudUrlCard),  400],
+      [nullIfEmpty(p.collection?.collectionImage1CloudUrlWeb),   800],
+      [nullIfEmpty(p.collection?.collectionImage1CloudUrlBase),  1200],
+    ]),
     collectionImageAlt: p.collection?.altTextCollectionImage1 ?? null,
     collectionVideoURL: p.collection?.collectionvideoURL ?? null,
   };

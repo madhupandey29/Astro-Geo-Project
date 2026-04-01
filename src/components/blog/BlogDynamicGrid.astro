@@ -1,6 +1,6 @@
 ---
 import type { ApiBlogPost } from "../../lib/blog";
-import { formatDate, getPostImage } from "../../lib/blog";
+import { formatDate, getPostImage, cloudinarySrcset } from "../../lib/blog";
 
 interface Props {
   featured: ApiBlogPost | undefined;
@@ -17,6 +17,8 @@ const { featured, posts } = Astro.props;
       <div class="md:w-2/3 h-[400px] md:h-[550px] overflow-hidden rounded-xl shadow-2xl relative">
         <img
           src={getPostImage(featured)}
+          srcset={cloudinarySrcset(getPostImage(featured), [400, 800, 1200])}
+          sizes="(max-width: 768px) 100vw, 66vw"
           alt={featured.featuredImageAlt ?? featured.title}
           title={featured.featuredImageAlt ?? featured.title}
           width="800"
@@ -56,6 +58,8 @@ const { featured, posts } = Astro.props;
           <div class="aspect-video overflow-hidden bg-slate-200">
             <img
               src={getPostImage(post)}
+              srcset={cloudinarySrcset(getPostImage(post), [400, 800])}
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
               alt={post.featuredImageAlt ?? post.title}
               title={post.featuredImageAlt ?? post.title}
               width="400"
