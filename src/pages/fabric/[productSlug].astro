@@ -3,7 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProductDetailHero from "../../components/product/ProductDetailHero.astro";
 import ProductDetailBody from "../../components/product/ProductDetailBody.astro";
 import ProductDetailRelated from "../../components/product/ProductDetailRelated.astro";
-import { fetchProducts, type Product } from "../../data/products";
+import { fetchProducts, buildCloudinarySrcset, type Product } from "../../data/products";
 import { getCompanyInfo } from "../../lib/api";
 
 export async function getStaticPaths() {
@@ -113,6 +113,18 @@ const faqSchema = product.faq.length > 0
   : null;
 
 const schemas = [productSchema, faqSchema].filter(Boolean);
+
+// LCP image preload — first product image at display-appropriate sizes
+const lcpImageSrcset = product.image1
+  ? buildCloudinarySrcset(product.image1, [400, 700, 1200]).replace(/f_auto/g, "f_webp")
+  : undefined;
+const lcpImageSrc = product.image1Srcset
+  ? undefined // srcset handles it; href just needs a valid fallback
+  : undefined;
+// Use the 700w candidate as the href fallback
+const lcpImageHref = product.image1
+  ? buildCloudinarySrcset(product.image1, [700]).split(" ")[0]
+  : undefined;
 ---
 
 <style>
@@ -134,6 +146,8 @@ const schemas = [productSchema, faqSchema].filter(Boolean);
   twitterImage={product.imageLarge || product.image1 || undefined}
   schemaMarkup={schemas}
   breadcrumbs={breadcrumbItems}
+  preloadImage={lcpImageHref}
+  preloadImageSrcset={lcpImageSrcset}
 >
   <!-- Breadcrumb UI -->
   <div class="max-w-7xl mx-auto px-4 lg:px-8 py-4 overflow-x-auto whitespace-nowrap hide-scrollbar">

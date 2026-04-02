@@ -78,11 +78,12 @@ const slides = slots.filter((s): s is Exclude<Slot, { type: "empty" }> => s.type
                   sizes="(max-width: 1024px) 100vw, 58vw"
                   alt={slide.alt}
                   title={slide.alt}
-                  width="800"
-                  height="533"
+                  width="700"
+                  height="467"
                   class="w-full h-[350px] lg:h-[600px] object-cover"
                   loading={i === 0 ? "eager" : "lazy"}
                   decoding={i === 0 ? "sync" : "async"}
+                  fetchpriority={i === 0 ? "high" : undefined}
                 />
               </picture>
             ) : slide.type === "youtube" ? (
@@ -114,10 +115,12 @@ const slides = slots.filter((s): s is Exclude<Slot, { type: "empty" }> => s.type
         <div id="gallery-dots" class="flex lg:hidden justify-center space-x-2 mt-4">
           {slides.map((_, i) => (
             <button
-              class={`w-2 h-2 rounded-full transition-colors gallery-dot ${i === 0 ? "bg-[#041632]" : "bg-[#e1e3e4]"}`}
+              class={`w-6 h-6 flex items-center justify-center gallery-dot`}
               data-dot={i}
               aria-label={`Go to slide ${i + 1}`}
-            />
+            >
+              <span class={`w-2 h-2 rounded-full transition-colors block ${i === 0 ? "bg-[#041632]" : "bg-[#e1e3e4]"}`}></span>
+            </button>
           ))}
         </div>
       )}
@@ -234,8 +237,11 @@ const slides = slots.filter((s): s is Exclude<Slot, { type: "empty" }> => s.type
     const slideWidth = track.offsetWidth;
     track.scrollTo({ left: slideWidth * index, behavior: "smooth" });
     dots.forEach((d, i) => {
-      d.classList.toggle("bg-[#041632]", i === index);
-      d.classList.toggle("bg-[#e1e3e4]", i !== index);
+      const inner = d.querySelector("span");
+      if (inner) {
+        inner.classList.toggle("bg-[#041632]", i === index);
+        inner.classList.toggle("bg-[#e1e3e4]", i !== index);
+      }
     });
     thumbs.forEach((t, i) => {
       t.classList.toggle("border-[#041632]", i === index);
@@ -258,8 +264,11 @@ const slides = slots.filter((s): s is Exclude<Slot, { type: "empty" }> => s.type
   track?.addEventListener("scroll", () => {
     const index = Math.round(track.scrollLeft / track.offsetWidth);
     dots.forEach((d, i) => {
-      d.classList.toggle("bg-[#041632]", i === index);
-      d.classList.toggle("bg-[#e1e3e4]", i !== index);
+      const inner = d.querySelector("span");
+      if (inner) {
+        inner.classList.toggle("bg-[#041632]", i === index);
+        inner.classList.toggle("bg-[#e1e3e4]", i !== index);
+      }
     });
     thumbs.forEach((t, i) => {
       t.classList.toggle("border-[#041632]", i === index);

@@ -23,6 +23,9 @@ interface Props {
   schemaMarkup?: object | object[];
   noindex?: boolean;
   breadcrumbs?: { name: string; url?: string }[];
+  // LCP image preload
+  preloadImage?: string;
+  preloadImageSrcset?: string;
 }
 
 const {
@@ -40,6 +43,8 @@ const {
   schemaMarkup,
   noindex = false,
   breadcrumbs,
+  preloadImage,
+  preloadImageSrcset,
 } = Astro.props;
 
 // Site-wide settings from API (eCatalogue)
@@ -74,6 +79,18 @@ const schemaArray = schemaMarkup
     <link rel="preconnect" href="https://www.googletagmanager.com" />
     <link rel="preconnect" href="https://analytics.google.com" />
     <link rel="preconnect" href="https://www.clarity.ms" />
+
+    <!-- LCP image preload (per-page, injected by pages that need it) -->
+    {preloadImage && (
+      <link
+        rel="preload"
+        as="image"
+        href={preloadImage}
+        imagesrcset={preloadImageSrcset || undefined}
+        imagesizes="(max-width: 1024px) 100vw, 58vw"
+        fetchpriority="high"
+      />
+    )}
 
     <!-- Preload self-hosted variable fonts -->
     <link rel="preload" href="/fonts/manrope-vf.woff2" as="font" type="font/woff2" crossorigin />
