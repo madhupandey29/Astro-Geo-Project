@@ -3,7 +3,7 @@ interface Props {
   image?: string | null;
 }
 const { image } = Astro.props;
-const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1600&q=80";
+const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&q=60&fm=webp";
 const heroImage = image ?? FALLBACK_IMAGE;
 ---
 <style>
@@ -22,10 +22,11 @@ const heroImage = image ?? FALLBACK_IMAGE;
       src={heroImage}
       alt="Support team at work"
       title="Support team at work"
-      width="1600"
-      height="1050"
+      width="800"
+      height="525"
       class="w-full h-full object-cover"
       loading="eager"
+      fetchpriority="low"
     />
     <div class="absolute inset-0 bg-gradient-to-r from-[#041632] via-[#041632]/80 to-transparent"></div>
   </div>

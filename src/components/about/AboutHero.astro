@@ -3,7 +3,12 @@ interface Props {
   image?: string | null;
 }
 const { image } = Astro.props;
-const heroImage = image ?? "https://lh3.googleusercontent.com/aida-public/AB6AXuB5rYWttbh6XITEOcBeURyt6qklLANwbPMgW8KAaSwC8g9iy78YJK_krbGLU41JN_Yu2nEohurOBCXQkaPvEDBXJG0Lw5ISGIDhR4vJhX5i6KEaRVD-sNd5KEpV5al1UXeoambztbcu5rhFcFo7R68Hcwe2vBDlFgZ9NcPpCHBxjrK2kQ6TccQLz504xGgx-f74-rmrGkNSaDamGvVIS8VVzLhT2eEwj9EVYJxLa8WK3QdrRaitaijNIHu9-rn8RD0vbfYse5ijTzlm";
+const FALLBACK_HERO = "https://res.cloudinary.com/age-fabric/image/upload/f_auto,q_auto,w_1200,c_limit/About1_j3mzld.jpg";
+const heroImage = image
+  ? image.includes("res.cloudinary.com") && !image.includes("f_auto")
+    ? image.replace("/upload/", "/upload/f_auto,q_auto,w_1200,c_limit/")
+    : image
+  : FALLBACK_HERO;
 ---
 <style>
   .gold-text {
@@ -24,6 +29,7 @@ const heroImage = image ?? "https://lh3.googleusercontent.com/aida-public/AB6AXu
       height="870"
       class="w-full h-full object-cover"
       loading="eager"
+      fetchpriority="high"
     />
     <div class="absolute inset-0 bg-gradient-to-r from-[#041632] via-[#041632]/60 to-transparent"></div>
   </div>

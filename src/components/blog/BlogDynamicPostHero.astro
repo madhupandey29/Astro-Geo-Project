@@ -6,10 +6,10 @@ interface Props { post: ApiBlogPost }
 const { post } = Astro.props;
 ---
 <header class="max-w-5xl mx-auto px-8 pt-32 pb-12">
-  <nav class="flex items-center gap-2 text-[10px] font-sans uppercase tracking-widest text-[#75777e] mb-8 overflow-x-auto whitespace-nowrap">
-    <a href="/" class="hover:text-[#041632] transition-colors">Home</a>
+  <nav class="flex items-center gap-2 text-[10px] font-sans uppercase tracking-widest text-[#44474d] mb-8 overflow-x-auto whitespace-nowrap">
+    <a href="/" class="text-[#44474d] hover:text-[#041632] transition-colors">Home</a>
     <span class="material-symbols-outlined text-sm">chevron_right</span>
-    <a href="/blog" class="hover:text-[#041632] transition-colors">Insights</a>
+    <a href="/blog" class="text-[#44474d] hover:text-[#041632] transition-colors">Insights</a>
     <span class="material-symbols-outlined text-sm">chevron_right</span>
     <span class="text-[#775a19] font-bold">{post.category}</span>
   </nav>
@@ -22,7 +22,7 @@ const { post } = Astro.props;
     {post.title}
   </h1>
 
-  <div class="flex flex-wrap items-center gap-6 text-xs font-sans text-[#75777e] mb-10">
+  <div class="flex flex-wrap items-center gap-6 text-xs font-sans text-[#44474d] mb-10">
     <div class="flex items-center gap-2">
       <span class="material-symbols-outlined text-[#775a19] text-base">schedule</span>
       <span>{post.readingTimeMin} min read</span>
@@ -51,6 +51,7 @@ const { post } = Astro.props;
       height="500"
       class="w-full h-full object-cover"
       loading="eager"
+      fetchpriority="high"
     />
     <div class="absolute inset-0 bg-gradient-to-t from-[#041632]/40 to-transparent"></div>
   </div>
