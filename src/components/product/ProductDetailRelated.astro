@@ -36,18 +36,20 @@ const hasMore = collectionProducts.length > 4;
             <div class="aspect-[3/2] bg-[#e7e8e9] mb-3 overflow-hidden group-hover:opacity-80 transition-opacity">
               {rel.image1 ? (
                 <picture>
-                  {rel.image1Srcset && (
-                    <source
-                      type="image/avif"
-                      srcset={rel.image1Srcset.replace(/f_auto/g, "f_avif")}
-                      sizes="(max-width: 768px) 50vw, 25vw"
-                    />
-                    <source
-                      type="image/webp"
-                      srcset={rel.image1Srcset.replace(/f_auto/g, "f_webp")}
-                      sizes="(max-width: 768px) 50vw, 25vw"
-                    />
-                  )}
+                  {rel.image1Srcset ? (
+                    <>
+                      <source
+                        type="image/avif"
+                        srcset={rel.image1Srcset.replace(/f_auto/g, "f_avif")}
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                      />
+                      <source
+                        type="image/webp"
+                        srcset={rel.image1Srcset.replace(/f_auto/g, "f_webp")}
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                      />
+                    </>
+                  ) : null}
                   <img
                     src={rel.image || rel.image1}
                     srcset={rel.image1Srcset || undefined}

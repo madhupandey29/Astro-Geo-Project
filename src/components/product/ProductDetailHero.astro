@@ -1,5 +1,6 @@
 ---
 import type { Product } from "../../data/products";
+import { getCloudinaryUrl } from "../../data/products";
 import ProductShareButton from "./ProductShareButton.astro";
 interface Props { product: Product }
 const { product } = Astro.props;
@@ -60,22 +61,24 @@ const slides = slots.filter((s): s is Exclude<Slot, { type: "empty" }> => s.type
           <div class="snap-center shrink-0 w-full" data-index={i}>
             {slide.type === "image" ? (
               <picture>
-                {slide.srcset && (
-                  <source
-                    type="image/avif"
-                    srcset={slide.srcset.replace(/f_auto/g, "f_avif")}
-                    sizes="(max-width: 1024px) 100vw, 58vw"
-                  />
-                  <source
-                    type="image/webp"
-                    srcset={slide.srcset.replace(/f_auto/g, "f_webp")}
-                    sizes="(max-width: 1024px) 100vw, 58vw"
-                  />
-                )}
+                {slide.srcset ? (
+                  <>
+                    <source
+                      type="image/avif"
+                      srcset={slide.srcset.replace(/f_auto/g, "f_avif")}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 58vw"
+                    />
+                    <source
+                      type="image/webp"
+                      srcset={slide.srcset.replace(/f_auto/g, "f_webp")}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 58vw"
+                    />
+                  </>
+                ) : null}
                 <img
-                  src={slide.src}
+                  src={getCloudinaryUrl(slide.src, "f_auto,q_auto,w_700,c_limit")}
                   srcset={slide.srcset || undefined}
-                  sizes="(max-width: 1024px) 100vw, 58vw"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 58vw"
                   alt={slide.alt}
                   title={slide.alt}
                   width="700"
@@ -136,7 +139,7 @@ const slides = slots.filter((s): s is Exclude<Slot, { type: "empty" }> => s.type
             aria-label={`View slide ${slideIndex + 1}`}
           >
             {slide.type === "image" ? (
-              <img src={slide.src} alt={slide.alt} title={slide.alt} width="80" height="80" class="w-full h-full object-cover" loading="lazy" />
+              <img src={getCloudinaryUrl(slide.src, "f_auto,q_auto,w_160,h_160,c_fill,g_auto")} alt={slide.alt} title={slide.alt} width="80" height="80" class="w-full h-full object-cover" loading="lazy" />
             ) : slide.type === "youtube" ? (
               <div class="relative w-full h-full">
                 <img src={slide.thumbSrc} alt={slide.alt} title={slide.alt} width="80" height="80" class="w-full h-full object-cover" loading="lazy" />

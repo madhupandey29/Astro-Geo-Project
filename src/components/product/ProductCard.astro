@@ -38,18 +38,20 @@ const { product } = Astro.props;
   <a href={product.href ?? undefined} class={`block${!product.href ? " pointer-events-none" : ""}`}>
     <div class="relative h-64 overflow-hidden">
       <picture>
-        {product.imageSrcset && (
-          <source
-            type="image/avif"
-            srcset={product.imageSrcset.replace(/f_auto/g, "f_avif")}
-            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-          />
-          <source
-            type="image/webp"
-            srcset={product.imageSrcset.replace(/f_auto/g, "f_webp")}
-            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-          />
-        )}
+        {product.imageSrcset ? (
+          <>
+            <source
+              type="image/avif"
+              srcset={product.imageSrcset.replace(/f_auto/g, "f_avif")}
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            />
+            <source
+              type="image/webp"
+              srcset={product.imageSrcset.replace(/f_auto/g, "f_webp")}
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            />
+          </>
+        ) : null}
         <img
           src={product.image}
           srcset={product.imageSrcset || undefined}
