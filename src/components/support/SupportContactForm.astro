@@ -30,8 +30,8 @@
         <!-- STEP 1: Personal Info -->
         <div id="step-1" class="space-y-5">
           <div>
-            <label class="field-label">Salutation</label>
-            <select name="salutationName" class="field-input">
+            <label for="salutationName" class="field-label">Salutation</label>
+            <select id="salutationName" name="salutationName" class="field-input">
               <option value="">Select salutation</option>
               <option value="Mr.">Mr.</option>
               <option value="Ms.">Ms.</option>
@@ -41,24 +41,24 @@
             </select>
           </div>
           <div>
-            <label class="field-label">First Name <span class="text-[#775a19]">*</span></label>
-            <input type="text" name="firstName" required class="field-input" placeholder="Your first name" />
+            <label for="firstName" class="field-label">First Name <span class="text-[#775a19]">*</span></label>
+            <input id="firstName" type="text" name="firstName" required class="field-input" placeholder="Your first name" />
           </div>
           <div>
-            <label class="field-label">Last Name <span class="text-[#775a19]">*</span></label>
-            <input type="text" name="lastName" required class="field-input" placeholder="Your last name" />
+            <label for="lastName" class="field-label">Last Name <span class="text-[#775a19]">*</span></label>
+            <input id="lastName" type="text" name="lastName" required class="field-input" placeholder="Your last name" />
           </div>
           <div>
-            <label class="field-label">Middle Name</label>
-            <input type="text" name="middleName" class="field-input" placeholder="Your middle name (optional)" />
+            <label for="middleName" class="field-label">Middle Name</label>
+            <input id="middleName" type="text" name="middleName" class="field-input" placeholder="Your middle name (optional)" />
           </div>
           <div>
-            <label class="field-label">Email Address <span class="text-[#775a19]">*</span></label>
-            <input type="email" name="emailAddress" class="field-input" placeholder="your@company.com" />
+            <label for="emailAddress" class="field-label">Email Address <span class="text-[#775a19]">*</span></label>
+            <input id="emailAddress" type="email" name="emailAddress" class="field-input" placeholder="your@company.com" />
           </div>
           <div>
-            <label class="field-label">Phone Number <span class="text-[#775a19]">*</span></label>
-            <input type="tel" name="phoneNumber" class="field-input" placeholder="+91 00000 00000" />
+            <label for="phoneNumber" class="field-label">Phone Number <span class="text-[#775a19]">*</span></label>
+            <input id="phoneNumber" type="tel" name="phoneNumber" class="field-input" placeholder="+91 00000 00000" />
             <p class="text-xs text-[#5a6a85] mt-1">* Please provide either an email address or phone number</p>
           </div>
           <div class="flex justify-end pt-2">
@@ -69,28 +69,28 @@
         <!-- STEP 2: Company & Address -->
         <div id="step-2" class="space-y-5 hidden">
           <div>
-            <label class="field-label">Company Name</label>
-            <input type="text" name="accountName" class="field-input" placeholder="Your company name" />
+            <label for="accountName" class="field-label">Company Name</label>
+            <input id="accountName" type="text" name="accountName" class="field-input" placeholder="Your company name" />
           </div>
           <div>
-            <label class="field-label">Street Address</label>
-            <input type="text" name="addressStreet" class="field-input" placeholder="Street address" />
+            <label for="addressStreet" class="field-label">Street Address</label>
+            <input id="addressStreet" type="text" name="addressStreet" class="field-input" placeholder="Street address" />
           </div>
           <div>
-            <label class="field-label">City</label>
-            <input type="text" name="addressCity" class="field-input" placeholder="City" />
+            <label for="addressCity" class="field-label">City</label>
+            <input id="addressCity" type="text" name="addressCity" class="field-input" placeholder="City" />
           </div>
           <div>
-            <label class="field-label">State / Province</label>
-            <input type="text" name="addressState" class="field-input" placeholder="State or Province" />
+            <label for="addressState" class="field-label">State / Province</label>
+            <input id="addressState" type="text" name="addressState" class="field-input" placeholder="State or Province" />
           </div>
           <div>
-            <label class="field-label">Country</label>
-            <input type="text" name="addressCountry" class="field-input" placeholder="Country" />
+            <label for="addressCountry" class="field-label">Country</label>
+            <input id="addressCountry" type="text" name="addressCountry" class="field-input" placeholder="Country" />
           </div>
           <div>
-            <label class="field-label">Postal Code</label>
-            <input type="text" name="addressPostalCode" class="field-input" placeholder="Postal/ZIP code" />
+            <label for="addressPostalCode" class="field-label">Postal Code</label>
+            <input id="addressPostalCode" type="text" name="addressPostalCode" class="field-input" placeholder="Postal/ZIP code" />
           </div>
           <div class="flex justify-between pt-2">
             <button type="button" id="prev-2" class="btn-secondary">Previous</button>
@@ -101,8 +101,8 @@
         <!-- STEP 3: Business Details -->
         <div id="step-3" class="space-y-5 hidden">
           <div>
-            <label class="field-label">Business Type</label>
-            <select name="cBusinessType" class="field-input">
+            <label for="cBusinessType" class="field-label">Business Type</label>
+            <select id="cBusinessType" name="cBusinessType" class="field-input">
               <option value="">Select business type</option>
               <option value="fabric-importer">Fabric Importer</option>
               <option value="fabric-exporter">Fabric Exporter</option>
@@ -114,8 +114,8 @@
             </select>
           </div>
           <div>
-            <label class="field-label">Fabric Category</label>
-            <select name="cFabricCategory" class="field-input">
+            <label for="cFabricCategory" class="field-label">Fabric Category</label>
+            <select id="cFabricCategory" name="cFabricCategory" class="field-input">
               <option value="">Select fabric category</option>
               <option value="cotton">Cotton</option>
               <option value="denim">Denim</option>
@@ -127,10 +127,11 @@
             </select>
           </div>
           <div>
-            <label class="field-label">Opportunity Amount</label>
+            <label for="opportunityAmount" class="field-label">Opportunity Amount</label>
             <div class="flex gap-3">
-              <input type="number" name="opportunityAmount" class="field-input flex-1" placeholder="0.00" min="0" step="0.01" />
-              <select name="opportunityAmountCurrency" class="field-input w-28">
+              <input id="opportunityAmount" type="number" name="opportunityAmount" class="field-input flex-1" placeholder="0.00" min="0" step="0.01" />
+              <label for="opportunityAmountCurrency" class="sr-only">Currency</label>
+              <select id="opportunityAmountCurrency" name="opportunityAmountCurrency" class="field-input w-28">
                 <option value="USD">USD</option>
                 <option value="INR">INR</option>
                 <option value="EUR">EUR</option>
@@ -139,8 +140,8 @@
             </div>
           </div>
           <div>
-            <label class="field-label">Description</label>
-            <textarea name="description" rows="4" class="field-input resize-none" placeholder="Please describe your requirements, specifications, or any additional information"></textarea>
+            <label for="description" class="field-label">Description</label>
+            <textarea id="description" name="description" rows="4" class="field-input resize-none" placeholder="Please describe your requirements, specifications, or any additional information"></textarea>
           </div>
 
           <div id="form-success" class="hidden px-4 py-3 bg-green-50 border border-green-200 text-green-800 text-sm rounded">
