@@ -100,7 +100,7 @@ export interface ProductsPage {
 
 export async function getProducts(page = 1, limit = 20): Promise<ProductsPage> {
   const res = await fetch(`${BASE_URL}/api/product?page=${page}&limit=${limit}`);
-  if (!res.ok) throw new Error(`Failed to fetch products: ${res.status}`);
+  if (!res.ok) return { data: [], total: 0, page, totalPages: 0, limit };
   const json: ApiResponse = await res.json();
   return {
     data: json.data,
@@ -234,19 +234,27 @@ export interface ApiTopicPage {
 }
 
 export async function getDynamicTopicPages(): Promise<ApiTopicPage[]> {
-  const res = await fetch(`${BASE_URL}/api/topicpage`);
-  if (!res.ok) throw new Error(`Failed to fetch topic pages: ${res.status}`);
-  const json = await res.json();
-  const data: ApiTopicPage[] = json.data ?? [];
-  return data.filter((p) => p.pageType === "Dynamic" && !p.deleted);
+  try {
+    const res = await fetch(`${BASE_URL}/api/topicpage`);
+    if (!res.ok) return [];
+    const json = await res.json();
+    const data: ApiTopicPage[] = json.data ?? [];
+    return data.filter((p) => p.pageType === "Dynamic" && !p.deleted);
+  } catch {
+    return [];
+  }
 }
 
 export async function getCategoryTopicPages(): Promise<ApiTopicPage[]> {
-  const res = await fetch(`${BASE_URL}/api/topicpage`);
-  if (!res.ok) throw new Error(`Failed to fetch topic pages: ${res.status}`);
-  const json = await res.json();
-  const data: ApiTopicPage[] = json.data ?? [];
-  return data.filter((p) => p.pageType === "Category" && !p.deleted);
+  try {
+    const res = await fetch(`${BASE_URL}/api/topicpage`);
+    if (!res.ok) return [];
+    const json = await res.json();
+    const data: ApiTopicPage[] = json.data ?? [];
+    return data.filter((p) => p.pageType === "Category" && !p.deleted);
+  } catch {
+    return [];
+  }
 }
 
 export async function getCategoryTopicPageBySlug(slug: string): Promise<ApiTopicPage | undefined> {
