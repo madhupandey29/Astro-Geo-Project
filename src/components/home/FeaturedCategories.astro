@@ -2,6 +2,7 @@
 import { getCategoryTopicPages } from "../../lib/api";
 
 const categories = await getCategoryTopicPages();
+const trackId = "fc-track";
 ---
 
 {categories.length > 0 && (
@@ -20,38 +21,111 @@ const categories = await getCategoryTopicPages();
         </a>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
-        {categories.map((cat, i) => (
-          <a
-            href={`/category/${cat.slug}`}
-            class:list={[
-              "group cursor-pointer",
-              i === categories.length - 1 && categories.length % 3 === 1
-                ? "sm:col-span-2 md:col-span-1"
-                : "",
-            ]}
-          >
-            <div class="aspect-[3/4] overflow-hidden rounded-xl mb-4 md:mb-6 relative">
-              {cat.image1CloudUrlCard || cat.image1CloudUrl ? (
-                <img
-                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  src={cat.image1CloudUrlCard ?? cat.image1CloudUrl ?? ""}
-                  alt={cat.name}
-                  title={cat.name}
-                  width="400"
-                  height="533"
-                  loading="lazy"
-                />
-              ) : (
-                <div class="w-full h-full bg-[#d1d5db]" />
-              )}
-              <div class="absolute inset-0 bg-gradient-to-t from-[#041632]/80 to-transparent flex items-end p-6 md:p-8">
-                <h3 class="!text-white font-headline text-2xl md:text-3xl">{cat.name}</h3>
+      <div class="fc-outer">
+        <button
+          class="fc-arrow fc-arrow-prev"
+          aria-label="Previous"
+          onclick={`(function(){var t=document.getElementById('${trackId}');var c=t.querySelector('.fc-card');var g=parseFloat(getComputedStyle(t).gap)||24;t.scrollBy({left:-(c.offsetWidth+g),behavior:'smooth'});})()`}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+
+        <div id={trackId} class="fc-track" style={`--count: ${categories.length}`}>
+          {categories.map((cat) => (
+            <a href={`/category/${cat.slug}`} class="fc-card group cursor-pointer">
+              <div class="aspect-[3/4] overflow-hidden rounded-xl mb-4 md:mb-6 relative">
+                {cat.image1CloudUrlCard || cat.image1CloudUrl ? (
+                  <img
+                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    src={cat.image1CloudUrlCard ?? cat.image1CloudUrl ?? ""}
+                    alt={cat.name}
+                    title={cat.name}
+                    width="400"
+                    height="533"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div class="w-full h-full bg-[#d1d5db]" />
+                )}
+                <div class="absolute inset-0 bg-gradient-to-t from-[#041632]/80 to-transparent flex items-end p-6 md:p-8">
+                  <h3 class="!text-white font-headline text-2xl md:text-3xl">{cat.name}</h3>
+                </div>
               </div>
-            </div>
-          </a>
-        ))}
+            </a>
+          ))}
+        </div>
+
+        <button
+          class="fc-arrow fc-arrow-next"
+          aria-label="Next"
+          onclick={`(function(){var t=document.getElementById('${trackId}');var c=t.querySelector('.fc-card');var g=parseFloat(getComputedStyle(t).gap)||24;t.scrollBy({left:(c.offsetWidth+g),behavior:'smooth'});})()`}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
       </div>
     </div>
   </section>
 )}
+
+<style>
+  .fc-outer {
+    position: relative;
+    padding: 0 2.25rem;
+  }
+
+  .fc-track {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+  }
+  .fc-track::-webkit-scrollbar { display: none; }
+
+  /* Cards — natural size, carousel scrolls if overflow */
+  .fc-card {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    width: 260px;
+  }
+  @media (min-width: 768px) {
+    .fc-card { width: 300px; }
+  }
+  @media (min-width: 1024px) {
+    .fc-card { width: 340px; }
+  }
+
+  /* Arrows */
+  .fc-arrow {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background: #020d1f;
+    border: none;
+    box-shadow: 0 4px 16px rgba(2,13,31,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #ffffff;
+    transition: background 0.18s, box-shadow 0.18s;
+    padding: 0;
+  }
+  .fc-arrow-prev { left: 0; }
+  .fc-arrow-next { right: 0; }
+  .fc-arrow:hover {
+    background: #775a19;
+    box-shadow: 0 6px 20px rgba(119,90,25,0.4);
+  }
+  .fc-arrow svg { display: block; flex-shrink: 0; }
+</style>

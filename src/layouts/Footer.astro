@@ -30,6 +30,11 @@ const fullAddress = addressParts.join(", ");
 const mapQuery = encodeURIComponent(fullAddress);
 const mapLink = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
 
+// Structured address lines for display
+const addressLine1 = company?.legalName ?? "Amrita Global Enterprises";
+const addressLine2 = [company?.addressStreet].filter(Boolean).join(", ");
+const addressLine3 = [company?.addressCity, company?.addressState, company?.addressCountry, company?.addressPostalCode].filter(Boolean).join(", ");
+
 const phone1 = company?.phone1 ?? "+91-9925155141";
 const phone1Dept = company?.phone1Dept ?? "Sales";
 const phone2 = company?.phone2 ?? "+91-9824003484";
@@ -269,9 +274,11 @@ const socialLinks = [
               href={mapLink}
               target="_blank"
               rel="noopener noreferrer"
-              class="text-xs text-on-surface-variant hover:text-on-surface transition-colors"
+              class="text-xs text-on-surface-variant hover:text-on-surface transition-colors leading-relaxed"
             >
-              {fullAddress}
+              {addressLine1 && <span class="block md:inline">{addressLine1}</span>}
+              {addressLine2 && <span class="block md:inline md:before:content-[',_']">{addressLine2}</span>}
+              {addressLine3 && <span class="block md:inline md:before:content-[',_']">{addressLine3}</span>}
             </a>
           </div>
         )}
@@ -294,13 +301,13 @@ const socialLinks = [
   </div>
 
   <!-- Sub Footer -->
-  <div class="max-w-screen-2xl mx-auto mt-16 pt-8 border-t border-outline-variant/30 flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left text-xs font-label">
-    <p class="text-on-surface-variant">
+  <div class="max-w-screen-2xl mx-auto mt-16 pt-8 pb-32 md:pb-8 border-t border-outline-variant/30 flex flex-col md:flex-row justify-between items-center gap-1 md:gap-4 text-center md:text-left text-xs font-label">
+    <p class="text-on-surface-variant leading-relaxed">
       © {foundingYear} {company?.legalName ?? siteConfig.brandName}.
-      {fullAddress && <span> {fullAddress}.</span>}
-      {recognition && <span> {recognition}.</span>}
+      {fullAddress && <span class="block md:inline"> {fullAddress}.</span>}
+      {recognition && <span class="block md:inline"> {recognition}.</span>}
     </p>
-    <div class="flex space-x-6 uppercase tracking-widest text-on-surface-variant">
+    <div class="flex space-x-6 uppercase tracking-widest text-on-surface-variant shrink-0">
       {siteConfig.footerLinks.legal.map((item) => (
         <a class="hover:text-on-surface transition-colors" href={item.href}>{item.label}</a>
       ))}

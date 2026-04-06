@@ -6,7 +6,7 @@ const topics = await getDynamicTopicPages();
 
 const sections = await Promise.all(
   topics.map(async (topic) => {
-    const raw = await getProductsByMerchTag(topic.slug1, 4);
+    const raw = await getProductsByMerchTag(topic.slug1, 12);
     const products = raw
       .filter((p) => (p.productslug ?? "").trim().toLowerCase() !== "pending")
       .map(mapApiProduct);
@@ -15,85 +15,180 @@ const sections = await Promise.all(
 );
 ---
 
-{sections.map(({ topic, products }, index) => (
-  <div class="section-wrapper">
-  <section class:list={["topic-section", index % 2 === 0 ? "topic-section--light" : "topic-section--white"]}>
-    <div class="container mx-auto px-4 md:px-8">
-      <div class="mb-12 md:mb-16">
-        <a href={`/collection/${topic.slug}`} class="group inline-block">
-          <h2 class="font-headline text-4xl md:text-5xl text-[#041632] mb-3 md:mb-4 group-hover:text-[#775a19] transition-colors">{topic.name}</h2>
-        </a>
-        {topic.description && (
-          <p class="font-label text-xs md:text-sm uppercase tracking-[0.3em] md:tracking-[0.4em] text-[#775a19]">{topic.description}</p>
-        )}
-      </div>
+{sections.map(({ topic, products }, index) => {
+  const id = `carousel-${index}`;
+  return (
+    <div class="section-wrapper">
+      <section class:list={["topic-section", index % 2 === 0 ? "topic-section--light" : "topic-section--white"]}>
+        <div class="container mx-auto px-4 md:px-8">
 
-      {products.length > 0 ? (
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-          {products.map((product) => (
-            <a href={`/collection/${topic.slug}/${product.slug}`} class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all border border-[#edeeef] block">
-              <div class="aspect-square bg-[#f3f4f5] overflow-hidden">
-                <img
-                  class="w-full h-full object-cover"
-                  src={product.image || "/images/placeholders/fabric.jpg"}
-                  alt={product.imageAlt || product.name}
-                  title={product.imageAlt || product.name}
-                  width="300"
-                  height="300"
-                  loading="lazy"
-                />
-              </div>
-              <div class="p-4 md:p-6">
-                <span class="font-label text-[9px] md:text-[10px] text-[#775a19] font-bold uppercase tracking-widest">{product.seriesLabel}</span>
-                <h3 class="font-headline text-lg md:text-xl text-[#041632] mt-1 mb-2">{product.name}</h3>
-                <div class="flex justify-between items-center pt-3 md:pt-4 border-t border-[#edeeef]">
-                  <span class="font-body text-[10px] md:text-xs text-[#44474d] italic">{product.specs.weight} | {product.specs.weave}</span>
-                  <span class="text-[#041632] font-label text-[10px] font-bold uppercase tracking-widest hover:text-[#775a19]">Details</span>
-                </div>
-              </div>
+          <div class="mb-10 md:mb-14">
+            <a href={`/collection/${topic.slug}`} class="group inline-block">
+              <h2 class="font-headline text-4xl md:text-5xl text-[#041632] mb-3 md:mb-4 group-hover:text-[#775a19] transition-colors">
+                {topic.name}
+              </h2>
             </a>
-          ))}
-        </div>
-      ) : (
-        <p class="text-center text-[#44474d] font-body text-sm">No products found for this collection.</p>
-      )}
+            {topic.description && (
+              <p class="font-label text-xs md:text-sm uppercase tracking-[0.3em] md:tracking-[0.4em] text-[#775a19]">
+                {topic.description}
+              </p>
+            )}
+          </div>
 
-      <div class="flex justify-center mt-10 md:mt-14">
-        <a
-          href={`/collection/${topic.slug}`}
-          class="font-label text-xs md:text-sm font-bold text-[#775a19] uppercase tracking-widest flex items-center gap-2 border-b-2 border-[#775a19] pb-1"
-        >
-          Explore Full Library
-        </a>
-      </div>
+          {products.length > 0 ? (
+            <div class="c-outer">
+              <button
+                id={`${id}-prev`}
+                class="c-arrow c-arrow-prev"
+                aria-label="Previous"
+                onclick={`(function(){var t=document.getElementById('${id}-track');var c=t.querySelector('.c-card');var g=parseFloat(getComputedStyle(t).gap)||16;t.scrollBy({left:-(c.offsetWidth+g),behavior:'smooth'});})()`}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6"/>
+                </svg>
+              </button>
+
+              <div id={`${id}-track`} class="c-track">
+                {products.map((product) => (
+                  <a
+                    href={`/collection/${topic.slug}/${product.slug}`}
+                    class="c-card bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all border border-[#edeeef] block"
+                  >
+                    <div class="aspect-square bg-[#f3f4f5] overflow-hidden">
+                      <img
+                        class="w-full h-full object-cover"
+                        src={product.image || "/images/placeholders/fabric.jpg"}
+                        alt={product.imageAlt || product.name}
+                        title={product.imageAlt || product.name}
+                        width="300"
+                        height="300"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div class="p-4 md:p-5">
+                      <span class="font-label text-[9px] md:text-[10px] text-[#775a19] font-bold uppercase tracking-widest">
+                        {product.seriesLabel}
+                      </span>
+                      <h3 class="font-headline text-base md:text-lg text-[#041632] mt-1 mb-2 leading-snug">
+                        {product.name}
+                      </h3>
+                      <div class="flex justify-between items-center pt-3 border-t border-[#edeeef]">
+                        <span class="font-body text-[10px] md:text-xs text-[#44474d] italic">
+                          {product.specs.weight} | {product.specs.weave}
+                        </span>
+                        <span class="text-[#041632] font-label text-[10px] font-bold uppercase tracking-widest hover:text-[#775a19]">
+                          Details
+                        </span>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+
+              <button
+                id={`${id}-next`}
+                class="c-arrow c-arrow-next"
+                aria-label="Next"
+                onclick={`(function(){var t=document.getElementById('${id}-track');var c=t.querySelector('.c-card');var g=parseFloat(getComputedStyle(t).gap)||16;t.scrollBy({left:(c.offsetWidth+g),behavior:'smooth'});})()`}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </button>
+            </div>
+          ) : (
+            <p class="text-center text-[#44474d] font-body text-sm">No products found for this collection.</p>
+          )}
+
+          <div class="flex justify-center mt-10 md:mt-14">
+            <a
+              href={`/collection/${topic.slug}`}
+              class="font-label text-xs md:text-sm font-bold text-[#775a19] uppercase tracking-widest flex items-center gap-2 border-b-2 border-[#775a19] pb-1"
+            >
+              Explore Full Library
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
-    </section>
-  </div>
-))}
+  );
+})}
 
 <style>
-  .section-wrapper {
-    position: relative;
-  }
+  .section-wrapper { position: relative; }
 
-  .topic-section {
-    padding: 4rem 0;
-    position: relative;
-  }
-
+  .topic-section { padding: 4rem 0; position: relative; }
   .topic-section--light {
     background: #f8f9fa;
-    box-shadow: inset 0 8px 24px rgba(4, 22, 50, 0.04), inset 0 -8px 24px rgba(4, 22, 50, 0.04);
+    box-shadow: inset 0 8px 24px rgba(4,22,50,0.04), inset 0 -8px 24px rgba(4,22,50,0.04);
   }
-
   .topic-section--white {
     background: #ffffff;
-    box-shadow: inset 0 8px 24px rgba(119, 90, 25, 0.04), inset 0 -8px 24px rgba(119, 90, 25, 0.04);
+    box-shadow: inset 0 8px 24px rgba(119,90,25,0.04), inset 0 -8px 24px rgba(119,90,25,0.04);
+  }
+  @media (min-width: 768px) { .topic-section { padding: 6rem 0; } }
+
+  /* Outer: relative so arrows can be absolute, padding gives them space */
+  .c-outer {
+    position: relative;
+    padding: 0 2.25rem;
   }
 
+  /* Scrollable track */
+  .c-track {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+  }
+  .c-track::-webkit-scrollbar { display: none; }
+
+  /* Cards — 1 mobile, 3 tablet, 4 desktop */
+  .c-card {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    width: 240px;
+  }
   @media (min-width: 768px) {
-    .topic-section {
-      padding: 6rem 0;
-    }
+    .c-card { width: 280px; }
+  }
+  @media (min-width: 1024px) {
+    .c-card { width: 300px; }
+  }
+
+  /* Arrows — dark navy, white icon */
+  .c-arrow {
+    position: absolute;
+    top: 38%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background: #020d1f;
+    border: none;
+    box-shadow: 0 4px 16px rgba(2,13,31,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #ffffff;
+    transition: background 0.18s, box-shadow 0.18s;
+    padding: 0;
+    line-height: 1;
+  }
+  .c-arrow-prev { left: 0; }
+  .c-arrow-next { right: 0; }
+
+  .c-arrow:hover {
+    background: #775a19;
+    box-shadow: 0 6px 20px rgba(119,90,25,0.4);
+  }
+  .c-arrow svg {
+    display: block;
+    flex-shrink: 0;
   }
 </style>
