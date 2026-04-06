@@ -5,7 +5,7 @@ import Footer from "/src/layouts/Footer.astro";
 import FloatingActions from "../components/common/FloatingActions.astro";
 import LocalBusinessSchema from "../components/schema/LocalBusinessSchema.astro";
 import BreadcrumbSchema from "../components/schema/BreadcrumbSchema.astro";
-import { getSiteSettings, getCompanyInfo } from "../lib/api";
+import { getSiteSettings, getCompanyInfo, getAuthors } from "../lib/api";
 
 interface Props {
   title?: string;
@@ -48,12 +48,14 @@ const {
 } = Astro.props;
 
 // Site-wide settings from API (eCatalogue)
-const [site, company] = await Promise.all([
+const [site, company, authors] = await Promise.all([
   getSiteSettings("eCatalogue"),
   getCompanyInfo("AGE"),
+  getAuthors(),
 ]);
 
 const companyName = company?.legalName ?? company?.name ?? "Amrita Global Enterprises";
+const authorName = authors[0]?.name ?? companyName;
 
 const siteBase = import.meta.env.PUBLIC_SITE_URL ?? "https://www.amrita-fashions.com";
 const resolvedCanonical = canonical ?? `${siteBase}${Astro.url.pathname}`;
@@ -127,8 +129,8 @@ const schemaArray = schemaMarkup
     </style>
     <meta name="description" content={description} />
     <meta name="robots" content={robotsContent} />
-    <meta name="author" content={companyName} />
-    <meta name="publisher" content={companyName} />
+    <meta name="author" content={authorName} />
+    <meta name="publisher" content={authorName} />
     {keywords && keywords.length > 0 && (
       <meta name="keywords" content={keywords.join(", ")} />
     )}
