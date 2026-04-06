@@ -57,8 +57,7 @@ const schema = {
   url: `${siteBase}/`,
   logo: {
     "@type": "ImageObject",
-    url: resolveUrl(company.logoUrl),
-    image: resolveUrl(company.defaultOgImage),
+    url: resolveUrl(company.logoUrl) ?? resolveUrl(company.defaultOgImage),
   },
   description: homePage?.description ?? company.description ?? undefined,
   telephone: company.phone1 ?? undefined,
