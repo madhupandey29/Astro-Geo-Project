@@ -25,7 +25,7 @@ const trackId = "fc-track";
         <button
           class="fc-arrow fc-arrow-prev"
           aria-label="Previous"
-          onclick={`(function(){var t=document.getElementById('${trackId}');var c=t.querySelector('.fc-card');var g=parseFloat(getComputedStyle(t).gap)||24;t.scrollBy({left:-(c.offsetWidth+g),behavior:'smooth'});})()`}
+          onclick={`(function(){var t=document.getElementById('${trackId}');var c=t.querySelector('.fc-card');var cols=window.innerWidth>=1024?4:window.innerWidth>=640?2:1;var g=parseFloat(getComputedStyle(t).gap)||0;t.scrollBy({left:-(c.offsetWidth+g)*cols,behavior:'smooth'});})()`}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="15 18 9 12 15 6"/>
@@ -60,7 +60,7 @@ const trackId = "fc-track";
         <button
           class="fc-arrow fc-arrow-next"
           aria-label="Next"
-          onclick={`(function(){var t=document.getElementById('${trackId}');var c=t.querySelector('.fc-card');var g=parseFloat(getComputedStyle(t).gap)||24;t.scrollBy({left:(c.offsetWidth+g),behavior:'smooth'});})()`}
+          onclick={`(function(){var t=document.getElementById('${trackId}');var c=t.querySelector('.fc-card');var cols=window.innerWidth>=1024?4:window.innerWidth>=640?2:1;var g=parseFloat(getComputedStyle(t).gap)||0;t.scrollBy({left:(c.offsetWidth+g)*cols,behavior:'smooth'});})()`}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"/>
@@ -74,12 +74,19 @@ const trackId = "fc-track";
 <style>
   .fc-outer {
     position: relative;
-    padding: 0 2.25rem;
+    margin: 0 -1rem;
+    overflow: hidden;
+  }
+  @media (min-width: 640px) {
+    .fc-outer { margin: 0 -2rem; }
+  }
+  @media (min-width: 1024px) {
+    .fc-outer { margin: 0 3rem; overflow: visible; }
   }
 
   .fc-track {
     display: flex;
-    gap: 1.5rem;
+    gap: 0;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
@@ -87,28 +94,31 @@ const trackId = "fc-track";
     scroll-behavior: smooth;
   }
   .fc-track::-webkit-scrollbar { display: none; }
+  @media (min-width: 1024px) {
+    .fc-track { overflow: hidden; }
+  }
 
-  /* Cards — natural size, carousel scrolls if overflow */
   .fc-card {
     scroll-snap-align: start;
     flex-shrink: 0;
-    width: 260px;
+    width: 100%;
+    padding: 0 0.5rem;
+    box-sizing: border-box;
   }
-  @media (min-width: 768px) {
-    .fc-card { width: 300px; }
+  @media (min-width: 640px) {
+    .fc-card { width: 50%; }
   }
   @media (min-width: 1024px) {
-    .fc-card { width: 340px; }
+    .fc-card { width: 25%; }
   }
 
-  /* Arrows */
   .fc-arrow {
     position: absolute;
     top: 40%;
     transform: translateY(-50%);
     z-index: 10;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: 50%;
     background: #020d1f;
     border: none;
@@ -121,8 +131,12 @@ const trackId = "fc-track";
     transition: background 0.18s, box-shadow 0.18s;
     padding: 0;
   }
-  .fc-arrow-prev { left: 0; }
-  .fc-arrow-next { right: 0; }
+  .fc-arrow-prev { left: 1rem; }
+  .fc-arrow-next { right: 1rem; }
+  @media (min-width: 1024px) {
+    .fc-arrow-prev { left: -3rem; }
+    .fc-arrow-next { right: -3rem; }
+  }
   .fc-arrow:hover {
     background: #775a19;
     box-shadow: 0 6px 20px rgba(119,90,25,0.4);

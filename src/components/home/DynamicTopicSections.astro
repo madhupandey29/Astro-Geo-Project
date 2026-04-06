@@ -29,7 +29,7 @@ const sections = await Promise.all(
               </h2>
             </a>
             {topic.description && (
-              <p class="font-label text-xs md:text-sm uppercase tracking-[0.3em] md:tracking-[0.4em] text-[#775a19]">
+              <p class="font-label text-xs md:text-sm uppercase tracking-[0.15em] text-[#775a19]">
                 {topic.description}
               </p>
             )}
@@ -41,7 +41,7 @@ const sections = await Promise.all(
                 id={`${id}-prev`}
                 class="c-arrow c-arrow-prev"
                 aria-label="Previous"
-                onclick={`(function(){var t=document.getElementById('${id}-track');var c=t.querySelector('.c-card');var g=parseFloat(getComputedStyle(t).gap)||16;t.scrollBy({left:-(c.offsetWidth+g),behavior:'smooth'});})()`}
+                onclick={`(function(){var t=document.getElementById('${id}-track');var c=t.querySelector('.c-card');var cols=window.innerWidth>=1024?4:window.innerWidth>=640?2:1;var g=parseFloat(getComputedStyle(t).gap)||0;t.scrollBy({left:-(c.offsetWidth+g)*cols,behavior:'smooth'});})()`}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="15 18 9 12 15 6"/>
@@ -89,7 +89,7 @@ const sections = await Promise.all(
                 id={`${id}-next`}
                 class="c-arrow c-arrow-next"
                 aria-label="Next"
-                onclick={`(function(){var t=document.getElementById('${id}-track');var c=t.querySelector('.c-card');var g=parseFloat(getComputedStyle(t).gap)||16;t.scrollBy({left:(c.offsetWidth+g),behavior:'smooth'});})()`}
+                onclick={`(function(){var t=document.getElementById('${id}-track');var c=t.querySelector('.c-card');var cols=window.innerWidth>=1024?4:window.innerWidth>=640?2:1;var g=parseFloat(getComputedStyle(t).gap)||0;t.scrollBy({left:(c.offsetWidth+g)*cols,behavior:'smooth'});})()`}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="9 18 15 12 9 6"/>
@@ -128,16 +128,24 @@ const sections = await Promise.all(
   }
   @media (min-width: 768px) { .topic-section { padding: 6rem 0; } }
 
-  /* Outer: relative so arrows can be absolute, padding gives them space */
+  /* Outer: clip overflow so cards don't peek */
   .c-outer {
     position: relative;
-    padding: 0 2.25rem;
+    margin: 0 -1rem;
+    overflow: hidden;
+  }
+  @media (min-width: 640px) {
+    .c-outer { margin: 0 -2rem; }
+  }
+  @media (min-width: 1024px) {
+    /* Make room for arrows outside the track */
+    .c-outer { margin: 0 3rem; overflow: visible; }
   }
 
-  /* Scrollable track */
+  /* Scrollable track — clips cards on desktop */
   .c-track {
     display: flex;
-    gap: 1rem;
+    gap: 0;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
@@ -145,28 +153,33 @@ const sections = await Promise.all(
     scroll-behavior: smooth;
   }
   .c-track::-webkit-scrollbar { display: none; }
+  @media (min-width: 1024px) {
+    .c-track { overflow: hidden; }
+  }
 
-  /* Cards — 1 mobile, 3 tablet, 4 desktop */
+  /* Cards */
   .c-card {
     scroll-snap-align: start;
     flex-shrink: 0;
-    width: 240px;
+    width: 100%;
+    padding: 0 0.5rem;
+    box-sizing: border-box;
   }
-  @media (min-width: 768px) {
-    .c-card { width: 280px; }
+  @media (min-width: 640px) {
+    .c-card { width: 50%; }
   }
   @media (min-width: 1024px) {
-    .c-card { width: 300px; }
+    .c-card { width: 25%; }
   }
 
-  /* Arrows — dark navy, white icon */
+  /* Arrows */
   .c-arrow {
     position: absolute;
     top: 38%;
     transform: translateY(-50%);
     z-index: 10;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: 50%;
     background: #020d1f;
     border: none;
@@ -180,15 +193,18 @@ const sections = await Promise.all(
     padding: 0;
     line-height: 1;
   }
-  .c-arrow-prev { left: 0; }
-  .c-arrow-next { right: 0; }
+  /* Mobile: arrows overlay the card */
+  .c-arrow-prev { left: 1rem; }
+  .c-arrow-next { right: 1rem; }
+  /* Desktop: arrows sit outside the track */
+  @media (min-width: 1024px) {
+    .c-arrow-prev { left: -3rem; }
+    .c-arrow-next { right: -3rem; }
+  }
 
   .c-arrow:hover {
     background: #775a19;
     box-shadow: 0 6px 20px rgba(119,90,25,0.4);
   }
-  .c-arrow svg {
-    display: block;
-    flex-shrink: 0;
-  }
+  .c-arrow svg { display: block; flex-shrink: 0; }
 </style>
