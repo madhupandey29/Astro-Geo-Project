@@ -79,9 +79,15 @@ const faqItems: FAQItem[] = apiFaqs.length > 0 ? apiFaqs : [
   },
 ];
 
-// Hero image: prefer hero variant, fall back to base
+// Hero image (image2CloudUrl) — category page hero background
 const heroImageUrl: string | null =
-  page.image1CloudUrlHero ?? page.image1CloudUrl ?? null;
+  page.image2CloudUrlHero ?? page.image2CloudUrl ?? null;
+
+// Guide section image (image3CloudUrl) — near footer / p2 section
+const guideImageUrl: string | null =
+  page.image3CloudUrl ?? null;
+const guideImageAlt: string | null =
+  page.altTextImage3 ?? page.name ?? null;
 
 // Intro body: combine p1 + p2 from the topic page, strip HTML tags for plain text
 function stripHtml(html: string | null): string {
@@ -102,7 +108,7 @@ const introBody: string =
   keywords={page.keywords ?? undefined}
   canonical={page.canonicalUrl ? `https://${page.canonicalUrl.replace(/^https?:\/\//, "")}` : undefined}
   ogType={page.ogType ?? "website"}
-  ogImage={heroImageUrl ?? undefined}
+  ogImage={page.image1CloudUrl ?? heroImageUrl ?? undefined}
 >
   <div class="bg-white text-slate-900">
     <FabricListLayout
@@ -134,6 +140,8 @@ const introBody: string =
       faqItems={faqItems}
       preSelectedCategory={page.name}
       showGuide={true}
+      guideImageUrl={guideImageUrl}
+      guideImageAlt={guideImageAlt}
       guideP2Html={page.p2 ?? null}
     />
   </div>

@@ -1,8 +1,12 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import tailwindcss from '@tailwindcss/vite';
+import { buildAstroRedirects } from './src/lib/redirects.ts';
+
+const redirects = await buildAstroRedirects();
 
 export default defineConfig({
+  redirects,
   site: process.env.PUBLIC_SITE_URL ?? 'http://localhost:4321',
   integrations: [mdx()],
   vite: {
