@@ -57,7 +57,7 @@ const sections = await Promise.all(
                   >
                     <div class="aspect-square bg-[#f3f4f5] overflow-hidden">
                       <CloudinaryImage
-                        src={product.image || "/images/placeholders/fabric.jpg"}
+                        src={product.image1 || product.image || "/images/placeholders/fabric.jpg"}
                         alt={product.imageAlt || product.name}
                         title={product.imageAlt || product.name}
                         width={400}

@@ -101,18 +101,7 @@ function buildFaq(p: ApiProduct): { q: string; a: string }[] {
  */
 export function getCloudinaryUrl(url: string | null | undefined, transforms: string): string {
   if (!url || !url.includes("/upload/")) return url ?? "";
-  const uploadIdx = url.indexOf("/upload/");
-  const base = url.slice(0, uploadIdx + "/upload/".length);
-  const segments = url.slice(base.length).split("/");
-  // Skip existing transform segments
-  let i = 0;
-  while (i < segments.length) {
-    const seg = segments[i];
-    if (/^v\d+$/.test(seg)) break;
-    if (seg.includes(",") || /^[fqwchgbdeo]_/.test(seg)) { i++; } else { break; }
-  }
-  const publicPart = segments.slice(i).join("/");
-  return `${base}${transforms}/${publicPart}`;
+  return rebuildCloudinaryUrl(url, transforms);
 }
 
 /** Strip HTML tags and return plain text, or null if nothing meaningful remains */
@@ -148,52 +137,64 @@ function sanitizeSecondaryImage(url: string | null | undefined): string | null {
 }
 
 /**
- * Extract the Cloudinary base (cloud name + upload path) and the versioned public ID
- * from any Cloudinary URL, then rebuild it with exact width/height transforms.
- *
- * Input:  https://res.cloudinary.com/age-fabric/image/upload/f_auto,q_auto,w_300,h_300,c_fill/v1773729784/1ProductFallBack_uhxkjr.jpg
- * Output: https://res.cloudinary.com/age-fabric/image/upload/f_auto,q_auto,w_400,h_256,c_fill,g_auto/v1773729784/1ProductFallBack_uhxkjr.jpg
+ * Strip any existing Cloudinary transforms from a URL and inject new ones.
+ * Works with or without a version segment (v1234...).
+ * Handles both comma-separated single segments and any known single-param prefixes.
  */
-function buildCloudinaryUrl(
+export function rebuildCloudinaryUrl(
   url: string,
-  width: number,
-  height: number,
+  transforms: string,
 ): string {
   const uploadIdx = url.indexOf("/upload/");
   if (uploadIdx === -1) return url;
 
   const base = url.slice(0, uploadIdx + "/upload/".length);
-  const segments = url.slice(base.length).split("/");
+  const rest = url.slice(base.length);
 
-  // Skip Cloudinary transform segments (contain commas or known param prefixes: f_, q_, w_, h_, c_, g_, etc.)
-  // Stop at version segments (v + digits) or the public ID start
+  // Split on "/" but keep version + public ID intact.
+  // A transform segment either contains "," or matches a known Cloudinary param prefix.
+  // We stop as soon as we hit a version segment (v\d+) or a plain public-ID segment.
+  const TRANSFORM_RE = /^[a-z]_/; // any lowercase letter followed by underscore
+  const VERSION_RE = /^v\d+$/;
+
+  const segments = rest.split("/");
   let i = 0;
   while (i < segments.length) {
     const seg = segments[i];
-    if (/^v\d+$/.test(seg)) break; // version segment — keep from here
-    if (seg.includes(",") || /^[fqwchgbdeo]_/.test(seg)) {
-      i++; // transform segment — skip
-    } else {
-      break; // public ID start
-    }
+    if (VERSION_RE.test(seg)) break;           // version — stop here
+    if (seg.includes(",") || TRANSFORM_RE.test(seg)) { i++; continue; } // transform — skip
+    break;                                      // public ID — stop
   }
 
   const publicPart = segments.slice(i).join("/");
-  return `${base}f_auto,q_auto,w_${width},c_limit/${publicPart}`;
+  return `${base}${transforms}/${publicPart}`;
 }
 
 /**
- * Build a correct srcset string from a source Cloudinary URL.
- * Each candidate uses an exact width that matches its w descriptor.
- * Aspect ratio is preserved from the supplied width/height.
+ * Build a srcset string for a Cloudinary image.
+ * @param sourceUrl  Any Cloudinary URL (existing transforms are stripped and replaced)
+ * @param widths     Array of pixel widths for the srcset descriptors
+ * @param aspectW    Slot aspect ratio width  (e.g. 4 for 4:5)
+ * @param aspectH    Slot aspect ratio height (e.g. 5 for 4:5)
+ * @param crop       Cloudinary crop mode: "fill" (cards) | "limit" (editorial)
  */
 export function buildCloudinarySrcset(
   sourceUrl: string | null | undefined,
   widths: number[],
+  aspectW = 1,
+  aspectH = 1,
+  crop: "fill" | "limit" = "limit",
 ): string {
   if (!sourceUrl) return "";
   return widths
-    .map((w) => `${buildCloudinaryUrl(sourceUrl, w, 0)} ${w}w`)
+    .map((w) => {
+      const h = Math.round((w * aspectH) / aspectW);
+      const t =
+        crop === "fill"
+          ? `f_auto,q_auto,c_fill,g_auto,w_${w},h_${h}`
+          : `f_auto,q_auto,c_limit,w_${w}`;
+      return `${rebuildCloudinaryUrl(sourceUrl, t)} ${w}w`;
+    })
     .join(", ");
 }
 
@@ -270,6 +271,7 @@ export function mapApiProduct(p: ApiProduct, whatsappNumber?: string, phone1?: s
     image1Srcset: buildCloudinarySrcset(
       sanitizeSecondaryImage(p.image1CloudUrl),
       [400, 800, 1200],
+      4, 5, "fill",
     ),
     image2: sanitizeSecondaryImage(p.image2CloudUrl),
     image3: sanitizeSecondaryImage(p.image3CloudUrl),
@@ -280,6 +282,7 @@ export function mapApiProduct(p: ApiProduct, whatsappNumber?: string, phone1?: s
     collectionImageSrcset: buildCloudinarySrcset(
       nullIfEmpty(p.collection?.collectionImage1CloudUrl),
       [400, 800, 1200],
+      4, 5, "fill",
     ),
     collectionImageAlt: p.collection?.altTextCollectionImage1 ?? null,
     collectionVideoURL: p.collection?.collectionvideoURL ?? null,
