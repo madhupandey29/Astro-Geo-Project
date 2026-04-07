@@ -79,19 +79,15 @@ function getIcon(name: string, size = "20"): string {
                   <span class="font-bold text-[#041632] md:text-lg pr-4">{faq.question}</span>
                   <span class="text-[#775a19] shrink-0 transition-transform duration-200 group-open:rotate-180" set:html={getIcon('expand_more')} />
                 </summary>
-                <div class="px-5 md:px-6 pb-5 md:pb-6 text-[#44474d] leading-relaxed text-sm md:text-base border-t border-[#c5c6ce]/20 pt-4" set:html={faq.answer} />
+                <div class="px-5 md:px-6 pb-5 md:pb-6 text-[#44474d] leading-relaxed text-sm md:text-base border-t border-[#c5c6ce]/20 pt-4 rich-content" set:html={faq.answer} />
               </details>
             ))}
           </div>
         </div>
       ))}
 
-      <!-- Empty state for search -->
-      <div id="faq-empty" class="hidden text-center py-16">
-        <span class="text-[#c5c6ce] mb-4 block" set:html={getIcon('search_off', '48')} />
-        <p class="text-[#44474d] text-lg font-medium">No results found.</p>
-        <p class="text-[#75777e] text-sm mt-2">Try a different keyword or browse the categories.</p>
-      </div>
+      <!-- Empty state for search (populated by JS to avoid soft-404 triggers) -->
+      <div id="faq-empty" class="hidden text-center py-16" aria-live="polite"></div>
     </div>
   </div>
 </section>
@@ -120,7 +116,16 @@ function getIcon(name: string, size = "20"): string {
       (sec as HTMLElement).style.display = anyVisible ? "" : "none";
     });
 
-    emptyState?.classList.toggle("hidden", visible > 0);
+    if (visible === 0 && emptyState) {
+      emptyState.innerHTML = `
+        <span class="text-[#c5c6ce] mb-4 block"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm-1-7h2v2h2v2h-2v2h-2v-2h-2v-2h2V7z"/></svg></span>
+        <p class="text-[#44474d] text-lg font-medium">No results found.</p>
+        <p class="text-[#75777e] text-sm mt-2">Try a different keyword or browse the categories.</p>
+      `;
+      emptyState.classList.remove("hidden");
+    } else {
+      emptyState?.classList.add("hidden");
+    }
   });
 
   // Active sidebar highlight on scroll

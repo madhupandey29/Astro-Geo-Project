@@ -91,3 +91,30 @@ export function cloudinarySrcset(url: string, widths: number[] = [400, 800, 1200
   if (!url) return "";
   return widths.map((w) => `${buildCloudinaryUrl(url, w, format)} ${w}w`).join(", ");
 }
+
+/**
+ * Adds rel="noopener noreferrer" to all <a target="_blank"> links in an HTML string.
+ * Fixes the "Unsafe Cross-Origin Links" SEO/security warning.
+ */
+export function safeExternalLinks(html: string): string {
+  if (!html) return html;
+  return html.replace(
+    /<a\s([^>]*target=["']_blank["'][^>]*)>/gi,
+    (match, attrs) => {
+      // Already has rel= — just ensure noopener noreferrer are present
+      if (/rel=["'][^"']*["']/i.test(attrs)) {
+        return match.replace(
+          /rel=(["'])([^"']*)(["'])/i,
+          (_m, q1, val, q2) => {
+            const parts = val.split(/\s+/).filter(Boolean);
+            if (!parts.includes("noopener")) parts.push("noopener");
+            if (!parts.includes("noreferrer")) parts.push("noreferrer");
+            return `rel=${q1}${parts.join(" ")}${q2}`;
+          }
+        );
+      }
+      // No rel= — inject it
+      return `<a ${attrs} rel="noopener noreferrer">`;
+    }
+  );
+}

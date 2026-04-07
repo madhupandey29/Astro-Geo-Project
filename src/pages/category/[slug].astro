@@ -27,6 +27,9 @@ const [rawProducts, filters] = await Promise.all([
   getFilterValues(),
 ]);
 
+// Only show categories that actually exist in this page's products
+const pageCategories = [...new Set(rawProducts.map((p) => p.category).filter(Boolean))];
+
 // Map raw API products → typed FabricProduct shape (skip pending slugs)
 const products: FabricProduct[] = rawProducts
   .filter((raw) => (raw.productslug ?? "").trim().toLowerCase() !== "pending")

@@ -5,7 +5,7 @@ import { formatDate, getPostImage, cloudinarySrcset } from "../../lib/blog";
 interface Props { post: ApiBlogPost }
 const { post } = Astro.props;
 ---
-<header class="max-w-5xl mx-auto px-8 pt-32 pb-12">
+<header class="max-w-5xl mx-auto px-4 md:px-8 pt-28 md:pt-32 pb-10 md:pb-12">
   <nav class="flex items-center gap-2 text-[10px] font-sans uppercase tracking-widest text-[#44474d] mb-8 overflow-x-auto whitespace-nowrap">
     <a href="/" class="text-[#44474d] hover:text-[#041632] transition-colors">Home</a>
     <span class="material-symbols-outlined text-sm">chevron_right</span>

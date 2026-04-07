@@ -58,7 +58,7 @@ const { post } = Astro.props;
         <h4 class="font-serif text-xl text-[#041632] mb-6">Expert Advice</h4>
         <div class="flex gap-4 mb-6">
           <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-[#775a19]/20 shrink-0">
-            <img src={post.author.avatar} alt={post.author.name} class="w-full h-full object-cover" />
+            <img src={post.author.avatar} alt={post.author.name} class="w-full h-full object-cover" width="56" height="56" loading="lazy" />
           </div>
           <div>
             <p class="text-base font-bold text-[#041632]">{post.author.name}</p>

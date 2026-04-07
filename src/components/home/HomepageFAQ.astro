@@ -29,7 +29,7 @@ const faqs = [
               <h3 class="font-headline text-lg md:text-xl text-[#041632]">{faq.question}</h3>
               <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
             </summary>
-            <div class="px-6 md:px-8 pb-6 md:pb-8 font-body text-sm md:text-base text-[#44474d] leading-relaxed" set:html={faq.answer} />
+            <div class="px-6 md:px-8 pb-6 md:pb-8 font-body text-sm md:text-base text-[#44474d] leading-relaxed rich-content" set:html={faq.answer} />
           </details>
         ))}
       </div>

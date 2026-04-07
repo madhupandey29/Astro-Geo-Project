@@ -12,7 +12,7 @@ const { featured, posts } = Astro.props;
 
 <!-- Featured Post -->
 {featured && (
-  <section class="px-8 mb-20 max-w-7xl mx-auto">
+  <section class="px-4 md:px-8 mb-16 md:mb-20 max-w-7xl mx-auto">
     <div class="relative flex flex-col md:flex-row gap-0 group">
       <div class="md:w-2/3 h-[400px] md:h-[550px] overflow-hidden rounded-xl shadow-2xl relative">
         <img
@@ -50,7 +50,7 @@ const { featured, posts } = Astro.props;
 
 <!-- Posts Grid -->
 {posts.length > 0 && (
-  <section class="px-8 mb-24 max-w-7xl mx-auto">
+  <section class="px-4 md:px-8 mb-24 max-w-7xl mx-auto">
     <h3 class="font-serif text-3xl text-[#041632] mb-10 border-b border-[#c5c6ce] pb-4">Latest Articles</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {posts.map((post) => (
@@ -87,7 +87,7 @@ const { featured, posts } = Astro.props;
 )}
 
 {posts.length === 0 && !featured && (
-  <section class="px-8 mb-24 max-w-7xl mx-auto text-center py-24">
+  <section class="px-4 md:px-8 mb-24 max-w-7xl mx-auto text-center py-24">
     <p class="text-[#5a5c63] font-sans text-lg">No articles available at the moment.</p>
   </section>
 )}

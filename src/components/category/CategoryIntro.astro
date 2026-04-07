@@ -15,7 +15,7 @@ const { name, p1, p2 } = Astro.props;
           <h2 class="font-headline text-4xl text-[#385b99] mb-8 leading-tight">
             {name}
           </h2>
-          <div class="space-y-6 text-[#434750] text-lg leading-relaxed">
+          <div class="space-y-6 text-[#434750] text-lg leading-relaxed rich-content">
             {p1 && <div set:html={p1} />}
             {p2 && <div set:html={p2} />}
           </div>
