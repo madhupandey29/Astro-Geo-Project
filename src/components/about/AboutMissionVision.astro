@@ -6,27 +6,11 @@ interface Props {
 }
 const { mission, vision, image2 } = Astro.props;
 
+import CloudinaryImage from "../common/CloudinaryImage.astro";
+
 const FALLBACK_IMAGE2 = "https://res.cloudinary.com/age-fabric/image/upload/f_auto,q_auto,w_600,c_limit/About2_fallback.jpg";
 
-function optimizeCloudinary(url: string, width: number): string {
-  if (!url.includes("res.cloudinary.com")) return url;
-  const uploadIdx = url.indexOf("/upload/");
-  if (uploadIdx === -1) return url;
-  const base = url.slice(0, uploadIdx + "/upload/".length);
-  const segments = url.slice(base.length).split("/");
-  let i = 0;
-  while (i < segments.length) {
-    const seg = segments[i];
-    if (/^v\d+$/.test(seg)) break;
-    if (seg.includes(",") || /^[fqwchgbdeo]_/.test(seg)) { i++; } else { break; }
-  }
-  const publicPart = segments.slice(i).join("/");
-  return `${base}f_auto,q_auto:low,w_${width},c_limit/${publicPart}`;
-}
-
-const missionImage = image2
-  ? optimizeCloudinary(image2, 600)
-  : FALLBACK_IMAGE2;
+const missionImage = image2 ?? FALLBACK_IMAGE2;
 
 const fallbackMission = "To engineer textiles that define the standard for quality and sustainability, ensuring every thread woven in our facility contributes to a more conscious global fashion ecosystem.";
 const fallbackVision = "To remain the preferred global manufacturing partner for world-class brands by fusing traditional Gujarati craftsmanship with AI-driven manufacturing technology.";
@@ -35,14 +19,17 @@ const fallbackVision = "To remain the preferred global manufacturing partner for
   <div class="max-w-7xl mx-auto px-8 flex flex-col md:flex-row items-center gap-20">
     <div class="w-full md:w-1/2 relative">
       <div class="aspect-[4/5] bg-[#1b2b48] overflow-hidden">
-        <img
+        <CloudinaryImage
           src={missionImage}
           alt="Luxury folded white fabric textures"
           title="Luxury folded white fabric textures"
-          width="600"
-          height="750"
-          class="w-full h-full object-cover mix-blend-overlay opacity-80"
+          width={600}
+          height={750}
+          widths={[300, 600, 900]}
+          sizes="(min-width: 768px) 50vw, 100vw"
+          crop="fill"
           loading="lazy"
+          class="w-full h-full object-cover mix-blend-overlay opacity-80"
         />
       </div>
       <div class="absolute -bottom-8 -right-8 bg-[#775a19] p-12 hidden lg:block">

@@ -1,6 +1,7 @@
 ---
 import { getDynamicTopicPages, getProductsByMerchTag } from "../../lib/api";
 import { mapApiProduct } from "../../data/products";
+import CloudinaryImage from "../common/CloudinaryImage.astro";
 
 const topics = await getDynamicTopicPages();
 
@@ -55,14 +56,17 @@ const sections = await Promise.all(
                     class="c-card bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all border border-[#edeeef] block"
                   >
                     <div class="aspect-square bg-[#f3f4f5] overflow-hidden">
-                      <img
-                        class="w-full h-full object-cover"
+                      <CloudinaryImage
                         src={product.image || "/images/placeholders/fabric.jpg"}
                         alt={product.imageAlt || product.name}
                         title={product.imageAlt || product.name}
-                        width="300"
-                        height="300"
+                        width={400}
+                        height={400}
+                        widths={[200, 400, 600, 800]}
+                        sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 80vw"
+                        crop="fill"
                         loading="lazy"
+                        class="w-full h-full object-cover"
                       />
                     </div>
                     <div class="p-4 md:p-5">

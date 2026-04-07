@@ -1,5 +1,6 @@
 ---
 import { getCompanyInfo, getTopicPageBySlug, buildWaLink, buildPhoneHref } from "../../lib/api";
+import CloudinaryImage from "../common/CloudinaryImage.astro";
 
 const [company, homePage] = await Promise.all([
   getCompanyInfo(),
@@ -40,15 +41,18 @@ const whatsappLink = buildWaLink(company?.whatsappNumber, "/support");
 
     <div class="lg:col-span-5 relative">
       <div class="aspect-[4/5] bg-[#e1e3e4] rounded-xl overflow-hidden shadow-2xl lg:rotate-2">
-        <img
-          class="w-full h-full object-cover"
-          src={heroImage ?? ""}
+        <CloudinaryImage
+          src={heroImage}
           alt={homePage?.altTextImage1 ?? "Premium textile fabric"}
           title={homePage?.altTextImage1 ?? "Premium textile fabric"}
-          width="512"
-          height="640"
+          width={512}
+          height={640}
+          widths={[480, 640, 800, 1024]}
+          sizes="(min-width: 1024px) 42vw, 100vw"
+          crop="fill"
           loading="eager"
           fetchpriority="high"
+          class="w-full h-full object-cover"
         />
       </div>
       <div class="absolute -bottom-6 -left-2 md:-bottom-8 md:-left-8 bg-white p-4 md:p-8 rounded-xl shadow-xl max-w-[160px] md:max-w-xs border border-[#edeeef]">

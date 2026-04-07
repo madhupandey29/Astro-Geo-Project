@@ -1,5 +1,6 @@
 ---
 import { getCategoryTopicPages } from "../../lib/api";
+import CloudinaryImage from "../common/CloudinaryImage.astro";
 
 const categories = await getCategoryTopicPages();
 const trackId = "fc-track";
@@ -37,14 +38,17 @@ const trackId = "fc-track";
             <a href={`/category/${cat.slug}`} class="fc-card group cursor-pointer">
               <div class="aspect-[3/4] overflow-hidden rounded-xl mb-4 md:mb-6 relative">
                 {cat.image1CloudUrlCard || cat.image1CloudUrl ? (
-                  <img
-                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    src={cat.image1CloudUrlCard ?? cat.image1CloudUrl ?? ""}
+                  <CloudinaryImage
+                    src={cat.image1CloudUrlCard ?? cat.image1CloudUrl}
                     alt={cat.name}
                     title={cat.name}
-                    width="400"
-                    height="533"
+                    width={400}
+                    height={533}
+                    widths={[200, 400, 600, 800]}
+                    sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                    crop="fill"
                     loading="lazy"
+                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                 ) : (
                   <div class="w-full h-full bg-[#d1d5db]" />

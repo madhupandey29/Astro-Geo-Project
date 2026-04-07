@@ -1,5 +1,6 @@
 ---
 import type { BlogPost } from "../../data/blog";
+import CloudinaryImage from "../common/CloudinaryImage.astro";
 interface Props { post: BlogPost }
 const { post } = Astro.props;
 ---
@@ -33,7 +34,18 @@ const { post } = Astro.props;
 
   <!-- Featured image -->
   <div class="relative h-[300px] md:h-[560px] w-full overflow-hidden rounded-xl shadow-lg">
-    <img src={post.image} alt={post.imageAlt} class="w-full h-full object-cover" width="1200" height="560" loading="eager" />
+    <CloudinaryImage
+      src={post.image}
+      alt={post.imageAlt}
+      width={1200}
+      height={560}
+      widths={[480, 800, 1200, 1600]}
+      sizes="(min-width: 1024px) 80vw, 100vw"
+      crop="fill"
+      loading="eager"
+      fetchpriority="high"
+      class="w-full h-full object-cover"
+    />
     <div class="absolute inset-0 bg-gradient-to-t from-[#041632]/40 to-transparent"></div>
   </div>
 </header>

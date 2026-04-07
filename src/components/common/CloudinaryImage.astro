@@ -1,0 +1,93 @@
+---
+/**
+ * Reusable Cloudinary responsive image component.
+ * Automatically builds srcset with width descriptors and injects
+ * correct c_fill + g_auto transforms matched to the display slot ratio.
+ *
+ * Usage:
+ *   <CloudinaryImage
+ *     src={cloudinaryUrl}
+ *     alt="description"
+ *     width={400} height={533}
+ *     sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+ *     widths={[200, 400, 800]}
+ *     crop="fill"
+ *   />
+ */
+
+interface Props {
+  src: string | null | undefined;
+  alt: string;
+  width: number;
+  height: number;
+  sizes: string;
+  /** Width breakpoints for srcset. Defaults to [320, 480, 640, 800] */
+  widths?: number[];
+  /** Cloudinary crop mode. "fill" for cards, "limit" for hero/editorial */
+  crop?: "fill" | "limit" | "fit";
+  /** Cloudinary gravity. "auto" works for most content images */
+  gravity?: string;
+  loading?: "lazy" | "eager";
+  fetchpriority?: "high" | "low" | "auto";
+  class?: string;
+  title?: string;
+}
+
+const {
+  src,
+  alt,
+  width,
+  height,
+  sizes,
+  widths = [320, 480, 640, 800],
+  crop = "fill",
+  gravity = "auto",
+  loading = "lazy",
+  fetchpriority,
+  class: className,
+  title,
+} = Astro.props;
+
+const CLOUD_BASE = "https://res.cloudinary.com/age-fabric/image/upload";
+
+function buildUrl(sourceUrl: string, w: number): string {
+  if (!sourceUrl.includes("/upload/")) return sourceUrl;
+  const uploadIdx = sourceUrl.indexOf("/upload/");
+  const base = sourceUrl.slice(0, uploadIdx + "/upload/".length);
+  const segments = sourceUrl.slice(base.length).split("/");
+  // Skip existing transform segments
+  let i = 0;
+  while (i < segments.length) {
+    const seg = segments[i];
+    if (/^v\d+$/.test(seg)) break;
+    if (seg.includes(",") || /^[fqwchgbdeo]_/.test(seg)) { i++; } else { break; }
+  }
+  const publicPart = segments.slice(i).join("/");
+  const h = Math.round((w * height) / width);
+  const transforms =
+    crop === "limit"
+      ? `f_auto,q_auto,c_limit,w_${w}`
+      : `f_auto,q_auto,c_${crop},g_${gravity},w_${w},h_${h}`;
+  return `${base}${transforms}/${publicPart}`;
+}
+
+const safeSrc = src ?? "";
+const fallback = safeSrc ? buildUrl(safeSrc, widths[Math.min(1, widths.length - 1)]) : "";
+const srcset = safeSrc
+  ? widths.map((w) => `${buildUrl(safeSrc, w)} ${w}w`).join(", ")
+  : undefined;
+---
+
+<img
+  src={fallback || safeSrc}
+  srcset={srcset}
+  sizes={sizes}
+  width={width}
+  height={height}
+  alt={alt}
+  title={title}
+  loading={loading}
+  fetchpriority={fetchpriority}
+  class={className}
+  decoding={loading === "eager" ? "sync" : "async"}
+/>

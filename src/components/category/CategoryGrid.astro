@@ -1,5 +1,6 @@
 ---
 import type { ApiProduct } from "../../lib/api";
+import CloudinaryImage from "../common/CloudinaryImage.astro";
 
 interface Props {
   name: string;
@@ -36,11 +37,16 @@ const trackId = `cg-track-${Math.random().toString(36).slice(2, 7)}`;
             <a href={`/fabric/${p.productslug}`} class="cg-card group cursor-pointer">
               <div class="relative aspect-[4/5] overflow-hidden mb-6 bg-[#eeedf3]">
                 {p.image1CloudUrlCard || p.image1CloudUrl ? (
-                  <img
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    src={p.image1CloudUrlCard ?? p.image1CloudUrl ?? ""}
-                    alt={p.altTextImage1 ?? p.productTitle}
+                  <CloudinaryImage
+                    src={p.image1CloudUrlCard ?? p.image1CloudUrl}
+                    alt={p.altTextImage1 ?? p.productTitle ?? p.name}
+                    width={400}
+                    height={500}
+                    widths={[200, 400, 600, 800]}
+                    sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                    crop="fill"
                     loading="lazy"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                 ) : (
                   <div class="w-full h-full bg-[#d1d5db]" />
