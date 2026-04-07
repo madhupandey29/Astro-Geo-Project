@@ -227,7 +227,7 @@ export function mapApiProduct(p: ApiProduct, whatsappNumber?: string, phone1?: s
     specs: {
       material: p.content.join(", "),
       weight: `${Math.round(p.gsm)} GSM`,
-      width: `${p.cm} cm / ${p.inch} inch`,
+      width: `${Math.round(p.cm)} cm / ${Math.round(p.inch)} inch`,
       weave: p.structure,
     },
     techSpecs: [

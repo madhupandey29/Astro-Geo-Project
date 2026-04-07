@@ -189,10 +189,10 @@ const slides = slots.filter((s): s is Exclude<Slot, { type: "empty" }> => s.type
         </span>
       </div>
       <div class="space-y-4">
-        <button class="w-full bg-[#041632] text-white py-4 px-6 font-bold flex items-center justify-center space-x-3 hover:bg-[#775a19] transition-colors">
+        <a href={product.whatsapp} target="_blank" rel="noopener noreferrer" class="w-full bg-[#041632] text-white py-4 px-6 font-bold flex items-center justify-center space-x-3 hover:bg-[#775a19] transition-colors">
           <span class="material-symbols-outlined">mail</span>
           <span>INQUIRE FOR BULK QUOTE</span>
-        </button>
+        </a>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <a href={product.whatsapp} class="flex items-center justify-center gap-2 border border-[#c5c6ce] py-3 px-2 hover:bg-[#e7e8e9] transition-colors min-w-0">
             <span class="material-symbols-outlined text-green-600 shrink-0" style="font-variation-settings: 'FILL' 1;">chat</span>
