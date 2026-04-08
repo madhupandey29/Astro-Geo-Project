@@ -1,7 +1,6 @@
 ---
 import type { ApiBlogPost } from "../../lib/blog";
-import { formatDate, getPostImage } from "../../lib/blog";
-import ResponsiveImage from "../common/ResponsiveImage.astro";
+import { formatDate, getPostImage, cloudinarySrcset } from "../../lib/blog";
 
 interface Props {
   featured: ApiBlogPost | undefined;
@@ -16,18 +15,16 @@ const { featured, posts } = Astro.props;
   <section class="px-4 md:px-8 mb-16 md:mb-20 max-w-7xl mx-auto">
     <div class="relative flex flex-col md:flex-row gap-0 group">
       <div class="md:w-2/3 h-[400px] md:h-[550px] overflow-hidden rounded-xl shadow-2xl relative">
-        <ResponsiveImage
+        <img
           src={getPostImage(featured)}
+          srcset={cloudinarySrcset(getPostImage(featured), [400, 800, 1200])}
+          sizes="(max-width: 768px) 100vw, 66vw"
           alt={featured.featuredImageAlt ?? featured.title}
           title={featured.featuredImageAlt ?? featured.title}
-          width={800}
-          height={550}
-          widths={[400, 640, 768, 796, 960, 1200, 1600]}
-          sizes="(min-width: 1380px) 796px, (min-width: 980px) calc(48.68vw + 134px), (min-width: 780px) calc(26.11vw + 346px), (min-width: 460px) calc(100vw - 32px), 383px"
-          crop="fill"
-          loading="eager"
-          fetchpriority="high"
+          width="800"
+          height="550"
           class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          loading="eager"
         />
         <div class="absolute inset-0 bg-gradient-to-t from-[#041632]/80 via-transparent to-transparent"></div>
         <div class="absolute top-6 left-6">
@@ -59,17 +56,16 @@ const { featured, posts } = Astro.props;
       {posts.map((post) => (
         <a href={`/blog/${post.slug}`} class="bg-[#f3f4f5] rounded-xl overflow-hidden group block hover:shadow-md transition-shadow">
           <div class="aspect-video overflow-hidden bg-slate-200">
-            <ResponsiveImage
+            <img
               src={getPostImage(post)}
+              srcset={cloudinarySrcset(getPostImage(post), [400, 800])}
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
               alt={post.featuredImageAlt ?? post.title}
               title={post.featuredImageAlt ?? post.title}
-              width={400}
-              height={225}
-              widths={[320, 384, 400, 512, 640, 800]}
-              sizes="(min-width: 1360px) 384px, (min-width: 1040px) calc(26.67vw + 27px), (min-width: 780px) calc(50vw - 48px), calc(100vw - 32px)"
-              crop="fill"
-              loading="lazy"
+              width="400"
+              height="225"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              loading="lazy"
             />
           </div>
           <div class="p-6">
