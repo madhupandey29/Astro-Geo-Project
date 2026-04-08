@@ -1,4 +1,6 @@
 ---
+import ResponsiveImage from "../common/ResponsiveImage.astro";
+
 interface Props {
   heroImage?: string;
 }
@@ -17,15 +19,18 @@ const bgImage = heroImage ?? "https://images.unsplash.com/photo-1558618666-fcd25
 <header class="relative flex flex-col overflow-hidden bg-[#041632] pt-16">
   <!-- Background image -->
   <div class="absolute inset-0 opacity-30 pointer-events-none">
-    <img
+    <ResponsiveImage
       src={bgImage}
       alt="Textile manufacturing floor"
       title="Careers at Amrita Global Enterprises"
-      width="1600"
-      height="900"
+      width={1600}
+      height={900}
+      widths={[640, 960, 1280, 1600]}
+      sizes="100vw"
+      crop="fill"
+      class="w-full h-full object-cover"
       loading="eager"
       fetchpriority="high"
-      class="w-full h-full object-cover"
     />
     <div class="absolute inset-0 bg-gradient-to-r from-[#041632] via-[#041632]/80 to-transparent"></div>
   </div>

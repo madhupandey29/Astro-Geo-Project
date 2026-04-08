@@ -1,4 +1,8 @@
 import { getProducts, getAllProducts, getCompanyInfo, buildWaLink, buildPhoneHref, type ApiProduct } from "../lib/api";
+import {
+  buildCloudinarySrcset as buildSharedCloudinarySrcset,
+  rebuildCloudinaryUrl as rebuildSharedCloudinaryUrl,
+} from "../lib/utils/cloudinary";
 
 // ── Type used by all product components ───────────────────────────────────────
 
@@ -145,29 +149,7 @@ export function rebuildCloudinaryUrl(
   url: string,
   transforms: string,
 ): string {
-  const uploadIdx = url.indexOf("/upload/");
-  if (uploadIdx === -1) return url;
-
-  const base = url.slice(0, uploadIdx + "/upload/".length);
-  const rest = url.slice(base.length);
-
-  // Split on "/" but keep version + public ID intact.
-  // A transform segment either contains "," or matches a known Cloudinary param prefix.
-  // We stop as soon as we hit a version segment (v\d+) or a plain public-ID segment.
-  const TRANSFORM_RE = /^[a-z]_/; // any lowercase letter followed by underscore
-  const VERSION_RE = /^v\d+$/;
-
-  const segments = rest.split("/");
-  let i = 0;
-  while (i < segments.length) {
-    const seg = segments[i];
-    if (VERSION_RE.test(seg)) break;           // version — stop here
-    if (seg.includes(",") || TRANSFORM_RE.test(seg)) { i++; continue; } // transform — skip
-    break;                                      // public ID — stop
-  }
-
-  const publicPart = segments.slice(i).join("/");
-  return `${base}${transforms}/${publicPart}`;
+  return rebuildSharedCloudinaryUrl(url, transforms);
 }
 
 /**
@@ -185,17 +167,14 @@ export function buildCloudinarySrcset(
   aspectH = 1,
   crop: "fill" | "limit" = "limit",
 ): string {
-  if (!sourceUrl) return "";
-  return widths
-    .map((w) => {
-      const h = Math.round((w * aspectH) / aspectW);
-      const t =
-        crop === "fill"
-          ? `f_auto,q_auto,c_fill,g_auto,w_${w},h_${h}`
-          : `f_auto,q_auto,c_limit,w_${w}`;
-      return `${rebuildCloudinaryUrl(sourceUrl, t)} ${w}w`;
-    })
-    .join(", ");
+  return buildSharedCloudinarySrcset(sourceUrl, widths, {
+    aspectWidth: aspectW,
+    aspectHeight: aspectH,
+    crop,
+    gravity: "auto",
+    format: "f_auto",
+    quality: "q_auto",
+  });
 }
 
 /** Build a srcset string from [url, width] pairs, skipping nulls (legacy helper) */

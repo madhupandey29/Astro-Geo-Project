@@ -1,4 +1,6 @@
 ---
+import ResponsiveImage from "../common/ResponsiveImage.astro";
+
 export interface Props {
   collectionLabel?: string;
   productName?: string;
@@ -33,7 +35,18 @@ const {
       <p class="text-sm text-[#b7c7eb] mb-6">{productDescription}</p>
     </div>
     <div class="px-8">
-      <img class="w-full h-56 object-cover rounded-t-xl shadow-lg" src={productImage} alt={productImageAlt} width="800" height="224" loading="lazy" />
+      <ResponsiveImage
+        src={productImage}
+        alt={productImageAlt}
+        title={productImageAlt}
+        width={800}
+        height={224}
+        widths={[320, 480, 640, 800]}
+        sizes="(max-width: 768px) 100vw, 800px"
+        crop="fill"
+        loading="lazy"
+        class="w-full h-56 object-cover rounded-t-xl shadow-lg"
+      />
     </div>
     <div class="p-8 bg-[#f3f4f6]">
       <div class="grid grid-cols-2 gap-4 mb-6">

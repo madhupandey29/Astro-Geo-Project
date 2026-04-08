@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ResponsiveImage from "../components/common/ResponsiveImage.astro";
 import { getTopicPageBySlug, getDynamicTopicPages, getCategoryTopicPages, getCompanyInfo, buildWaLink } from "../lib/api";
 import { fetchBlogPosts } from "../lib/blog";
 import { fetchProducts } from "../data/products";
@@ -114,13 +115,16 @@ const dotClass = "w-1.5 h-1.5 rounded-full bg-[#775a19] shrink-0";
             </ul>
           </div>
           <div class="relative overflow-hidden rounded-lg aspect-video hidden md:block">
-            <img
-              alt="Industrial weaving loom"
-              width="512"
-              height="288"
-              loading="lazy"
-              class="absolute inset-0 w-full h-full object-cover opacity-20 grayscale"
+            <ResponsiveImage
               src={seo?.image1CloudUrl ?? seo?.image1CloudUrlWeb ?? "https://lh3.googleusercontent.com/aida-public/AB6AXuBr3FZ3h1bYJV-0njc4dtyax3kO4zmr6h40mB7p1iHXg-zCUQF5iGi0nRnh0nlUwFp4MSG1Rnw8QlkA62t5lUPcOV7iDLdu7DDQ9Va0oz7BTCQGCzbeXXG9t3Mq-oeYaN81eMDtjvAOIRSIY1KU-sVaXSASvRrHDtQ2cTxB2wEcQgsGEopycjjoJKE3UzcBIDcZF6DEOOOhBSxBAZRxFuiTh4v9tELqAZUNywAGffOwYv1CSpN1WTTywijreUVNaeRePBnZpGcGpuuE"}
+              alt="Industrial weaving loom"
+              title="Industrial weaving loom"
+              width={512}
+              height={288}
+              widths={[320, 512, 768, 1024]}
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              class="absolute inset-0 w-full h-full object-cover opacity-20 grayscale"
+              loading="lazy"
             />
           </div>
         </div>
@@ -289,13 +293,16 @@ const dotClass = "w-1.5 h-1.5 rounded-full bg-[#775a19] shrink-0";
           </div>
         </div>
         <div class="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none hidden md:block">
-          <img
-            alt="Textile pattern"
-            width="512"
-            height="512"
-            loading="lazy"
-            class="w-full h-full object-cover"
+          <ResponsiveImage
             src={seo?.image2CloudUrlWeb ?? seo?.image2CloudUrl ?? "https://lh3.googleusercontent.com/aida-public/AB6AXuD32VWhamFsiP4tsBnwKyyc2xyGTovgptvxaaO22uF8i6oVbUxpjy7zIauwtNC6lY6Y1I7i9JZBkhJOnHOMmpOz-qulhPnqKOsACK7ZTHh_FLhKzpK9ZiDAJ9jNqWPDYgauaLLm68av2dva0u1N6iMhpjQRPyFXruQaQHUPJP2CVeTmLoVduQSHLLGW7UUNYOc_UPVoSOmKg4HUH-rAN3q73U_-V5kIy6PZvCDWBoMC9A4ul0rVYj0BvezQWbY9vZMvTCVMUCW9mwAy"}
+            alt="Textile pattern"
+            title="Textile pattern"
+            width={512}
+            height={512}
+            widths={[320, 512, 768, 1024]}
+            sizes="33vw"
+            class="w-full h-full object-cover"
+            loading="lazy"
           />
         </div>
       </div>

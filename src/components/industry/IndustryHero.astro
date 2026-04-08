@@ -1,4 +1,6 @@
 ---
+import ResponsiveImage from "../common/ResponsiveImage.astro";
+
 export interface Props {
   badge?: string;
   title?: string;
@@ -18,7 +20,18 @@ const {
 
 <section class="relative h-[618px] flex items-end overflow-hidden">
   <div class="absolute inset-0 z-0">
-    <img class="w-full h-full object-cover" src={image} alt={imageAlt} width="1440" height="618" loading="eager" />
+    <ResponsiveImage
+      src={image}
+      alt={imageAlt}
+      title={imageAlt}
+      width={1440}
+      height={618}
+      widths={[640, 960, 1280, 1440]}
+      sizes="100vw"
+      crop="fill"
+      loading="eager"
+      class="w-full h-full object-cover"
+    />
     <div class="absolute inset-0" style="background: linear-gradient(to top, #041632 0%, rgba(4,22,50,0.55) 50%, transparent 100%);"></div>
   </div>
   <div class="relative z-10 px-6 pb-12 w-full">

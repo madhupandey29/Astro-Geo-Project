@@ -3,8 +3,9 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProductDetailHero from "../../components/product/ProductDetailHero.astro";
 import ProductDetailBody from "../../components/product/ProductDetailBody.astro";
 import ProductDetailRelated from "../../components/product/ProductDetailRelated.astro";
-import { fetchProducts, buildCloudinarySrcset, type Product } from "../../data/products";
+import { fetchProducts, type Product } from "../../data/products";
 import { getCompanyInfo } from "../../lib/api";
+import { buildCloudinaryUrl, buildCloudinarySrcset as buildResponsiveCloudinarySrcset } from "../../lib/utils/cloudinary";
 
 export async function getStaticPaths() {
   const products = await fetchProducts();
@@ -124,14 +125,20 @@ const ogImageUrl = buildOgImageUrl(product.imageLarge || product.image1 || null)
 
 // LCP image preload — first product image at display-appropriate sizes
 const lcpImageSrcset = product.image1
-  ? buildCloudinarySrcset(product.image1, [400, 700, 1200]).replace(/f_auto/g, "f_webp")
-  : undefined;
-const lcpImageSrc = product.image1Srcset
-  ? undefined // srcset handles it; href just needs a valid fallback
+  ? buildResponsiveCloudinarySrcset(product.image1, [400, 700, 1200], {
+      crop: "limit",
+      format: "f_auto",
+      quality: "q_auto",
+    })
   : undefined;
 // Use the 700w candidate as the href fallback
 const lcpImageHref = product.image1
-  ? buildCloudinarySrcset(product.image1, [700]).split(" ")[0]
+  ? buildCloudinaryUrl(product.image1, {
+      width: 700,
+      crop: "limit",
+      format: "f_auto",
+      quality: "q_auto",
+    })
   : undefined;
 ---
 

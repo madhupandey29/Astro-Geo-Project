@@ -1,4 +1,6 @@
 ---
+import ResponsiveImage from "../common/ResponsiveImage.astro";
+
 interface Props {
   name: string;
   excerpt: string | null;
@@ -11,10 +13,18 @@ const { name, excerpt, imageUrl, altText } = Astro.props;
 <section class="relative flex items-center overflow-hidden -mt-[94px] md:-mt-[102px] pt-[94px] md:pt-[102px]" style="height: calc(560px + 94px);">
   <div class="absolute inset-0 z-0">
     {imageUrl ? (
-      <img
-        class="w-full h-full object-cover"
+      <ResponsiveImage
         src={imageUrl}
         alt={altText ?? name}
+        title={altText ?? name}
+        width={1440}
+        height={560}
+        widths={[640, 960, 1280, 1440]}
+        sizes="100vw"
+        crop="fill"
+        class="w-full h-full object-cover"
+        loading="eager"
+        fetchpriority="high"
       />
     ) : (
       <div class="w-full h-full bg-[#041632]" />

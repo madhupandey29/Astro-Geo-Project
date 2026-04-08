@@ -1,6 +1,7 @@
 ---
 import type { ApiBlogPost } from "../../lib/blog";
-import { formatDate, getPostImage, cloudinarySrcset } from "../../lib/blog";
+import { formatDate, getPostImage } from "../../lib/blog";
+import ResponsiveImage from "../common/ResponsiveImage.astro";
 
 interface Props { post: ApiBlogPost }
 const { post } = Astro.props;
@@ -41,25 +42,20 @@ const { post } = Astro.props;
   </div>
 
   <div class="relative h-[300px] md:h-[500px] w-full overflow-hidden rounded-xl shadow-lg">
-    {(() => {
-      const img = getPostImage(post);
-      const srcset = cloudinarySrcset(img, [400, 768, 960]);
-      return (
-        <img
-          src={img}
-          srcset={srcset}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 768px, 960px"
-          alt={post.featuredImageAlt ?? post.title}
-          title={post.featuredImageAlt ?? post.title}
-          width="960"
-          height="500"
-          class="w-full h-full object-cover"
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-        />
-      );
-    })()}
+    <ResponsiveImage
+      src={getPostImage(post)}
+      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 768px, 960px"
+      alt={post.featuredImageAlt ?? post.title}
+      title={post.featuredImageAlt ?? post.title}
+      width={960}
+      height={500}
+      widths={[400, 640, 768, 960, 1200]}
+      crop="limit"
+      class="w-full h-full object-cover"
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    />
     <div class="absolute inset-0 bg-gradient-to-t from-[#041632]/40 to-transparent"></div>
   </div>
 </header>

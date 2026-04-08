@@ -1,6 +1,5 @@
 ---
 import type { Product } from "../../data/products";
-import { getCloudinaryUrl } from "../../data/products";
 import ProductShareButton from "./ProductShareButton.astro";
 import ResponsiveImage from "../common/ResponsiveImage.astro";
 interface Props { product: Product }
@@ -62,7 +61,7 @@ const slides = slots.filter((s): s is Exclude<Slot, { type: "empty" }> => s.type
           <div class="snap-center shrink-0 w-full" data-index={i}>
             {slide.type === "image" ? (
               <ResponsiveImage
-                src={getCloudinaryUrl(slide.src, slide.srcset ? "f_auto,q_auto,w_700,c_limit" : "f_auto,q_auto,w_665,c_limit")}
+                src={slide.src}
                 alt={slide.alt}
                 title={slide.alt}
                 width={700}
@@ -126,7 +125,7 @@ const slides = slots.filter((s): s is Exclude<Slot, { type: "empty" }> => s.type
           >
             {slide.type === "image" ? (
               <ResponsiveImage
-                src={getCloudinaryUrl(slide.src, "f_auto,q_auto,w_160,h_160,c_fill,g_auto")}
+                src={slide.src}
                 alt={slide.alt}
                 title={slide.alt}
                 width={80}

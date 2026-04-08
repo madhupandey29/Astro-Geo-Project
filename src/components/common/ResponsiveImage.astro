@@ -1,5 +1,6 @@
 ---
 import CloudinaryImage from "./CloudinaryImage.astro";
+import { isCloudinaryUrl } from "../../lib/utils/cloudinary";
 
 interface Props {
   /** Cloudinary URL or any normal image URL */
@@ -26,6 +27,7 @@ interface Props {
   class?: string;
   title?: string;
   decoding?: "sync" | "async" | "auto";
+  formatStrategy?: "auto" | "picture";
 }
 
 const {
@@ -43,10 +45,11 @@ const {
   class: className,
   title,
   decoding,
+  formatStrategy,
 } = Astro.props;
 
 const safeSrc = src ?? "";
-const isCloudinary = safeSrc.includes("res.cloudinary.com") && safeSrc.includes("/upload/");
+const isCloudinary = isCloudinaryUrl(safeSrc);
 ---
 
 {isCloudinary ? (
@@ -63,6 +66,8 @@ const isCloudinary = safeSrc.includes("res.cloudinary.com") && safeSrc.includes(
     loading={loading}
     fetchpriority={fetchpriority}
     class={className}
+    decoding={decoding}
+    formatStrategy={formatStrategy}
   />
 ) : (
   <img

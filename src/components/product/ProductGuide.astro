@@ -1,4 +1,6 @@
 ---
+import ResponsiveImage from "../common/ResponsiveImage.astro";
+
 interface Props {
   imageUrl?: string | null;
   imageAlt?: string | null;
@@ -59,12 +61,15 @@ const {
 
     <div class="hidden sm:block">
       <div class="rotate-2 bg-white p-2 shadow-2xl">
-        <img
+        <ResponsiveImage
           src={imageUrl}
           alt={imageAlt}
           title="How to choose the right fabric for your brand"
-          width="600"
-          height="600"
+          width={600}
+          height={600}
+          widths={[400, 600, 800, 1200]}
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          crop="fill"
           class="w-full grayscale transition-all duration-700 hover:grayscale-0"
           loading="lazy"
         />

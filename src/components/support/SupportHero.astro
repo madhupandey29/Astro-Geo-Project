@@ -1,4 +1,6 @@
 ---
+import ResponsiveImage from "../common/ResponsiveImage.astro";
+
 interface Props {
   image?: string | null;
 }
@@ -18,12 +20,15 @@ const heroImage = image ?? FALLBACK_IMAGE;
 <header class="relative flex flex-col overflow-hidden bg-[#041632] pt-16">
   <!-- Background image -->
   <div class="absolute inset-0 opacity-30 pointer-events-none">
-    <img
+    <ResponsiveImage
       src={heroImage}
       alt="Support team at work"
       title="Support team at work"
-      width="800"
-      height="525"
+      width={800}
+      height={525}
+      widths={[480, 640, 800, 1024, 1280]}
+      sizes="100vw"
+      crop="fill"
       class="w-full h-full object-cover"
       loading="eager"
       fetchpriority="high"

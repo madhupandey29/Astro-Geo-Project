@@ -1,6 +1,7 @@
 ---
 import type { Product } from "../../data/products";
 import { buildWaLink, buildPhoneHref } from "../../lib/api";
+import ResponsiveImage from "../common/ResponsiveImage.astro";
 
 interface Props {
   product: Product;
@@ -35,34 +36,18 @@ const hasMore = collectionProducts.length > 4;
           >
             <div class="aspect-[3/2] bg-[#e7e8e9] mb-3 overflow-hidden group-hover:opacity-80 transition-opacity">
               {rel.image1 ? (
-                <picture>
-                  {rel.image1Srcset ? (
-                    <>
-                      <source
-                        type="image/avif"
-                        srcset={rel.image1Srcset.replace(/f_auto/g, "f_avif")}
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                      />
-                      <source
-                        type="image/webp"
-                        srcset={rel.image1Srcset.replace(/f_auto/g, "f_webp")}
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                      />
-                    </>
-                  ) : null}
-                  <img
-                    src={rel.image || rel.image1}
-                    srcset={rel.image1Srcset || undefined}
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                    alt={rel.imageAlt ?? rel.name}
-                    title={rel.imageAlt ?? rel.name}
-                    width="400"
-                    height="267"
-                    class="w-full h-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </picture>
+                <ResponsiveImage
+                  src={rel.image1}
+                  alt={rel.imageAlt ?? rel.name}
+                  title={rel.imageAlt ?? rel.name}
+                  width={400}
+                  height={267}
+                  widths={[200, 320, 400, 520]}
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  crop="fill"
+                  loading="lazy"
+                  class="w-full h-full object-cover"
+                />
               ) : (
                 <div class="w-full h-full flex items-center justify-center">
                   <span class="material-symbols-outlined text-4xl text-[#c5c6ce]">image</span>
