@@ -42,8 +42,9 @@ const whatsappHref = buildWaLink(company?.whatsappNumber ?? company?.phone1, sit
           const logoSrc = company?.logoUrl ?? "/images/icons/my_logo.png";
           // Build Cloudinary srcset by injecting width transforms into the upload URL
           const clMatch = logoSrc.match(/^(https:\/\/res\.cloudinary\.com\/.+\/upload\/)(.+)$/);
+          // If `sizes` is present, srcset MUST use width (w) descriptors, not density (1x/2x).
           const srcset = clMatch
-            ? `${clMatch[1]}w_36,f_auto,q_auto/${clMatch[2]} 1x, ${clMatch[1]}w_72,f_auto,q_auto/${clMatch[2]} 2x`
+            ? `${clMatch[1]}w_36,f_auto,q_auto/${clMatch[2]} 36w, ${clMatch[1]}w_72,f_auto,q_auto/${clMatch[2]} 72w`
             : undefined;
           return (
             <img

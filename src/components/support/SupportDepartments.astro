@@ -14,6 +14,7 @@ interface Props {
 const { authors, salesEmail, supportEmail, phone1, phone1Dept, phone2, phone2Dept, gstin } = Astro.props;
 
 const dynamicAuthor = authors[0] ?? null;
+import ResponsiveImage from "../common/ResponsiveImage.astro";
 
 // Inline SVG icons — no external font dependency
 const svgIcons = {
@@ -74,13 +75,16 @@ const staticDepts = [
         <div class="p-8 md:p-10 text-center hover:bg-[#f3f4f5] transition-colors group">
           <div class="w-12 h-12 rounded-full overflow-hidden mx-auto mb-4 bg-[#041632]/5 flex items-center justify-center">
             {dynamicAuthor.authorimageCard ? (
-              <img
-                src={dynamicAuthor.authorimageCard.replace('/upload/', '/upload/f_auto,q_auto,w_96,h_96,c_fill,g_face/')}
-                srcset={`${dynamicAuthor.authorimageCard.replace('/upload/', '/upload/f_auto,q_auto,w_48,h_48,c_fill,g_face/')} 1x, ${dynamicAuthor.authorimageCard.replace('/upload/', '/upload/f_auto,q_auto,w_96,h_96,c_fill,g_face/')} 2x`}
+              <ResponsiveImage
+                src={dynamicAuthor.authorimageCard}
                 alt={dynamicAuthor.altimage ?? `${dynamicAuthor.name} Profile Image`}
                 title={dynamicAuthor.altimage ?? dynamicAuthor.name}
-                width="48"
-                height="48"
+                width={48}
+                height={48}
+                widths={[48, 96]}
+                sizes="48px"
+                crop="fill"
+                gravity="face"
                 class="w-full h-full object-cover"
                 loading="lazy"
               />

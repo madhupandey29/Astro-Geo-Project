@@ -48,7 +48,8 @@ const whatsappLink = buildWaLink(company?.whatsappNumber, "/support");
           width={512}
           height={640}
           widths={[480, 640, 800, 1024]}
-          sizes="(min-width: 1024px) 42vw, 100vw"
+          // Match real rendered width inside the fixed container/grid.
+          sizes="(min-width: 1540px) 584px, (min-width: 1280px) 479px, (min-width: 1040px) 372px, (min-width: 780px) 704px, (min-width: 680px) 608px, calc(94.44vw - 15px)"
           crop="fill"
           loading="eager"
           fetchpriority="high"
