@@ -1,0 +1,26 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TermsHero from "../components/terms/TermsHero.astro";
+import TermsNav from "../components/terms/TermsNav.astro";
+import TermsContent from "../components/terms/TermsContent.astro";
+import { getTopicPageBySlug } from "../lib/api";
+import { resolveCanonical } from "../lib/seo/canonical";
+
+const seo = await getTopicPageBySlug("terms-and-conditions");
+---
+
+<BaseLayout
+  title={seo?.metaTitle ?? "Wholesale Terms & Legal Policies | Amrita Global Enterprises"}
+  description={seo?.description ?? "Terms of service, privacy policy, cookie policy, and wholesale rules for Amrita Global Enterprises — B2B fabric manufacturer and exporter."}
+  keywords={seo?.keywords ?? undefined}
+  canonical={resolveCanonical(seo?.canonicalUrl)}
+  ogType={seo?.ogType ?? "website"}
+  breadcrumbs={[
+    { name: "Home", url: "/" },
+    { name: "Terms & Conditions" },
+  ]}
+>
+  <TermsHero breadcrumbs={[{ name: "Home", href: "/" }, { name: "Terms & Conditions" }]} />
+  <TermsNav />
+  <TermsContent />
+</BaseLayout>

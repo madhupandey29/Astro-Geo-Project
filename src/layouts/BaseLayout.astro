@@ -1,0 +1,332 @@
+---
+import "../styles/global.css";
+import Header from "/src/layouts/Header.astro";
+import Footer from "/src/layouts/Footer.astro";
+import FloatingActions from "../components/common/FloatingActions.astro";
+import LocalBusinessSchema from "../components/schema/LocalBusinessSchema.astro";
+import BreadcrumbSchema from "../components/schema/BreadcrumbSchema.astro";
+
+import { getSiteSettings, getCompanyInfo } from "../lib/api";
+const SITE_BASE = import.meta.env.PUBLIC_SITE_URL;
+
+interface Props {
+  title?: string;
+  description?: string;
+  // Per-page SEO overrides
+  canonical?: string;
+  keywords?: string[];
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: string;
+  ogType?: string;
+  twitterTitle?: string;
+  twitterDescription?: string;
+  twitterImage?: string;
+  schemaMarkup?: object | object[];
+  noindex?: boolean;
+  breadcrumbs?: { name: string; url?: string }[];
+  // LCP image preload
+  preloadImage?: string;
+  preloadImageSrcset?: string;
+  // Pass author name from pages that already fetch authors (about, support, blog, etc.)
+  // Falls back to company name if not provided — avoids a redundant getAuthors() call in BaseLayout
+  authorName?: string;
+}
+
+const {
+  title = "Amrita Global Enterprises",
+  description = "B2B fabric manufacturer and exporter.",
+  canonical,
+  keywords,
+  ogTitle,
+  ogDescription,
+  ogImage,
+  ogType = "website",
+  twitterTitle,
+  twitterDescription,
+  twitterImage,
+  schemaMarkup,
+  noindex = false,
+  breadcrumbs,
+  preloadImage,
+  preloadImageSrcset,
+  authorName: authorNameProp,
+} = Astro.props;
+
+// Site-wide settings from API (eCatalogue)
+const [site, company] = await Promise.all([
+  getSiteSettings("eCatalogue"),
+  getCompanyInfo("AGE"),
+]);
+
+const companyName = company?.legalName ?? company?.name ?? "Amrita Global Enterprises";
+// Use prop if passed (pages that already fetched authors), otherwise fall back to company name
+const authorName = authorNameProp ?? companyName;
+
+const siteBase = SITE_BASE;
+const rawCanonical = canonical ?? `${siteBase}${Astro.url.pathname}`;
+const resolvedCanonical = rawCanonical.endsWith("/") ? rawCanonical : `${rawCanonical}/`;
+const resolvedOgTitle = ogTitle ?? title;
+const resolvedOgDesc = ogDescription ?? description;
+const resolvedTwitterTitle = twitterTitle ?? resolvedOgTitle;
+const resolvedTwitterDesc = twitterDescription ?? resolvedOgDesc;
+
+// Always resolve an absolute OG image — fallback to brand logo so og:image is never missing
+const defaultOgImage = `${siteBase}/images/icons/my_logo.webp`;
+const resolvedOgImage = ogImage
+  ? (ogImage.startsWith("http") ? ogImage : `${siteBase}${ogImage}`)
+  : defaultOgImage;
+const resolvedTwitterImage = twitterImage
+  ? (twitterImage.startsWith("http") ? twitterImage : `${siteBase}${twitterImage}`)
+  : resolvedOgImage;
+
+// robots: noindex prop overrides, otherwise use API robotsPolicy or default to index, follow
+const robotsContent = noindex
+  ? "noindex, nofollow"
+  : (site?.robotsPolicy ?? "index, follow");
+
+const schemaArray = schemaMarkup
+  ? Array.isArray(schemaMarkup) ? schemaMarkup : [schemaMarkup]
+  : null;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#041632" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{title}</title>
+
+    <!-- Preconnect to Cloudinary for faster image loads -->
+    <link rel="preconnect" href="https://res.cloudinary.com" />
+
+    <!-- LCP image preload (per-page, injected by pages that need it) -->
+    {preloadImage && (
+      <link
+        rel="preload"
+        as="image"
+        href={preloadImage}
+        imagesrcset={preloadImageSrcset || undefined}
+        imagesizes="(max-width: 1024px) 100vw, 58vw"
+        fetchpriority="high"
+      />
+    )}
+
+    <!-- Preload self-hosted variable fonts -->
+    <link rel="preload" href="/fonts/manrope-vf.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-vf.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/newsreader-vf.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Font-face declarations inline — keeps fonts out of the CSS bundle -->
+    <style is:inline>
+      @font-face {
+        font-family: "Manrope Variable";
+        src: url("/fonts/manrope-vf.woff2") format("woff2-variations");
+        font-weight: 200 800;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Inter Variable";
+        src: url("/fonts/inter-vf.woff2") format("woff2-variations");
+        font-weight: 100 900;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Newsreader Variable";
+        src: url("/fonts/newsreader-vf.woff2") format("woff2-variations");
+        font-weight: 200 800;
+        font-style: normal;
+        font-display: swap;
+      }
+    </style>
+    <meta name="description" content={description} />
+    <meta name="robots" content={robotsContent} />
+    <meta name="author" content={authorName} />
+    <meta name="publisher" content={authorName} />
+    {keywords && keywords.length > 0 && (
+      <meta name="keywords" content={keywords.join(", ")} />
+    )}
+    <link rel="canonical" href={resolvedCanonical} />
+
+    <!-- Site Verification -->
+    {site?.googleVerification && (
+      <meta name="google-site-verification" content={site.googleVerification} />
+    )}
+    {site?.bingVerification && (
+      <meta name="msvalidate.01" content={site.bingVerification} />
+    )}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={resolvedOgTitle} />
+    <meta property="og:description" content={resolvedOgDesc} />
+    <meta property="og:url" content={resolvedCanonical} />
+    <meta property="og:site_name" content="Amrita Global Enterprises" />
+    <meta property="og:image" content={resolvedOgImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={resolvedOgTitle} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={resolvedTwitterTitle} />
+    <meta name="twitter:description" content={resolvedTwitterDesc} />
+    {site?.twitterHandle && <meta name="twitter:site" content={site.twitterHandle} />}
+    <meta name="twitter:image" content={resolvedTwitterImage} />
+
+    <!-- JSON-LD Structured Data -->
+    {schemaArray && schemaArray.map((schema) => (
+      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    ))}
+
+    <!-- Local Business / Organization Schema -->
+    <LocalBusinessSchema company={company} site={site} />
+
+    <!-- Breadcrumb Schema (skip on homepage) -->
+    {breadcrumbs && breadcrumbs.length > 0 && (
+      <BreadcrumbSchema items={breadcrumbs} />
+    )}
+
+    <!-- Analytics — run in Web Worker via Partytown to eliminate main-thread long tasks -->
+    {site?.gaMeasurementId && (
+      <script type="text/partytown" src={`https://www.googletagmanager.com/gtag/js?id=${site.gaMeasurementId}`} />
+      <script type="text/partytown" set:html={`
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', '${site.gaMeasurementId}');
+      `} />
+    )}
+    {site?.clarityId && (
+      <script type="text/partytown" set:html={`window.clarity=window.clarity||function(){(window.clarity.q=window.clarity.q||[]).push(arguments)};`} />
+      <script type="text/partytown" src={`https://www.clarity.ms/tag/${site.clarityId}`} />
+    )}
+
+    <!-- Material Symbols — self-hosted for long cache TTL, subset to used icons only -->
+    <link rel="preload" href="/fonts/material-symbols-outlined.woff2" as="font" type="font/woff2" crossorigin />
+
+    <style is:inline>
+      @font-face {
+        font-family: 'Material Symbols Outlined';
+        font-style: normal;
+        font-weight: 100 700;
+        font-display: swap;
+        src: url('/fonts/material-symbols-outlined.woff2') format('woff2');
+      }
+      .material-symbols-outlined {
+        font-family: 'Material Symbols Outlined';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-feature-settings: 'liga';
+        -webkit-font-smoothing: antialiased;
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-[var(--color-background)] text-[var(--color-text)]">
+    <Header />
+    <main class="pt-[94px] md:pt-[102px]">
+      <slot />
+    </main>
+    <Footer />
+    <FloatingActions />
+    <!-- Auto-upgrade any <img src="...cloudinary..."> to <picture> with AVIF/WebP srcset -->
+    <script>
+      const CLOUDINARY_RE = /^https:\/\/res\.cloudinary\.com\/.+\/upload\//;
+      const DEFAULT_WIDTHS = [320, 480, 640, 800, 1200];
+
+      function rebuildUrl(src: string, transforms: string): string {
+        const uploadIdx = src.indexOf("/upload/");
+        if (uploadIdx === -1) return src;
+        const base = src.slice(0, uploadIdx + "/upload/".length);
+        const rest = src.slice(base.length).split("/");
+        let i = 0;
+        while (i < rest.length) {
+          const seg = rest[i];
+          if (/^v\d+$/.test(seg)) break;
+          if (seg.includes(",") || /^[a-z]_/.test(seg)) { i++; continue; }
+          break;
+        }
+        return `${base}${transforms}/${rest.slice(i).join("/")}`;
+      }
+
+      function buildSrcset(src: string, widths: number[], format: "f_avif" | "f_webp" | "f_auto"): string {
+        return widths.map((w) => `${rebuildUrl(src, `${format},q_auto,w_${w},c_limit`)} ${w}w`).join(", ");
+      }
+
+      function getWidths(img: HTMLImageElement): number[] {
+        const w = img.getAttribute("width");
+        const natural = w ? parseInt(w, 10) : 0;
+        if (natural > 0) return DEFAULT_WIDTHS.filter((cw) => cw <= Math.min(natural * 2, 1600));
+        return DEFAULT_WIDTHS;
+      }
+
+      function upgradeImg(img: HTMLImageElement): void {
+        const src = img.getAttribute("src") ?? "";
+        if (!CLOUDINARY_RE.test(src)) return;
+        if (img.parentElement?.tagName === "PICTURE") return;
+        if (img.dataset.clUpgraded) return;
+
+        const widths = getWidths(img);
+        const sizes = img.getAttribute("sizes") ?? "100vw";
+        const picture = document.createElement("picture");
+
+        const avif = document.createElement("source");
+        avif.type = "image/avif";
+        avif.srcset = buildSrcset(src, widths, "f_avif");
+        avif.sizes = sizes;
+
+        const webp = document.createElement("source");
+        webp.type = "image/webp";
+        webp.srcset = buildSrcset(src, widths, "f_webp");
+        webp.sizes = sizes;
+
+        img.dataset.clUpgraded = "1";
+        if (!img.getAttribute("srcset")) {
+          img.srcset = buildSrcset(src, widths, "f_auto");
+          img.sizes = sizes;
+        }
+
+        img.parentNode!.insertBefore(picture, img);
+        picture.appendChild(avif);
+        picture.appendChild(webp);
+        picture.appendChild(img);
+      }
+
+      function scanAndUpgrade(root: Document | Element = document): void {
+        root.querySelectorAll<HTMLImageElement>("img").forEach(upgradeImg);
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", () => scanAndUpgrade());
+      } else {
+        scanAndUpgrade();
+      }
+
+      const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          for (const node of mutation.addedNodes) {
+            if (node.nodeType !== 1) continue;
+            const el = node as Element;
+            if (el.tagName === "IMG") upgradeImg(el as HTMLImageElement);
+            else el.querySelectorAll<HTMLImageElement>("img").forEach(upgradeImg);
+          }
+        }
+      });
+
+      observer.observe(document.body, { childList: true, subtree: true });
+    </script>
+  </body>
+</html>
