@@ -64,7 +64,8 @@ const companyName = company?.legalName ?? company?.name ?? "Amrita Global Enterp
 const authorName = authorNameProp ?? companyName;
 
 const siteBase = SITE_BASE;
-const cleanPath = Astro.url.pathname.replace(/\.html$/, '');
+const rawPath = Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '');
+const cleanPath = rawPath === '/' ? '' : rawPath;
 const resolvedCanonical = canonical ?? undefined;
 const resolvedOgTitle = ogTitle ?? title;
 const resolvedOgDesc = ogDescription ?? description;
