@@ -193,7 +193,6 @@ const schemaArray = schemaMarkup
       <BreadcrumbSchema items={breadcrumbs} />
     )}
 
-    <!-- Analytics — run in Web Worker via Partytown to eliminate main-thread long tasks -->
     {site?.gaMeasurementId && (
       <script type="text/partytown" src={`https://www.googletagmanager.com/gtag/js?id=${site.gaMeasurementId}`} />
       <script type="text/partytown" set:html={`
