@@ -242,6 +242,16 @@ const schemaArray = schemaMarkup
     </main>
     <Footer />
     <FloatingActions />
+    <!-- WhatsApp delegated click handler: opens data-wa-link URLs in a new tab -->
+    <script is:inline>
+      document.addEventListener('click', (e) => {
+        const waBtn = e.target.closest('[data-wa-link]');
+        if (waBtn) {
+          const url = waBtn.getAttribute('data-wa-link');
+          window.open(url, '_blank', 'noopener,noreferrer');
+        }
+      });
+    </script>
     <!-- Auto-upgrade any <img src="...cloudinary..."> to <picture> with AVIF/WebP srcset -->
     <script>
       const CLOUDINARY_RE = /^https:\/\/res\.cloudinary\.com\/.+\/upload\//;
