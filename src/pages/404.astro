@@ -1,9 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCompanyInfo } from "../lib/api";
+const company = await getCompanyInfo("AGE");
+const companyName = company?.legalName ?? "";
 ---
 
 <BaseLayout
-  title="Page Not Found | Amrita Global Enterprises"
+  title={`Page Not Found | ${companyName}`}
   description="The page you're looking for doesn't exist. Browse our fabric collections or get in touch with our team."
   noindex={true}
 >
