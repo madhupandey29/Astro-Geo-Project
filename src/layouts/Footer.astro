@@ -300,14 +300,14 @@ const socialLinks = [
    
 
       <!-- Social Icons -->
-      <div class="flex flex-wrap gap-3 mt-4" role="list" aria-label="Social media links">
+      <div class="flex flex-wrap gap-5" role="list" aria-label="Social media links">
         {socialLinks.filter(s => s.href && s.href !== "#").map((s) => (
           <a
             href={s.href}
             aria-label={s.label}
             target="_blank"
             rel="noopener noreferrer"
-            class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary transition-colors text-primary hover:text-white"
+            class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary transition-colors text-primary hover:text-white [&_svg]:w-4 [&_svg]:h-4"
             set:html={`<span class="flex items-center justify-center">${s.svg}</span>`}
           />
         ))}
@@ -316,7 +316,7 @@ const socialLinks = [
   </div>
 
   <!-- Sub Footer -->
-  <div class="max-w-screen-2xl mx-auto mt-16 pt-8 pb-32 md:pb-8 border-t border-outline-variant/30 text-center text-sm font-label">
+  <div class="max-w-screen-2xl mx-auto mt-8 md:mt-16 pt-8 pb-32 md:pb-8 border-t border-outline-variant/30 text-center text-sm font-label">
     <div class="text-on-surface-variant flex flex-col md:flex-row md:flex-wrap justify-center items-center gap-y-2 md:gap-y-1 md:gap-x-3">
       <span>© {foundingYear}–{new Date().getFullYear()} {company?.legalName}</span>
       {fullAddress && (
