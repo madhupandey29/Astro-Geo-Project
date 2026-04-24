@@ -87,7 +87,7 @@ const heroImageUrl: string | null = page.image1CloudUrlHero ?? page.image1CloudU
 ---
 
 <BaseLayout
-  title={page.metaTitle ?? `${page.name} | ${companyName}`}
+  title={page.metaTitle ?? `${page.name}`}
   description={page.description ?? page.excerpt ?? ""}
   keywords={page.keywords ?? undefined}
   canonical={resolveCanonical(page.canonicalUrl)}

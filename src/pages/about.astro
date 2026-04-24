@@ -21,7 +21,7 @@ const companyName = company?.legalName ?? "";
 ---
 
 <BaseLayout
-  title={aboutData?.metaTitle ?? `About Us | ${companyName}`}
+  title={aboutData?.metaTitle ?? `About Us`}
   description={aboutData?.description ?? `For over five decades, ${companyName} has defined the intersection of technical precision and artistic mastery in the global fabric industry.`}
   keywords={aboutData?.keywords ?? undefined}
   canonical={resolveCanonical(aboutData?.canonicalUrl)}
