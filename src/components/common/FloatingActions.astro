@@ -84,4 +84,15 @@ const emailHref = company?.primaryEmail
 
   window.addEventListener('scroll', updateVisibility, { passive: true });
   updateVisibility();
+
+  // GA tracking
+  document.querySelector('[aria-label="Chat on WhatsApp"]')?.addEventListener('click', () => {
+    window.gtag?.('event', 'cta_click', { event_label: 'Floating WhatsApp', section: 'floating_actions' });
+  });
+  document.querySelector('[aria-label="Call us"]')?.addEventListener('click', () => {
+    window.gtag?.('event', 'cta_click', { event_label: 'Floating Call', section: 'floating_actions' });
+  });
+  document.querySelector('[aria-label="Email us"]')?.addEventListener('click', () => {
+    window.gtag?.('event', 'cta_click', { event_label: 'Floating Email', section: 'floating_actions' });
+  });
 </script>

@@ -288,15 +288,21 @@ const companyName = company?.legalName ?? "";
   let isSubmitting = false;
 
   // ── open / close ──────────────────────────────────────────────────────────────
+  const _gaPage = () => (window as any).location.pathname;
+  const _gaForm = 'Product Inquiry Modal';
+  const _gaProduct = () => (openBtn as HTMLButtonElement | null)?.dataset?.product ?? '';
+
   function openModal(productName = '') {
     productNameEl.textContent = productName;
     productChip.classList.toggle('hidden', !productName);
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+    (window as any).gtag?.('event', 'modal_open', { modal_id: 'inquiry_modal', trigger: 'Request a Custom Quote button', product: productName, page_path: _gaPage() });
   }
   function closeModal() {
     modal.classList.add('hidden');
     document.body.style.overflow = '';
+    (window as any).gtag?.('event', 'modal_close', { modal_id: 'inquiry_modal', step_reached: current + 1, page_path: _gaPage() });
   }
 
   // Original product open button
@@ -384,9 +390,13 @@ const companyName = company?.legalName ?? "";
     return true;
   }
 
-  (document.getElementById(`${FORM_ID}-next-0`) as HTMLElement).addEventListener('click', () => { if (validateStep0()) goTo(1); });
+  (document.getElementById(`${FORM_ID}-next-0`) as HTMLElement).addEventListener('click', () => {
+    if (validateStep0()) { goTo(1); (window as any).gtag?.('event', 'form_step', { form_id: FORM_ID, form_name: _gaForm, step_number: 2, step_label: 'Company', product: _gaProduct(), page_path: _gaPage() }); }
+  });
   (document.getElementById(`${FORM_ID}-prev-1`) as HTMLElement).addEventListener('click', () => goTo(0));
-  (document.getElementById(`${FORM_ID}-next-1`) as HTMLElement).addEventListener('click', () => goTo(2));
+  (document.getElementById(`${FORM_ID}-next-1`) as HTMLElement).addEventListener('click', () => {
+    goTo(2); (window as any).gtag?.('event', 'form_step', { form_id: FORM_ID, form_name: _gaForm, step_number: 3, step_label: 'Requirements', product: _gaProduct(), page_path: _gaPage() });
+  });
   (document.getElementById(`${FORM_ID}-prev-2`) as HTMLElement).addEventListener('click', () => goTo(1));
 
   // ── submit ────────────────────────────────────────────────────────────────────
@@ -405,6 +415,7 @@ const companyName = company?.legalName ?? "";
     submitText.textContent = 'Sending…';
     spinner.style.display = '';
     errorEl.classList.add('hidden');
+    (window as any).gtag?.('event', 'form_submit', { form_id: FORM_ID, form_name: _gaForm, product: _gaProduct(), page_path: _gaPage() });
 
     const resetBtn = () => {
       submitBtn.disabled = false;
@@ -443,6 +454,7 @@ const companyName = company?.legalName ?? "";
       isSubmitting = false;
       successEl.classList.remove('hidden');
       progressBar.style.width = '100%';
+      (window as any).gtag?.('event', 'form_success', { form_id: FORM_ID, form_name: _gaForm, product: _gaProduct(), page_path: _gaPage() });
     } catch (err: unknown) {
       let msg = 'Something went wrong. Please try again.';
       if (err instanceof Error) {
@@ -452,6 +464,7 @@ const companyName = company?.legalName ?? "";
       console.error('[IQM] Submit error:', err);
       errorEl.textContent = msg;
       errorEl.classList.remove('hidden');
+      (window as any).gtag?.('event', 'form_error', { form_id: FORM_ID, form_name: _gaForm, error_message: msg, page_path: _gaPage() });
       resetBtn();
     }
   });

@@ -55,6 +55,7 @@ const LEAD_CAPTURE_URL = import.meta.env.PUBLIC_ESPO_BASE + "/LeadCapture/" + im
     btn.textContent = 'Subscribing...';
     successMsg.classList.add('hidden');
     errorMsg.classList.add('hidden');
+    (window as any).gtag?.('event', 'form_submit', { form_id: 'newsletter', form_name: 'Blog Newsletter', page_path: window.location.pathname });
 
     try {
       const res = await fetch(ESPO_URL, {
@@ -69,11 +70,14 @@ const LEAD_CAPTURE_URL = import.meta.env.PUBLIC_ESPO_BASE + "/LeadCapture/" + im
       if (res.ok) {
         form.reset();
         successMsg.classList.remove('hidden');
+        (window as any).gtag?.('event', 'form_success', { form_id: 'newsletter', form_name: 'Blog Newsletter', page_path: window.location.pathname });
       } else {
         errorMsg.classList.remove('hidden');
+        (window as any).gtag?.('event', 'form_error', { form_id: 'newsletter', form_name: 'Blog Newsletter', error_message: 'API error', page_path: window.location.pathname });
       }
     } catch {
       errorMsg.classList.remove('hidden');
+      (window as any).gtag?.('event', 'form_error', { form_id: 'newsletter', form_name: 'Blog Newsletter', error_message: 'Network error', page_path: window.location.pathname });
     } finally {
       btn.disabled = false;
       btn.textContent = 'Subscribe';
