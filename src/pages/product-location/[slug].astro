@@ -152,6 +152,9 @@ const graphSchema = {
   schemaMarkup={graphSchema}
   breadcrumbs={breadcrumbs}
   preloadImage={ogImage}
+  waMessage={product && location
+    ? `Hi, I'm interested in ${product.name} available in ${location.name}. Can you share more details?`
+    : `Hi, I'm interested in ${pageTitle}. Can you share more details?`}
 >
   <PLHero
     data={data}

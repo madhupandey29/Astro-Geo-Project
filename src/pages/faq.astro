@@ -26,6 +26,7 @@ const categories = apiCategories.length > 0 ? apiCategories : faqCategories;
     { name: "Home", url: "/" },
     { name: "FAQ" },
   ]}
+  waMessage="Hi, I have some questions about your fabrics, MOQ, and ordering process. Can you help?"
 >
   <FAQHero breadcrumbs={[{ name: "Home", href: "/" }, { name: "FAQ" }]} />
   <FAQAccordion categories={categories} />

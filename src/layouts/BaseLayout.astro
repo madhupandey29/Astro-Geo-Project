@@ -31,6 +31,8 @@ interface Props {
   // Pass author name from pages that already fetch authors (about, support, blog, etc.)
   // Falls back to company name if not provided — avoids a redundant getAuthors() call in BaseLayout
   authorName?: string;
+  // Page-specific WhatsApp pre-filled message for the floating button
+  waMessage?: string;
 }
 
 // Site-wide settings from API (eCatalogue) — fetched before props destructuring so companyName is available as default
@@ -59,6 +61,7 @@ const {
   preloadImage,
   preloadImageSrcset,
   authorName: authorNameProp,
+  waMessage,
 } = Astro.props;
 // Use prop if passed (pages that already fetched authors), otherwise fall back to company name
 const authorName = authorNameProp ?? companyName;
@@ -243,7 +246,7 @@ const schemaArray = schemaMarkup
       <slot />
     </main>
     <Footer />
-    <FloatingActions />
+    <FloatingActions waMessage={waMessage} />
     <!-- WhatsApp delegated click handler: opens data-wa-link URLs in a new tab -->
     <script is:inline>
       document.addEventListener('click', (e) => {
