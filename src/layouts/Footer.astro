@@ -20,6 +20,14 @@ const collectionLinks = dynamicTopicPages.map((p) => ({
   href: `/collection/${p.slug}`,
 }));
 
+// Build dynamic quick links — replace "About Us" label with "About {alternateName[0]}"
+const alternateName0 = company?.alternateName?.[0] ?? null;
+const quickLinks = siteConfig.footerLinks.quick.map((item) =>
+  item.href === "/about" && alternateName0
+    ? { ...item, label: `About ${alternateName0}` }
+    : item
+);
+
 // Build full address string + Google Maps link
 const addressParts = [
   company?.addressStreet,
@@ -148,7 +156,7 @@ const socialLinks = [
       <div>
         <h3 id="footer-nav-quick" class="font-label text-sm font-semibold uppercase tracking-widest mb-6 md:mb-8 text-on-surface">Quick Links</h3>
         <ul aria-labelledby="footer-nav-quick" class="grid grid-cols-2 md:grid-cols-1 gap-4 text-sm font-body">
-          {siteConfig.footerLinks.quick.map((item) => (
+          {quickLinks.map((item) => (
             <li>
               <a class="text-on-surface-variant hover:text-on-surface transition-all duration-200 ease-in-out" href={item.href}>{item.label}</a>
             </li>
