@@ -373,6 +373,13 @@ const socialLinks = [
       successMsg.classList.add('hidden');
       errorMsg.classList.add('hidden');
 
+      const gaEvent = (name) => {
+        window.dataLayer = window.dataLayer || [];
+        if (typeof window.gtag === 'function') window.gtag('event', name, { page_path: window.location.pathname });
+        else window.dataLayer.push({ event: name, page_path: window.location.pathname });
+      };
+      gaEvent('footer_newsletter_subscribe_attempt');
+
       try {
         const res = await fetch(ESPO_URL, {
           method: 'POST',
@@ -386,14 +393,46 @@ const socialLinks = [
         if (res.ok) {
           form.reset();
           successMsg.classList.remove('hidden');
+          gaEvent('footer_newsletter_subscribe_success');
         } else {
           errorMsg.classList.remove('hidden');
+          gaEvent('footer_newsletter_subscribe_error');
         }
       } catch {
         errorMsg.classList.remove('hidden');
+        gaEvent('footer_newsletter_subscribe_error');
       } finally {
         btn.disabled = false;
       }
     });
   }
+
+  // Social media icon tracking
+  function gaEvent(name) {
+    window.dataLayer = window.dataLayer || [];
+    if (typeof window.gtag === 'function') window.gtag('event', name, { page_path: window.location.pathname });
+    else window.dataLayer.push({ event: name, page_path: window.location.pathname });
+  }
+  document.querySelectorAll('[aria-label="Social media links"] a').forEach((el) => {
+    el.addEventListener('mousedown', () => {
+      const label = el.getAttribute('aria-label') ?? 'social';
+      gaEvent(`footer_social_${label.toLowerCase()}_click`);
+    });
+  });
+
+  // Footer WhatsApp Us button
+  document.querySelector('[aria-label="WhatsApp Us"]')?.addEventListener('mousedown', () => {
+    gaEvent('footer_whatsapp_us_click');
+  });
+
+  // Footer phone & email clicks
+  document.querySelectorAll('footer a[href^="tel:"]').forEach((el) => {
+    el.addEventListener('mousedown', () => gaEvent('footer_phone_click'));
+  });
+  document.querySelectorAll('footer a[href^="mailto:"]').forEach((el) => {
+    el.addEventListener('mousedown', () => {
+      const label = el.textContent?.trim().includes('sales') ? 'footer_sales_email_click' : 'footer_support_email_click';
+      gaEvent(label);
+    });
+  });
 </script>

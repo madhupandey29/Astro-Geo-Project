@@ -187,9 +187,9 @@ const keySpecs = [
   modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
 
-  waLink?.addEventListener("click", () => window.gtag?.('event', 'share', { method: 'whatsapp', content_type: 'product', page_path: window.location.pathname }));
-  tgLink?.addEventListener("click", () => window.gtag?.('event', 'share', { method: 'telegram', content_type: 'product', page_path: window.location.pathname }));
-  twLink?.addEventListener("click", () => window.gtag?.('event', 'share', { method: 'twitter', content_type: 'product', page_path: window.location.pathname }));
+  waLink?.addEventListener("click", () => window.gtag?.('event', 'product_share_whatsapp', { page_path: window.location.pathname }));
+  tgLink?.addEventListener("click", () => window.gtag?.('event', 'product_share_telegram', { page_path: window.location.pathname }));
+  twLink?.addEventListener("click", () => window.gtag?.('event', 'product_share_twitter', { page_path: window.location.pathname }));
 
   copyBtn?.addEventListener("click", async () => {
     const url = window.location.href;
@@ -205,6 +205,6 @@ const keySpecs = [
     }
     if (copyLabel) copyLabel.textContent = "Copied!";
     setTimeout(() => { if (copyLabel) copyLabel.textContent = "Copy Link"; }, 2000);
-    window.gtag?.('event', 'share', { method: 'copy_link', content_type: 'product', page_path: window.location.pathname });
+    window.gtag?.('event', 'product_share_copy_link', { page_path: window.location.pathname });
   });
 </script>

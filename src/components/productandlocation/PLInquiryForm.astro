@@ -213,11 +213,11 @@ const productName = product.productTitle ?? product.name;
   const _gaForm = 'Product & Location Inquiry Form';
 
   document.getElementById(`${FORM_ID}-next-0`)?.addEventListener('click', () => {
-    if (validateStep0()) { goTo(1); window.gtag?.('event', 'form_step', { form_id: FORM_ID, form_name: _gaForm, step_number: 2, step_label: 'Company', page_path: _gaPage() }); }
+    if (validateStep0()) { goTo(1); window.gtag?.('event', `pl_inquiry_step2_company__${_gaPage().replace(/\//g,'_').replace(/^_/,'')}`, { form_name: _gaForm, page_path: _gaPage() }); }
   });
   document.getElementById(`${FORM_ID}-prev-1`)?.addEventListener('click', () => goTo(0));
   document.getElementById(`${FORM_ID}-next-1`)?.addEventListener('click', () => {
-    goTo(2); window.gtag?.('event', 'form_step', { form_id: FORM_ID, form_name: _gaForm, step_number: 3, step_label: 'Details', page_path: _gaPage() });
+    goTo(2); window.gtag?.('event', `pl_inquiry_step3_details__${_gaPage().replace(/\//g,'_').replace(/^_/,'')}`, { form_name: _gaForm, page_path: _gaPage() });
   });
   document.getElementById(`${FORM_ID}-prev-2`)?.addEventListener('click', () => goTo(1));
 
@@ -235,7 +235,7 @@ const productName = product.productTitle ?? product.name;
     submitText.textContent = 'Sending...';
     spinner.style.display = 'inline-block';
     errorEl?.classList.add('hidden');
-    window.gtag?.('event', 'form_submit', { form_id: FORM_ID, form_name: _gaForm, page_path: _gaPage() });
+    window.gtag?.('event', `pl_inquiry_submitted__${_gaPage().replace(/\//g,'_').replace(/^_/,'')}`, { form_name: _gaForm, page_path: _gaPage() });
 
     try {
       const res = await fetch(LEAD_CAPTURE_URL, {
@@ -250,13 +250,13 @@ const productName = product.productTitle ?? product.name;
       document.getElementById(`${FORM_ID}-stepper`)?.classList.add('hidden');
       stepLabel?.classList.add('hidden');
       successEl?.classList.remove('hidden');
-      window.gtag?.('event', 'form_success', { form_id: FORM_ID, form_name: _gaForm, page_path: _gaPage() });
+      window.gtag?.('event', `pl_inquiry_success__${_gaPage().replace(/\//g,'_').replace(/^_/,'')}`, { form_name: _gaForm, page_path: _gaPage() });
     } catch {
       if (errorEl) {
         errorEl.textContent = 'Something went wrong. Please try again or email us directly.';
         errorEl.classList.remove('hidden');
       }
-      window.gtag?.('event', 'form_error', { form_id: FORM_ID, form_name: _gaForm, error_message: 'Submit failed', page_path: _gaPage() });
+      window.gtag?.('event', `pl_inquiry_error__${_gaPage().replace(/\//g,'_').replace(/^_/,'')}`, { form_name: _gaForm, page_path: _gaPage() });
     } finally {
       submitBtn.disabled = false;
       submitText.textContent = 'Submit Request';

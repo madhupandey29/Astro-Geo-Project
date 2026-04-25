@@ -44,6 +44,16 @@ const LEAD_CAPTURE_URL = import.meta.env.PUBLIC_ESPO_BASE + "/LeadCapture/" + im
   const successMsg = document.getElementById('newsletter-success')!;
   const errorMsg = document.getElementById('newsletter-error')!;
 
+  function gaEvent(name: string) {
+    const w = window as any;
+    w.dataLayer = w.dataLayer || [];
+    if (typeof w.gtag === 'function') {
+      w.gtag('event', name, { page_path: window.location.pathname });
+    } else {
+      w.dataLayer.push({ event: name, page_path: window.location.pathname });
+    }
+  }
+
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = emailInput.value.trim();
@@ -55,7 +65,7 @@ const LEAD_CAPTURE_URL = import.meta.env.PUBLIC_ESPO_BASE + "/LeadCapture/" + im
     btn.textContent = 'Subscribing...';
     successMsg.classList.add('hidden');
     errorMsg.classList.add('hidden');
-    (window as any).gtag?.('event', 'form_submit', { form_id: 'newsletter', form_name: 'Blog Newsletter', page_path: window.location.pathname });
+    gaEvent('blog_newsletter_subscribe_attempt');
 
     try {
       const res = await fetch(ESPO_URL, {
@@ -70,14 +80,14 @@ const LEAD_CAPTURE_URL = import.meta.env.PUBLIC_ESPO_BASE + "/LeadCapture/" + im
       if (res.ok) {
         form.reset();
         successMsg.classList.remove('hidden');
-        (window as any).gtag?.('event', 'form_success', { form_id: 'newsletter', form_name: 'Blog Newsletter', page_path: window.location.pathname });
+        gaEvent('blog_newsletter_subscribe_success');
       } else {
         errorMsg.classList.remove('hidden');
-        (window as any).gtag?.('event', 'form_error', { form_id: 'newsletter', form_name: 'Blog Newsletter', error_message: 'API error', page_path: window.location.pathname });
+        gaEvent('blog_newsletter_subscribe_error');
       }
     } catch {
       errorMsg.classList.remove('hidden');
-      (window as any).gtag?.('event', 'form_error', { form_id: 'newsletter', form_name: 'Blog Newsletter', error_message: 'Network error', page_path: window.location.pathname });
+      gaEvent('blog_newsletter_subscribe_error');
     } finally {
       btn.disabled = false;
       btn.textContent = 'Subscribe';

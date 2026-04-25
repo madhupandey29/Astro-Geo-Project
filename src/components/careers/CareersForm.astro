@@ -155,19 +155,19 @@ const companyName = company?.legalName ?? "";
     const file = e.target.files?.[0];
     const nameEl = document.getElementById(`${FORM_ID}-resume-name`);
     if (nameEl) { nameEl.textContent = file ? `Selected: ${file.name}` : ''; nameEl.classList.toggle('hidden', !file); }
-    if (file) window.gtag?.('event', 'form_step', { form_id: FORM_ID, form_name: _gaForm, step_number: 3, step_label: 'Resume Upload', file_name: file.name, page_path: _gaPage() });
+    if (file) window.gtag?.('event', 'careers_resume_uploaded', { file_name: file.name, page_path: _gaPage() });
   });
 
   document.getElementById(`${FORM_ID}-next-0`).addEventListener('click', () => {
     if (!g('firstName') || !g('lastName') || !g('emailAddress')) { alert('Please fill in First Name, Last Name and Email.'); return; }
     goTo(1);
-    window.gtag?.('event', 'form_step', { form_id: FORM_ID, form_name: _gaForm, step_number: 2, step_label: 'Experience', page_path: _gaPage() });
+    window.gtag?.('event', 'careers_form_step2_experience', { page_path: _gaPage() });
   });
   document.getElementById(`${FORM_ID}-prev-1`).addEventListener('click', () => goTo(0));
   document.getElementById(`${FORM_ID}-next-1`).addEventListener('click', () => {
     if (!g('title')) { alert('Please enter the position you are applying for.'); return; }
     goTo(2);
-    window.gtag?.('event', 'form_step', { form_id: FORM_ID, form_name: _gaForm, step_number: 3, step_label: 'Resume', page_path: _gaPage() });
+    window.gtag?.('event', 'careers_form_step3_resume', { page_path: _gaPage() });
   });
   document.getElementById(`${FORM_ID}-prev-2`).addEventListener('click', () => goTo(1));
 
@@ -183,7 +183,7 @@ const companyName = company?.legalName ?? "";
     submitText.textContent = 'Submitting...';
     spinner.style.display = 'inline-block';
     errorEl.classList.add('hidden');
-    window.gtag?.('event', 'form_submit', { form_id: FORM_ID, form_name: _gaForm, position: g('title'), page_path: _gaPage() });
+    window.gtag?.('event', 'careers_application_submitted', { position: g('title'), page_path: _gaPage() });
 
     try {
       let resumeAttachmentId;
@@ -232,11 +232,11 @@ const companyName = company?.legalName ?? "";
       document.getElementById(`${FORM_ID}-stepper`).classList.add('hidden');
       stepLabel.classList.add('hidden');
       successEl.classList.remove('hidden');
-      window.gtag?.('event', 'form_success', { form_id: FORM_ID, form_name: _gaForm, page_path: _gaPage() });
+      window.gtag?.('event', 'careers_application_success', { page_path: _gaPage() });
     } catch (err) {
       errorEl.textContent = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
       errorEl.classList.remove('hidden');
-      window.gtag?.('event', 'form_error', { form_id: FORM_ID, form_name: _gaForm, error_message: errorEl.textContent, page_path: _gaPage() });
+      window.gtag?.('event', 'careers_application_error', { page_path: _gaPage() });
       submitBtn.disabled = false;
       submitText.textContent = 'Submit Application';
       spinner.style.display = 'none';
