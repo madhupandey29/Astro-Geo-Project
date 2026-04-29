@@ -33,7 +33,7 @@ const location = data.location;
 const pageTitle =
   data.title?.trim() ||
   (product && location ? `${product.productTitle || product.name} in ${location.name}` : null) ||
-  "Product & Location";
+  "Fabric Manufacturer";
 
 const metaDescription =
   stripHtml(data.fulldescription).slice(0, 155) ||

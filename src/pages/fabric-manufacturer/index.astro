@@ -15,13 +15,13 @@ const companyName = company?.legalName ?? "";
 
 const breadcrumbs = [
   { name: "Home", url: "/" },
-  { name: "Product & Location" },
+  { name: "Fabric Manufacturer" },
 ];
 
 const listSchema = {
   "@context": "https://schema.org",
   "@type": "ItemList",
-  name: `Product & Location Combinations — ${companyName}`,
+  name: `Fabric Manufacturer — ${companyName}`,
   url: `${SITE_BASE}/fabric-manufacturer`,
   numberOfItems: items.length,
   itemListElement: items.map((item, index) => ({
@@ -46,7 +46,7 @@ const listSchema = {
 >
   <PLListingHero
     total={items.length}
-    breadcrumbs={[{ name: "Home", href: "/" }, { name: "Product & Location" }]}
+    breadcrumbs={[{ name: "Home", href: "/" }, { name: "Fabric Manufacturer" }]}
   />
   <PLGrid items={items} />
 </BaseLayout>
