@@ -2,6 +2,21 @@
 import type { Product } from "../../data/products";
 interface Props { product: Product }
 const { product } = Astro.props;
+
+// Build enhanced weight value with GSM and Oz
+const enhancedWeight = `${Math.round(product.gsm)} GSM / ${(Math.round(product.ozs * 100) / 100).toFixed(2)} oz`;
+
+// Build width value with cm and inch only
+const enhancedWidth = `${Math.round(product.cm)} cm / ${Math.round(product.inch)} inch`;
+
+// Filter out null/empty values and specific fields
+const filteredTechSpecs = product.techSpecs.filter((row) => {
+  // Skip if value is null, undefined, or empty string
+  if (!row.value || row.value.trim() === '') return false;
+  // Skip Width (CM), Width (Inch), GSM, and Ozs rows
+  if (['Width (CM)', 'Width (Inch)', 'GSM', 'Ozs'].includes(row.label)) return false;
+  return true;
+});
 ---
 
 <!-- Technical Specs & Applications -->
@@ -18,24 +33,32 @@ const { product } = Astro.props;
           <table class="w-full text-left font-sans min-w-[300px]">
             <tbody>
               <!-- Quick specs first -->
-              <tr class="border-b border-[#edeeef]">
-                <td class="py-4 px-4 lg:px-6 font-semibold text-[#44474d] bg-[#ffffff] text-xs lg:text-sm">Material</td>
-                <td class="py-4 px-4 lg:px-6 bg-white text-xs lg:text-sm">{product.specs.material}</td>
-              </tr>
-              <tr class="border-b border-[#edeeef]">
-                <td class="py-4 px-4 lg:px-6 font-semibold text-[#44474d] bg-[#ffffff] text-xs lg:text-sm">Weight</td>
-                <td class="py-4 px-4 lg:px-6 bg-white text-xs lg:text-sm">{product.specs.weight}</td>
-              </tr>
-              <tr class="border-b border-[#edeeef]">
-                <td class="py-4 px-4 lg:px-6 font-semibold text-[#44474d] bg-[#ffffff] text-xs lg:text-sm">Width</td>
-                <td class="py-4 px-4 lg:px-6 bg-white text-xs lg:text-sm">{product.specs.width}</td>
-              </tr>
-              <tr class="border-b border-[#edeeef]">
-                <td class="py-4 px-4 lg:px-6 font-semibold text-[#44474d] bg-[#ffffff] text-xs lg:text-sm">Weave</td>
-                <td class="py-4 px-4 lg:px-6 bg-white text-xs lg:text-sm">{product.specs.weave}</td>
-              </tr>
-              <!-- Detailed tech specs below -->
-              {product.techSpecs.map((row) => (
+              {product.specs.material && (
+                <tr class="border-b border-[#edeeef]">
+                  <td class="py-4 px-4 lg:px-6 font-semibold text-[#44474d] bg-[#ffffff] text-xs lg:text-sm">Material</td>
+                  <td class="py-4 px-4 lg:px-6 bg-white text-xs lg:text-sm">{product.specs.material}</td>
+                </tr>
+              )}
+              {(product.gsm || product.ozs) && (
+                <tr class="border-b border-[#edeeef]">
+                  <td class="py-4 px-4 lg:px-6 font-semibold text-[#44474d] bg-[#ffffff] text-xs lg:text-sm">Weight</td>
+                  <td class="py-4 px-4 lg:px-6 bg-white text-xs lg:text-sm">{enhancedWeight}</td>
+                </tr>
+              )}
+              {(product.cm || product.inch) && (
+                <tr class="border-b border-[#edeeef]">
+                  <td class="py-4 px-4 lg:px-6 font-semibold text-[#44474d] bg-[#ffffff] text-xs lg:text-sm">Width</td>
+                  <td class="py-4 px-4 lg:px-6 bg-white text-xs lg:text-sm">{enhancedWidth}</td>
+                </tr>
+              )}
+              {product.specs.weave && (
+                <tr class="border-b border-[#edeeef]">
+                  <td class="py-4 px-4 lg:px-6 font-semibold text-[#44474d] bg-[#ffffff] text-xs lg:text-sm">Weave</td>
+                  <td class="py-4 px-4 lg:px-6 bg-white text-xs lg:text-sm">{product.specs.weave}</td>
+                </tr>
+              )}
+              <!-- Detailed tech specs below (filtered) -->
+              {filteredTechSpecs.map((row) => (
                 <tr class="border-b border-[#edeeef]">
                   <td class="py-4 px-4 lg:px-6 font-semibold text-[#44474d] bg-[#ffffff] text-xs lg:text-sm">{row.label}</td>
                   <td class="py-4 px-4 lg:px-6 bg-white text-xs lg:text-sm">{row.value}</td>
