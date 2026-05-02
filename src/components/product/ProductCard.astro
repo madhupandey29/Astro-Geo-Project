@@ -40,7 +40,7 @@ const { product } = Astro.props;
 ---
 
 <article
-  class="product-card group cursor-pointer overflow-hidden rounded bg-white shadow-sm transition-all hover:shadow-xl"
+  class="product-card group cursor-pointer overflow-hidden rounded bg-white shadow-sm transition-all hover:shadow-xl flex flex-col h-full"
   data-name={product.name}
   data-slug={product.searchSlug ?? (product.href ? product.href.split("/").pop() : "")}
   data-category={product.filterCategory ?? product.category}
@@ -62,7 +62,7 @@ const { product } = Astro.props;
   data-vendorcode={product.searchVendorCode ?? ""}
   data-moq={product.searchMOQ ?? ""}
 >
-  <a href={product.href ?? undefined} class={`block${!product.href ? " pointer-events-none" : ""}`}>
+  <a href={product.href ?? undefined} class={`flex flex-col h-full${!product.href ? " pointer-events-none" : ""}`}>
     <div class="relative h-64 overflow-hidden">
       <CloudinaryImage
         src={product.image}
@@ -83,9 +83,9 @@ const { product } = Astro.props;
       )}
     </div>
 
-    <div class="p-6">
+    <div class="p-6 flex flex-col flex-grow">
       <div class="mb-2 flex items-start justify-between">
-        <h3 class="font-headline italic text-base text-[#041632] leading-snug">{product.name}</h3>
+        <h3 class="font-headline italic text-base text-[#041632] leading-snug min-h-[3rem]">{product.name}</h3>
         <span
           class="mt-1 h-4 w-4 rounded-full border border-slate-300"
           style={`background:${product.color}`}
@@ -96,7 +96,7 @@ const { product } = Astro.props;
         {product.category}
       </p>
 
-      <div class="grid grid-cols-2 gap-4 border-t border-slate-200 pt-4">
+      <div class="grid grid-cols-2 gap-4 border-t border-slate-200 pt-4 mt-auto">
         <div>
           <p class="text-[10px] font-label uppercase tracking-wide text-slate-500">Weight</p>
           <p class="text-sm font-bold text-[#041632]">{product.weight}</p>
@@ -108,7 +108,7 @@ const { product } = Astro.props;
       </div>
 
       {product.href && (
-        <div class="mt-6 w-full bg-[#041632] py-3 text-center text-xs font-label uppercase tracking-widest text-white transition hover:bg-[#775a19]">
+        <div class="mt-6 w-full bg-[#041632] py-3 text-center text-xs font-label uppercase tracking-widest text-white transition hover:bg-[#041632]/90">
           View Specifications
         </div>
       )}
