@@ -82,11 +82,11 @@ function getDeptIcon(dept: string): string {
               )}
             </div>
 
-            <p class="text-sm text-[#44474d] leading-relaxed mb-6">{pos.description}</p>
+            <div class="text-sm text-[#44474d] leading-relaxed mb-6 rich-content" set:html={pos.description} />
 
             <div class="mb-8 flex-1">
               <h4 class="text-xs font-bold uppercase tracking-widest text-[#041632] mb-3">Key Requirements</h4>
-              <div class="text-sm text-[#44474d] leading-relaxed prose prose-sm max-w-none" set:html={pos.requirements} />
+              <div class="text-sm text-[#44474d] leading-relaxed rich-content" set:html={pos.requirements} />
             </div>
 
             <a href="#apply-now" class="block text-center py-3 border border-[#041632] text-[#041632] font-sans font-bold uppercase tracking-widest text-xs hover:bg-[#041632] hover:text-white transition-colors">

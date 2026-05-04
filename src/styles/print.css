@@ -155,21 +155,77 @@
     order: 1 !important;
   }
 
-  /* Style Quality & Compliance for print */
-  .print-hide-quality h2 {
-    text-align: center;
-    margin-bottom: 1.5rem !important;
+  /* Hide the entire second column (Related Keywords) */
+  .print-hide-quality .grid > div.print-hide-keywords {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
   }
 
+  /* Style Quality & Compliance for print - Single line format */
+  .print-hide-quality h2 {
+    display: inline !important;
+    text-align: left !important;
+    margin-bottom: 0 !important;
+    margin-right: 0.5rem !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+  }
+
+  /* Hide Related Keywords h2 specifically */
+  .print-hide-keywords h2 {
+    display: none !important;
+  }
+
+  /* Hide icons and boxes, show as inline list */
   .print-hide-quality .grid {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 1rem !important;
+    display: inline !important;
   }
 
   .print-hide-quality .grid > div {
-    page-break-inside: avoid;
-    padding: 1rem !important;
+    display: inline !important;
+    padding: 0 !important;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  /* But force hide the keywords div */
+  .print-hide-quality .grid > div.print-hide-keywords,
+  .print-hide-quality .grid > div.print-hide-keywords * {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  .print-hide-quality .material-symbols-outlined {
+    display: none !important;
+  }
+
+  .print-hide-quality h3 {
+    display: inline !important;
+    font-size: 1rem !important;
+    font-weight: normal !important;
+  }
+
+  /* Add numbering and commas */
+  .print-hide-quality .grid > div:not(:last-child) h3::after {
+    content: ", " !important;
+  }
+
+  .print-hide-quality .grid > div:nth-child(1) h3::before {
+    content: "1. " !important;
+  }
+
+  .print-hide-quality .grid > div:nth-child(2) h3::before {
+    content: "2. " !important;
+  }
+
+  .print-hide-quality .grid > div:nth-child(3) h3::before {
+    content: "3. " !important;
   }
 
   /* Technical Specs section - SECOND */
@@ -205,6 +261,11 @@
 
   /* Hide "About this Fabric" section */
   .print-hide-about {
+    display: none !important;
+  }
+
+  /* Hide "Related Keywords" section */
+  .print-hide-keywords {
     display: none !important;
   }
 
@@ -273,8 +334,8 @@
     gap: 0.5rem !important;
     column-gap: 0.75rem !important;
     scroll-snap-type: none !important;
-    max-height: 450px !important;
-    height: 450px !important;
+    max-height: 350px !important;
+    height: 350px !important;
   }
 
   /* Target only divs with images (not videos) */
@@ -295,7 +356,7 @@
   #gallery-track > div:has(img):nth-of-type(1) img {
     width: 100% !important;
     height: 100% !important;
-    max-height: 450px !important;
+    max-height: 350px !important;
     object-fit: cover !important;
     border: 1px solid #e5e7eb !important;
     display: block !important;
@@ -312,7 +373,7 @@
   #gallery-track > div:has(img):nth-of-type(2) img {
     width: 100% !important;
     height: 100% !important;
-    max-height: 220px !important;
+    max-height: 170px !important;
     object-fit: cover !important;
     border: 1px solid #e5e7eb !important;
     display: block !important;
@@ -329,7 +390,7 @@
   #gallery-track > div:has(img):nth-of-type(3) img {
     width: 100% !important;
     height: 100% !important;
-    max-height: 220px !important;
+    max-height: 170px !important;
     object-fit: cover !important;
     border: 1px solid #e5e7eb !important;
     display: block !important;
@@ -390,23 +451,26 @@
   /* Make the section more compact with proper spacing */
   .bg-\\[\\#f3f4f5\\].py-12,
   .bg-\\[\\#f3f4f5\\].py-20 {
-    padding-top: 1rem !important;
-    padding-bottom: 1rem !important;
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.5rem !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
-    margin-bottom: 0.5rem !important;
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
   }
 
   /* Reduce spacing in grid */
   .grid.grid-cols-1.lg\\:grid-cols-2 {
-    gap: 1.5rem !important;
+    gap: 1rem !important;
   }
 
   /* Technical Specifications Heading - Larger and Bold */
   .bg-\\[\\#f3f4f5\\] h2.font-serif {
     font-size: 1.5rem !important;
     font-weight: 700 !important;
-    margin-bottom: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
     page-break-after: avoid !important;
     color: #041632 !important;
   }
@@ -419,12 +483,40 @@
     break-inside: avoid !important;
   }
 
+  /* Split table into 2 columns - 5 rows left, 4 rows right */
+  table tbody {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0 2rem !important;
+    grid-auto-flow: column !important;
+  }
+
+  /* First 5 rows go to left column */
+  table tr:nth-child(-n+5) {
+    grid-column: 1 !important;
+  }
+
+  /* Remaining rows go to right column */
+  table tr:nth-child(n+6) {
+    grid-column: 2 !important;
+  }
+
+  /* Make each row display as a grid for label/value layout */
+  table tr {
+    display: grid !important;
+    grid-template-columns: 40% 60% !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    margin-bottom: 0.15rem !important;
+  }
+
   table td,
   table th {
-    padding: 0.5rem 1rem !important;
-    font-size: 0.95rem !important;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.9rem !important;
     line-height: 1.3 !important;
-    border-bottom: 1px solid #e5e7eb !important;
+    border-bottom: none !important;
   }
 
   table td:first-child {
@@ -437,55 +529,12 @@
     font-weight: 500 !important;
   }
 
-  /* Prevent page breaks in table rows */
-  table tr {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-  }
-
-  /* Quality & Compliance section spacing - COMPACT */
+  /* Quality & Compliance section spacing - COMPACT SINGLE LINE */
   .print-hide-quality {
-    padding: 1rem 0 !important;
-    margin: 0.5rem 0 !important;
+    padding: 0 !important;
+    margin: 0.25rem 0 0.25rem 0 !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
-  }
-
-  .print-hide-quality h2 {
-    font-size: 1.5rem !important;
-    font-weight: 700 !important;
-    text-align: center;
-    margin-bottom: 1rem !important;
-    page-break-after: avoid !important;
-    color: #041632 !important;
-  }
-
-  .print-hide-quality .grid {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 0.75rem !important;
-  }
-
-  .print-hide-quality .grid > div {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-    padding: 0.75rem !important;
-  }
-
-  .print-hide-quality h3 {
-    font-size: 0.95rem !important;
-    font-weight: 600 !important;
-    margin-bottom: 0.25rem !important;
-  }
-
-  .print-hide-quality p {
-    font-size: 0.8rem !important;
-    line-height: 1.3 !important;
-  }
-
-  .print-hide-quality .material-symbols-outlined {
-    font-size: 2rem !important;
-    margin-bottom: 0.5rem !important;
   }
 
   /* Keep Quality & Compliance and Technical Specs together on same page */
@@ -681,23 +730,35 @@
 
   /* Product hero section - more compact */
   section.max-w-7xl:first-of-type {
-    margin-bottom: 1rem !important;
+    margin-bottom: 0.5rem !important;
     page-break-after: avoid !important;
-    padding-bottom: 0.5rem !important;
+    padding-bottom: 0.25rem !important;
+    padding-top: 0.25rem !important;
   }
 
   /* Reduce product title and description spacing */
   section.max-w-7xl:first-of-type h1 {
-    font-size: 1.75rem !important;
+    font-size: 1.5rem !important;
     line-height: 1.2 !important;
-    margin-bottom: 0.5rem !important;
+    margin-bottom: 0.25rem !important;
+    margin-top: 0.25rem !important;
   }
 
   section.max-w-7xl:first-of-type p {
-    margin-top: 0.5rem !important;
-    margin-bottom: 0.5rem !important;
-    font-size: 0.9rem !important;
-    line-height: 1.4 !important;
+    margin-top: 0.25rem !important;
+    margin-bottom: 0.25rem !important;
+    font-size: 0.85rem !important;
+    line-height: 1.3 !important;
+  }
+
+  /* Hide product tagline (subtitle) and description in print */
+  .print-hide-tagline,
+  .print-hide-desc {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   /* Technical Specs section - keep together on one page */

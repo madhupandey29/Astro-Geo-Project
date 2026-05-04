@@ -19,21 +19,42 @@ const filteredTechSpecs = product.techSpecs.filter((row) => {
 });
 ---
 
-<!-- Certifications (Quality & Compliance) - MOVED TO TOP FOR PRINT -->
+<!-- Certifications & Keywords - Combined Section -->
 <section class="max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-20 print-hide-quality print-order-1">
-  <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-10 lg:mb-12 text-center">Quality &amp; Compliance</h2>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-    {product.certifications.map((cert) => (
-      <div class="bg-white p-4 lg:p-5 border border-[#c5c6ce]/10 text-center flex flex-col items-center shadow-sm">
-        <span class="material-symbols-outlined text-3xl lg:text-4xl text-[#775a19] mb-3" style="font-variation-settings: 'FILL' 1;">{cert.icon}</span>
-        <h3 class="font-bold text-base lg:text-lg">{cert.title}</h3>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
+    
+    <!-- Quality & Compliance -->
+    <div>
+      <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-8 lg:mb-10 text-center">Quality &amp; Compliance</h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 lg:gap-5">
+        {product.certifications.map((cert) => (
+          <div class="bg-white p-3 lg:p-4 border border-[#c5c6ce]/10 text-center flex flex-col items-center shadow-sm">
+            <span class="material-symbols-outlined text-2xl lg:text-3xl text-[#775a19] mb-2" style="font-variation-settings: 'FILL' 1;">{cert.icon}</span>
+            <h3 class="font-bold text-sm lg:text-base">{cert.title}</h3>
+          </div>
+        ))}
       </div>
-    ))}
+    </div>
+
+    <!-- Related Keywords -->
+    {product.keywords && product.keywords.length > 0 && (
+      <div class="print-hide-keywords">
+        <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-8 lg:mb-10 text-center">Related Keywords</h2>
+        <div class="flex flex-wrap gap-3 lg:gap-3">
+          {product.keywords.map((keyword) => (
+            <span class="inline-block bg-[#f3f4f5] text-[#041632] px-3 py-2 text-sm lg:text-base font-medium border border-[#c5c6ce]/20 hover:border-[#775a19] hover:bg-white transition-colors">
+              {keyword}
+            </span>
+          ))}
+        </div>
+      </div>
+    )}
+
   </div>
 </section>
 
 <!-- Technical Specs & Applications - MOVED BELOW QUALITY FOR PRINT -->
-<section class="bg-[#f3f4f5] py-12 lg:py-20 print-order-2">
+<section class="bg-[#f3f4f5] py-8 lg:py-12 print-order-2">
   <div class="max-w-7xl mx-auto px-4 lg:px-8">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
 
@@ -85,12 +106,12 @@ const filteredTechSpecs = product.techSpecs.filter((row) => {
       <!-- Application Suitability -->
       <div class="print-app-suitability">
         <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-6 lg:mb-8 flex items-center">
-          <span class="w-10 h-px bg-[#775a19] mr-4"></span>Application Suitability (AI Analysis)
+          <span class="w-10 h-px bg-[#775a19] mr-4"></span>Application Suitability
         </h2>
         {(() => {
           const sorted = [...product.applications].sort((a, b) => b.score - a.score);
-          const visible = sorted.slice(0, 6);
-          const hidden = sorted.slice(6);
+          const visible = sorted.slice(0, 5);
+          const hidden = sorted.slice(5);
           return (
             <div>
               <div class="space-y-2 lg:space-y-3 print-app-grid">
@@ -121,13 +142,15 @@ const filteredTechSpecs = product.techSpecs.filter((row) => {
                       </div>
                     ))}
                   </div>
-                  <button
-                    id="toggle-apps-btn"
-                    class="mt-5 flex items-center gap-2 text-sm font-semibold text-[#041632] hover:text-[#775a19] transition-colors"
-                  >
-                    <span id="toggle-apps-label">View more ({hidden.length})</span>
-                    <span id="toggle-apps-icon" class="material-symbols-outlined text-base transition-transform">expand_more</span>
-                  </button>
+                  <div class="flex justify-center">
+                    <button
+                      id="toggle-apps-btn"
+                      class="mt-5 flex items-center gap-2 text-sm font-semibold text-[#041632] hover:text-[#775a19] transition-colors"
+                    >
+                      <span id="toggle-apps-label">View more ({hidden.length})</span>
+                      <span id="toggle-apps-icon" class="material-symbols-outlined text-base transition-transform">expand_more</span>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -141,7 +164,7 @@ const filteredTechSpecs = product.techSpecs.filter((row) => {
 
 <!-- Long Description -->
 <section class="max-w-7xl mx-auto px-4 lg:px-8 py-12 lg:py-16 print-hide-about print-order-3">
-  <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-6 flex items-center">
+  <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-6 flex items-center justify-center">
     <span class="w-10 h-px bg-[#775a19] mr-4"></span>About this Fabric
   </h2>
   <div class="relative">
@@ -154,13 +177,15 @@ const filteredTechSpecs = product.techSpecs.filter((row) => {
       <!-- fade overlay — hidden when expanded -->
       <div id="desc-fade" class="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
     </div>
-    <button
-      id="desc-toggle-btn"
-      class="mt-3 flex items-center gap-1 text-sm font-semibold text-[#041632] hover:text-[#775a19] transition-colors"
-    >
-      <span id="desc-toggle-label">View more</span>
-      <span id="desc-toggle-icon" class="material-symbols-outlined text-base transition-transform">expand_more</span>
-    </button>
+    <div class="flex justify-center">
+      <button
+        id="desc-toggle-btn"
+        class="mt-3 flex items-center gap-1 text-sm font-semibold text-[#041632] hover:text-[#775a19] transition-colors"
+      >
+        <span id="desc-toggle-label">View more</span>
+        <span id="desc-toggle-icon" class="material-symbols-outlined text-base transition-transform">expand_more</span>
+      </button>
+    </div>
   </div>
 </section>
 
