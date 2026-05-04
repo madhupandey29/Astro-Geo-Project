@@ -1,0 +1,157 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import FabricListLayout from "../../components/product/FabricListLayout.astro";
+import type { FAQItem } from "../../components/product/FabricListLayout.astro";
+import { fetchProducts, getCloudinaryUrl } from "../../data/products";
+import { getFilterValues, getTopicPageBySlug, getWebsiteFAQ, getCompanyInfo } from "../../lib/api";
+import { resolveCanonical } from "../../lib/seo/canonical";
+const SITE_BASE = import.meta.env.PUBLIC_SITE_URL;
+
+const FABRIC_HERO_IMAGE = "https://res.cloudinary.com/age-fabric/image/upload/v1775652305/17_y6ajol.jpg";
+
+const [allProducts, filters, seo, faqData, company] = await Promise.all([
+  fetchProducts(),
+  getFilterValues(),
+  getTopicPageBySlug("fabric"),
+  getWebsiteFAQ(),
+  getCompanyInfo("AGE"),
+]);
+const companyName = company?.legalName ?? "";
+
+const total = allProducts.length;
+const rawProducts = allProducts;
+
+const products = rawProducts.map((p) => ({
+  id: p.id,
+  name: p.name,
+  category: p.category,
+  weight: p.specs.weight,
+  width: p.specs.width,
+  color: p.hex?.[0] ?? "#041632",
+  image: p.image,
+  imageSrcset: p.image1Srcset || undefined,
+  href: p.slug ? `/fabric/${p.slug}` : null,
+  filterCategory: p.category,
+  filterColor: p.colorNames.join("|"),
+  filterStructure: p.structure,
+  filterContent: p.content,
+  filterGsm: String(p.gsm),
+  filterDesign: p.design,
+  filterFinish: p.finish.join("|"),
+  // extra search fields
+  searchSlug: p.slug,
+  searchOzs: String(p.ozs),
+  searchCm: String(p.cm),
+  searchInch: String(p.inch),
+  searchMotif: p.motif ?? "",
+  searchKeywords: p.keywords.join("|"),
+  searchMerchTags: p.merchTags.join("|"),
+  searchCollection: p.collectionName,
+  searchSupply: p.supplyStatus,
+  searchFabricCode: p.fabricCode,
+  searchVendorCode: p.vendorCode,
+  searchMOQ: p.salesMOQ,
+}));
+
+const heroImageUrl = seo?.image1CloudUrl ?? null;
+
+// F2 FIX: use SITE_BASE directly — no local alias needed
+// ── JSON-LD: ItemList schema (product snippets in Google) ──────────────────────
+const itemListSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: `Fabric Catalog — ${companyName}`,
+  url: `${SITE_BASE}/fabric`,
+  numberOfItems: total,
+  itemListElement: rawProducts.map((p, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    item: {
+      "@type": "Product",
+      "@id": `${SITE_BASE}/fabric/${p.slug}`,
+      name: p.name,
+      url: `${SITE_BASE}/fabric/${p.slug}`,
+      image: p.image1 || p.image || undefined,
+      description: p.shortDesc || undefined,
+      sku: p.slug,
+      brand: {
+        "@type": "Brand",
+        name: companyName,
+      },
+      ...(p.ratingCount > 0 ? {
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue: p.rating,
+          ratingCount: p.ratingCount,
+          bestRating: 5,
+          worstRating: 1,
+        },
+      } : {}),
+      offers: {
+        "@type": "Offer",
+        "@id": `${SITE_BASE}/fabric/${p.slug}#offer`,
+        url: `${SITE_BASE}/fabric/${p.slug}`,
+        priceCurrency: "INR",
+        price: 0,
+        availability: "https://schema.org/InStock",
+        seller: {
+          "@type": "Organization",
+          name: companyName,
+        },
+      },
+    },
+  })),
+};
+
+const breadcrumbItems = [
+  { name: "Home", url: "/" },
+  { name: "Fabric" },
+];
+
+const faqItems: FAQItem[] = faqData.map((f) => ({
+  question: f.question,
+  answer: f.answer,
+}));
+---
+
+<BaseLayout
+  title={seo?.metaTitle}
+  description={seo?.description ?? "Browse our full fabric catalog including cotton twill, woven fabrics, and performance textiles."}
+  keywords={seo?.keywords ?? undefined}
+  canonical={resolveCanonical(seo?.canonicalUrl)}
+  ogType={seo?.ogType ?? "product"}
+  ogImage={seo?.image1CloudUrlHero ?? seo?.image1CloudUrl ?? FABRIC_HERO_IMAGE}
+  schemaMarkup={[itemListSchema]}
+  breadcrumbs={breadcrumbItems}
+  waMessage="Hi, I'm looking for fabrics. Can you help me find the right one for my needs?"
+>
+  <div class="bg-white text-slate-900">
+    <FabricListLayout
+      hero={{
+        title: "Browse Our Full Fabric Catalog",
+        imageUrl: heroImageUrl ?? "https://res.cloudinary.com/age-fabric/image/upload/v1775652305/17_y6ajol.jpg",
+        breadcrumbLabel: "Fabric",
+        breadcrumbHref: "/fabric",
+      }}
+      intro={{
+        heading: "Explore 100% Cotton Twill, Woven Fabrics, and Performance Textiles",
+        body: "Precision-engineered for durability and aesthetic excellence. Our curated selection represents the pinnacle of industrial textile manufacturing, sourcing the finest fibers for global brands.",
+        calloutTitle: "Technical Assurance",
+        calloutBody: "All fabrics undergo 12-point quality inspection including GSM verification, color fastness, and tensile strength testing.",
+      }}
+      products={products}
+      filters={{
+        categories: filters.category,
+        colors: filters.color,
+        structures: filters.structure,
+        contents: filters.content,
+        designs: filters.design,
+        finishes: filters.finish,
+      }}
+      total={total}
+      faqItems={faqItems}
+      guideImageUrl={seo?.image2CloudUrl ?? null}
+      guideImageAlt={seo?.altTextImage2 ?? "How to choose the right fabric for your brand"}
+    />
+  </div>
+</BaseLayout>

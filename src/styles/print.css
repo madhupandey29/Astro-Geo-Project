@@ -1,0 +1,774 @@
+/* Print Styles for Fabric Detail Pages */
+
+@media print {
+  /* ========================================
+     GENERAL PRINT SETTINGS
+     ======================================== */
+  
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Remove all top margins and padding from body and first elements */
+  body,
+  body > *:first-child,
+  body > div:first-child {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Remove page margins for better layout */
+  @page {
+    margin: 0.3cm;
+    size: A4;
+  }
+
+  /* Remove any page breaks before content */
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Ensure main content starts immediately */
+  main,
+  .max-w-7xl {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  /* Remove the header spacing from main element */
+  main.pt-\\[94px\\],
+  main[class*="pt-"] {
+    padding-top: 0 !important;
+  }
+
+  /* Remove spacing from first section */
+  section:first-of-type,
+  div:first-of-type {
+    margin-top: 0 !important;
+    padding-top: 0.5rem !important;
+  }
+
+  /* Ensure product hero section starts at top */
+  section.max-w-7xl:first-of-type {
+    margin-top: 0 !important;
+    padding-top: 0.5rem !important;
+  }
+
+  /* Prevent page breaks before first content */
+  .max-w-7xl:first-child,
+  section:first-child {
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+  }
+
+  /* ========================================
+     HIDE ELEMENTS IN PRINT
+     ======================================== */
+  
+  /* Hide navigation, header, footer */
+  header,
+  header *,
+  nav,
+  footer,
+  .floating-actions,
+  #floating-whatsapp,
+  #floating-call {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide the top blue navigation strip - more specific */
+  body > header,
+  [class*="FABRIC MANUFACTURER"],
+  div[class*="bg-[#041632]"]:first-child,
+  header > div,
+  header > nav {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Hide breadcrumbs completely */
+  nav[aria-label="Breadcrumb"],
+  .max-w-7xl:has(nav[aria-label="Breadcrumb"]) {
+    display: none !important;
+  }
+
+  /* Hide supply status section with call button */
+  .print-hide-actions {
+    display: none !important;
+  }
+
+  /* Hide action buttons and interactive elements */
+  #inquire-modal-open,
+  #product-whatsapp-btn,
+  #product-print-btn,
+  #product-email-btn,
+  .gallery-dot,
+  #gallery-dots,
+  #gallery-thumbs,
+  button[aria-label*="share"],
+  button[aria-label*="Share"] {
+    display: none !important;
+  }
+
+  /* Hide "View more" buttons in Application Suitability */
+  #toggle-apps-btn,
+  #desc-toggle-btn {
+    display: none !important;
+  }
+
+  /* Hide Application Suitability section */
+  .print-app-suitability,
+  .print-app-suitability * {
+    display: none !important;
+  }
+
+  /* But keep the parent section visible for Technical Specs */
+  section:has(.print-app-suitability) {
+    display: block !important;
+  }
+
+  /* Make Technical Specs full width when Application Suitability is hidden */
+  section:has(.print-app-suitability) .grid {
+    display: block !important;
+  }
+
+  section:has(.print-app-suitability) .grid > div:first-child {
+    max-width: 100% !important;
+  }
+
+  /* SHOW Quality & Compliance section in print - FIRST */
+  .print-hide-quality {
+    display: block !important;
+    page-break-inside: avoid;
+    order: 1 !important;
+  }
+
+  /* Style Quality & Compliance for print */
+  .print-hide-quality h2 {
+    text-align: center;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .print-hide-quality .grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 1rem !important;
+  }
+
+  .print-hide-quality .grid > div {
+    page-break-inside: avoid;
+    padding: 1rem !important;
+  }
+
+  /* Technical Specs section - SECOND */
+  .print-order-2 {
+    order: 2 !important;
+  }
+
+  /* About this Fabric - THIRD (but hidden) */
+  .print-order-3 {
+    order: 3 !important;
+  }
+
+  /* FAQ - FOURTH (but hidden) */
+  .print-order-4 {
+    order: 4 !important;
+  }
+
+  /* Make body use flexbox for ordering in print */
+  body main {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Product hero should be first */
+  section.max-w-7xl:first-of-type {
+    order: 0 !important;
+  }
+
+  /* Hide FAQ section completely */
+  .print-hide-faq {
+    display: none !important;
+  }
+
+  /* Hide "About this Fabric" section */
+  .print-hide-about {
+    display: none !important;
+  }
+
+  /* If FAQ somehow shows, expand all details */
+  details {
+    display: block !important;
+  }
+
+  details summary {
+    display: block !important;
+    list-style: none !important;
+  }
+
+  details summary::marker,
+  details summary::-webkit-details-marker {
+    display: none !important;
+  }
+
+  /* Show FAQ answers */
+  details > div {
+    display: block !important;
+  }
+
+  /* Hide CTA section */
+  .print-hide-cta {
+    display: none !important;
+  }
+
+  /* Hide carousel navigation buttons */
+  #scroll-right-btn,
+  button[aria-label*="Scroll"] {
+    display: none !important;
+  }
+
+  /* ========================================
+     HEADER - HIDE COMPLETELY IN PRINT
+     ======================================== */
+  
+  /* Hide header completely to avoid empty pages */
+  body > header,
+  header {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* ========================================
+     GALLERY & IMAGES - MAIN IMAGE LARGE, OTHERS SMALL
+     ======================================== */
+  
+  /* Hide video slides FIRST (YouTube and regular videos) */
+  #gallery-track > div:has(iframe),
+  #gallery-track > div:has(video) {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Gallery container - use CSS Grid for layout */
+  #gallery-track {
+    overflow: visible !important;
+    display: grid !important;
+    grid-template-columns: 65% 33% !important;
+    grid-template-rows: 1fr 1fr !important;
+    gap: 0.5rem !important;
+    column-gap: 0.75rem !important;
+    scroll-snap-type: none !important;
+    max-height: 450px !important;
+    height: 450px !important;
+  }
+
+  /* Target only divs with images (not videos) */
+  #gallery-track > div:has(img) {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* First image with img tag - large, spans 2 rows on the left */
+  #gallery-track > div:has(img):nth-of-type(1) {
+    width: 100% !important;
+    height: 100% !important;
+    grid-row: 1 / 3 !important;
+    grid-column: 1 !important;
+  }
+
+  #gallery-track > div:has(img):nth-of-type(1) img {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 450px !important;
+    object-fit: cover !important;
+    border: 1px solid #e5e7eb !important;
+    display: block !important;
+  }
+
+  /* Second image with img tag - top right */
+  #gallery-track > div:has(img):nth-of-type(2) {
+    width: 100% !important;
+    height: 100% !important;
+    grid-row: 1 !important;
+    grid-column: 2 !important;
+  }
+
+  #gallery-track > div:has(img):nth-of-type(2) img {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 220px !important;
+    object-fit: cover !important;
+    border: 1px solid #e5e7eb !important;
+    display: block !important;
+  }
+
+  /* Third image with img tag - bottom right */
+  #gallery-track > div:has(img):nth-of-type(3) {
+    width: 100% !important;
+    height: 100% !important;
+    grid-row: 2 !important;
+    grid-column: 2 !important;
+  }
+
+  #gallery-track > div:has(img):nth-of-type(3) img {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 220px !important;
+    object-fit: cover !important;
+    border: 1px solid #e5e7eb !important;
+    display: block !important;
+  }
+
+  /* Hide remaining images (4th onwards) */
+  #gallery-track > div:has(img):nth-of-type(n+4) {
+    display: none !important;
+  }
+
+  /* Remove zigzag border for cleaner print */
+  .zigzag-frame {
+    clip-path: none !important;
+    border: none !important;
+  }
+
+  /* Optimize images for print */
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+    display: block;
+  }
+
+  /* Force all images to be visible in print (override lazy loading) */
+  .print-related-section img {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    content-visibility: visible !important;
+    min-height: 150px !important;
+  }
+
+  /* Ensure picture elements don't hide images */
+  .print-related-section picture {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Override any lazy loading attributes */
+  img[loading="lazy"] {
+    content-visibility: visible !important;
+  }
+
+  /* Ensure aspect ratio containers show images */
+  .print-related-section .aspect-\\[3\\/2\\] {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 150px !important;
+  }
+
+  /* ========================================
+     TECHNICAL SPECS & QUALITY COMPLIANCE
+     BETTER SPACING AND LAYOUT - FIT ON ONE PAGE
+     ======================================== */
+  
+  /* Make the section more compact with proper spacing */
+  .bg-\\[\\#f3f4f5\\].py-12,
+  .bg-\\[\\#f3f4f5\\].py-20 {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Reduce spacing in grid */
+  .grid.grid-cols-1.lg\\:grid-cols-2 {
+    gap: 1.5rem !important;
+  }
+
+  /* Technical Specifications Heading - Larger and Bold */
+  .bg-\\[\\#f3f4f5\\] h2.font-serif {
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.75rem !important;
+    page-break-after: avoid !important;
+    color: #041632 !important;
+  }
+
+  /* Compact table spacing with larger fonts */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  table td,
+  table th {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.95rem !important;
+    line-height: 1.3 !important;
+    border-bottom: 1px solid #e5e7eb !important;
+  }
+
+  table td:first-child {
+    font-weight: 600 !important;
+    color: #44474d !important;
+  }
+
+  table td:last-child {
+    color: #191c1d !important;
+    font-weight: 500 !important;
+  }
+
+  /* Prevent page breaks in table rows */
+  table tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Quality & Compliance section spacing - COMPACT */
+  .print-hide-quality {
+    padding: 1rem 0 !important;
+    margin: 0.5rem 0 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .print-hide-quality h2 {
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    text-align: center;
+    margin-bottom: 1rem !important;
+    page-break-after: avoid !important;
+    color: #041632 !important;
+  }
+
+  .print-hide-quality .grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  .print-hide-quality .grid > div {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    padding: 0.75rem !important;
+  }
+
+  .print-hide-quality h3 {
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .print-hide-quality p {
+    font-size: 0.8rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .print-hide-quality .material-symbols-outlined {
+    font-size: 2rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Keep Quality & Compliance and Technical Specs together on same page */
+  .print-hide-quality,
+  .print-order-2 {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+  
+  /* Show all hidden applications */
+  #extra-apps {
+    display: block !important;
+    margin-top: 0 !important;
+  }
+
+  /* Make application suitability 3 columns */
+  .print-app-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.25rem !important;
+    column-gap: 0.5rem !important;
+    margin-top: 0 !important;
+  }
+
+  /* Adjust application cards for 3-column layout */
+  .print-app-card {
+    max-width: none !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    padding: 0.5rem !important;
+  }
+
+  /* Ensure the parent container allows grid layout */
+  .print-app-suitability .space-y-2,
+  .print-app-suitability .space-y-3 {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.25rem !important;
+    column-gap: 0.5rem !important;
+  }
+
+  /* ========================================
+     RELATED FABRICS - GRID LAYOUT
+     ======================================== */
+  
+  /* Add proper spacing to Related Fabrics section - MOVE TO END */
+  .print-related-section {
+    margin-top: 1.5rem !important;
+    padding-top: 1.5rem !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    page-break-before: auto;
+    page-break-after: avoid !important;
+    order: 99 !important;
+  }
+
+  .print-related-section h2 {
+    margin-bottom: 1rem !important;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+  }
+
+  /* Convert carousel to grid */
+  .print-related-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 1rem !important;
+    overflow: visible !important;
+    scroll-snap-type: none !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .print-related-grid > a {
+    width: 100% !important;
+    min-width: auto !important;
+    max-width: none !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    display: block !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* Force images to load and display in print */
+  .print-related-grid picture,
+  .print-related-grid source,
+  .print-related-grid img {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Style fabric card image containers */
+  .print-related-grid > a > div {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 3/2 !important;
+    background: #f3f4f5 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Style fabric card images */
+  .print-related-grid img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+    border: 1px solid #e5e7eb !important;
+  }
+
+  .print-related-grid > a h3 {
+    font-size: 0.8rem !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.25rem !important;
+    line-height: 1.2 !important;
+    font-weight: 600 !important;
+    color: #041632 !important;
+  }
+
+  .print-related-grid > a p {
+    font-size: 0.7rem !important;
+    margin-top: 0.25rem !important;
+    margin-bottom: 0 !important;
+    color: #44474d !important;
+  }
+
+  /* Hide "View Collection" link in print */
+  .print-hide {
+    display: none !important;
+  }
+
+  /* ========================================
+     LAYOUT ADJUSTMENTS
+     ======================================== */
+  
+  /* Prevent orphan pages - remove trailing blank pages */
+  body::after,
+  main::after {
+    display: none !important;
+  }
+
+  /* Remove any trailing margins that cause blank pages */
+  body > *:last-child,
+  main > *:last-child {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    page-break-after: avoid !important;
+  }
+
+  /* Expand collapsed content */
+  .desc-collapsed {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  #long-desc-wrap {
+    max-height: none !important;
+  }
+
+  /* Hide fade overlay */
+  #desc-fade {
+    display: none !important;
+  }
+
+  /* Ensure section headings are visible and styled */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid !important;
+    color: #041632 !important;
+    font-weight: bold !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Make sure "About this Fabric" heading is visible */
+  section h2 {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Adjust spacing for print - prevent page breaks in sections */
+  section {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Add spacing between major sections */
+  section.max-w-7xl {
+    margin-top: 0.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Product hero section - more compact */
+  section.max-w-7xl:first-of-type {
+    margin-bottom: 1rem !important;
+    page-break-after: avoid !important;
+    padding-bottom: 0.5rem !important;
+  }
+
+  /* Reduce product title and description spacing */
+  section.max-w-7xl:first-of-type h1 {
+    font-size: 1.75rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  section.max-w-7xl:first-of-type p {
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+    font-size: 0.9rem !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Technical Specs section - keep together on one page */
+  section.bg-\\[\\#f3f4f5\\] {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-before: auto !important;
+  }
+
+  /* Remove background colors that waste ink */
+  .bg-\\[\\#f3f4f5\\] {
+    background: white !important;
+  }
+
+  .bg-\\[\\#041632\\] {
+    background: white !important;
+  }
+
+  /* Keep important backgrounds */
+  .bg-white {
+    background: white !important;
+  }
+
+  /* Adjust text colors for print */
+  .text-white {
+    color: black !important;
+  }
+
+  /* Ensure all text is readable */
+  p, span, div {
+    color: #000 !important;
+  }
+
+  /* Keep specific colored text */
+  .text-\\[\\#775a19\\],
+  .text-\\[\\#041632\\] {
+    color: #041632 !important;
+  }
+
+  /* ========================================
+     BREADCRUMBS - HIDE COMPLETELY
+     ======================================== */
+  
+  /* Hide breadcrumbs completely to save space */
+  nav[aria-label="Breadcrumb"],
+  div:has(> nav[aria-label="Breadcrumb"]) {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* ========================================
+     TECHNICAL SPECIFICATIONS
+     ======================================== */
+  
+  /* Ensure table prints properly */
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+}

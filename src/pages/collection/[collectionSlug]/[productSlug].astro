@@ -1,0 +1,87 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../../components/common/Breadcrumbs.astro";
+import ProductDetailHero from "../../../components/product/ProductDetailHero.astro";
+import ProductDetailBody from "../../../components/product/ProductDetailBody.astro";
+import ProductDetailRelated from "../../../components/product/ProductDetailRelated.astro";
+import { fetchProducts, type Product } from "../../../data/products";
+import { getDynamicTopicPages, getCompanyInfo } from "../../../lib/api";
+const SITE_BASE = import.meta.env.PUBLIC_SITE_URL;
+
+export async function getStaticPaths() {
+  const [products, topics] = await Promise.all([
+    fetchProducts(),
+    getDynamicTopicPages(),
+  ]);
+
+  const paths: { params: { collectionSlug: string; productSlug: string }; props: { product: Product; collectionProducts: Product[]; collectionName: string } }[] = [];
+
+  for (const topic of topics) {
+    const topicProducts = products.filter(
+      (p) => p.slug && p.merchTags?.includes(topic.slug1)
+    );
+    for (const product of topicProducts) {
+      const collectionProducts = products.filter(
+        (p) => p.collectionId === product.collectionId && p.id !== product.id && p.slug
+      );
+      paths.push({
+        params: { collectionSlug: topic.slug, productSlug: product.slug },
+        props: { product, collectionProducts, collectionName: topic.name },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { product, collectionProducts, collectionName } = Astro.props as {
+  product: Product;
+  collectionProducts: Product[];
+  collectionName: string;
+};
+
+const { collectionSlug } = Astro.params;
+
+const canonicalUrl = `${SITE_BASE}/fabric/${product.slug}`;
+const company = await getCompanyInfo("AGE");
+const companyName = company?.legalName ?? "";
+---
+
+<style>
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+
+<BaseLayout
+  title={`${product.name}`}
+  description={product.shortDesc}
+  canonical={canonicalUrl}
+  keywords={product.keywords}
+  ogTitle={`${product.name} | ${companyName}`}
+  ogDescription={product.shortDesc}
+  ogImage={product.imageLarge || product.image1 || undefined}
+  ogType="product"
+  twitterTitle={`${product.name} | ${companyName}`}
+  twitterDescription={product.shortDesc}
+  twitterImage={product.imageLarge || product.image1 || undefined}
+  breadcrumbs={[
+    { name: "Home", url: "/" },
+    { name: collectionName, url: `/collection/${collectionSlug}` },
+    { name: product.name },
+  ]}
+  waMessage={`Hi, I'm interested in "${product.name}". Can you share more details about this fabric?`}
+>
+  <div class="max-w-7xl mx-auto px-4 lg:px-8 pt-4">
+    <Breadcrumbs
+      items={[
+        { name: "Home", href: "/" },
+        { name: collectionName, href: `/collection/${collectionSlug}` },
+        { name: product.name },
+      ]}
+      variant="light"
+    />
+  </div>
+  <ProductDetailHero product={product} />
+  <ProductDetailBody product={product} />
+  <ProductDetailRelated product={product} collectionProducts={collectionProducts} />
+</BaseLayout>

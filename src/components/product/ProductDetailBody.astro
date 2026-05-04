@@ -1,0 +1,234 @@
+---
+import type { Product } from "../../data/products";
+interface Props { product: Product }
+const { product } = Astro.props;
+
+// Build enhanced weight value with GSM and Oz
+const enhancedWeight = `${Math.round(product.gsm)} GSM / ${(Math.round(product.ozs * 100) / 100).toFixed(2)} oz`;
+
+// Build width value with cm and inch only
+const enhancedWidth = `${Math.round(product.cm)} cm / ${Math.round(product.inch)} inch`;
+
+// Filter out null/empty values and specific fields
+const filteredTechSpecs = product.techSpecs.filter((row) => {
+  // Skip if value is null, undefined, or empty string
+  if (!row.value || row.value.trim() === '') return false;
+  // Skip Width (CM), Width (Inch), GSM, and Ozs rows
+  if (['Width (CM)', 'Width (Inch)', 'GSM', 'Ozs'].includes(row.label)) return false;
+  return true;
+});
+---
+
+<!-- Certifications (Quality & Compliance) - MOVED TO TOP FOR PRINT -->
+<section class="max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-20 print-hide-quality print-order-1">
+  <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-10 lg:mb-12 text-center">Quality &amp; Compliance</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+    {product.certifications.map((cert) => (
+      <div class="bg-white p-4 lg:p-5 border border-[#c5c6ce]/10 text-center flex flex-col items-center shadow-sm">
+        <span class="material-symbols-outlined text-3xl lg:text-4xl text-[#775a19] mb-3" style="font-variation-settings: 'FILL' 1;">{cert.icon}</span>
+        <h3 class="font-bold text-base lg:text-lg">{cert.title}</h3>
+      </div>
+    ))}
+  </div>
+</section>
+
+<!-- Technical Specs & Applications - MOVED BELOW QUALITY FOR PRINT -->
+<section class="bg-[#f3f4f5] py-12 lg:py-20 print-order-2">
+  <div class="max-w-7xl mx-auto px-4 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+
+      <!-- Tech Specs Table -->
+      <div>
+        <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-6 lg:mb-8 flex items-center">
+          <span class="w-10 h-px bg-[#775a19] mr-4"></span>Technical Specifications
+        </h2>
+        <div class="overflow-x-auto shadow-sm">
+          <table class="w-full text-left font-sans min-w-[300px]">
+            <tbody>
+              <!-- Quick specs first -->
+              {product.specs.material && (
+                <tr class="border-b border-[#edeeef]">
+                  <td class="py-4 px-4 lg:px-6 font-semibold text-[#44474d] bg-[#ffffff] text-xs lg:text-sm">Material</td>
+                  <td class="py-4 px-4 lg:px-6 bg-white text-xs lg:text-sm">{product.specs.material}</td>
+                </tr>
+              )}
+              {(product.gsm || product.ozs) && (
+                <tr class="border-b border-[#edeeef]">
+                  <td class="py-4 px-4 lg:px-6 font-semibold text-[#44474d] bg-[#ffffff] text-xs lg:text-sm">Weight</td>
+                  <td class="py-4 px-4 lg:px-6 bg-white text-xs lg:text-sm">{enhancedWeight}</td>
+                </tr>
+              )}
+              {(product.cm || product.inch) && (
+                <tr class="border-b border-[#edeeef]">
+                  <td class="py-4 px-4 lg:px-6 font-semibold text-[#44474d] bg-[#ffffff] text-xs lg:text-sm">Width</td>
+                  <td class="py-4 px-4 lg:px-6 bg-white text-xs lg:text-sm">{enhancedWidth}</td>
+                </tr>
+              )}
+              {product.specs.weave && (
+                <tr class="border-b border-[#edeeef]">
+                  <td class="py-4 px-4 lg:px-6 font-semibold text-[#44474d] bg-[#ffffff] text-xs lg:text-sm">Weave</td>
+                  <td class="py-4 px-4 lg:px-6 bg-white text-xs lg:text-sm">{product.specs.weave}</td>
+                </tr>
+              )}
+              <!-- Detailed tech specs below (filtered) -->
+              {filteredTechSpecs.map((row) => (
+                <tr class="border-b border-[#edeeef]">
+                  <td class="py-4 px-4 lg:px-6 font-semibold text-[#44474d] bg-[#ffffff] text-xs lg:text-sm">{row.label}</td>
+                  <td class="py-4 px-4 lg:px-6 bg-white text-xs lg:text-sm">{row.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Application Suitability -->
+      <div class="print-app-suitability">
+        <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-6 lg:mb-8 flex items-center">
+          <span class="w-10 h-px bg-[#775a19] mr-4"></span>Application Suitability (AI Analysis)
+        </h2>
+        {(() => {
+          const sorted = [...product.applications].sort((a, b) => b.score - a.score);
+          const visible = sorted.slice(0, 6);
+          const hidden = sorted.slice(6);
+          return (
+            <div>
+              <div class="space-y-2 lg:space-y-3 print-app-grid">
+                {visible.map((app) => (
+                  <div class="bg-white p-2 lg:p-3 shadow-sm border-l-3 border-[#041632] max-w-md print-app-card">
+                    <div class="flex justify-between mb-1">
+                      <span class="font-bold text-[#041632] text-xs lg:text-sm">{app.name.replace(/\b\w/g, c => c.toUpperCase())}</span>
+                    </div>
+                    <div class="w-full bg-[#e7e8e9] h-1.5">
+                      <div class="bg-[#041632] h-full" style={`width: ${app.score}%`}></div>
+                    </div>
+                    <p class="text-[10px] lg:text-xs mt-1 text-[#44474d]">{app.desc}</p>
+                  </div>
+                ))}
+              </div>
+              {hidden.length > 0 && (
+                <div>
+                  <div id="extra-apps" class="space-y-2 lg:space-y-3 mt-2 lg:mt-3 hidden print-app-grid">
+                    {hidden.map((app) => (
+                      <div class="bg-white p-2 lg:p-3 shadow-sm border-l-3 border-[#041632] max-w-md print-app-card">
+                        <div class="flex justify-between mb-1">
+                          <span class="font-bold text-[#041632] text-xs lg:text-sm">{app.name.replace(/\b\w/g, c => c.toUpperCase())}</span>
+                        </div>
+                        <div class="w-full bg-[#e7e8e9] h-1.5">
+                          <div class="bg-[#041632] h-full" style={`width: ${app.score}%`}></div>
+                        </div>
+                        <p class="text-[10px] lg:text-xs mt-1 text-[#44474d]">{app.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    id="toggle-apps-btn"
+                    class="mt-5 flex items-center gap-2 text-sm font-semibold text-[#041632] hover:text-[#775a19] transition-colors"
+                  >
+                    <span id="toggle-apps-label">View more ({hidden.length})</span>
+                    <span id="toggle-apps-icon" class="material-symbols-outlined text-base transition-transform">expand_more</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })()}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Long Description -->
+<section class="max-w-7xl mx-auto px-4 lg:px-8 py-12 lg:py-16 print-hide-about print-order-3">
+  <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-6 flex items-center">
+    <span class="w-10 h-px bg-[#775a19] mr-4"></span>About this Fabric
+  </h2>
+  <div class="relative">
+    <div class="desc-outer relative">
+      <div
+        id="long-desc-wrap"
+        class="desc-collapsed text-[#44474d] font-sans leading-relaxed text-sm lg:text-base max-w-none prose prose-sm"
+        set:html={product.longDescription}
+      />
+      <!-- fade overlay — hidden when expanded -->
+      <div id="desc-fade" class="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+    </div>
+    <button
+      id="desc-toggle-btn"
+      class="mt-3 flex items-center gap-1 text-sm font-semibold text-[#041632] hover:text-[#775a19] transition-colors"
+    >
+      <span id="desc-toggle-label">View more</span>
+      <span id="desc-toggle-icon" class="material-symbols-outlined text-base transition-transform">expand_more</span>
+    </button>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="bg-[#041632] text-white py-10 lg:py-12 print-hide-faq print-order-4">
+  <div class="max-w-4xl mx-auto px-4 lg:px-8">
+    <h3 class="font-serif text-xl lg:text-2xl italic mb-6 text-center">Industrial FAQ</h3>
+    <div class="space-y-3">
+      {product.faq.map((item) => (
+        <details class="group cursor-pointer rounded-lg bg-white/5 border border-white/10 hover:border-[#c9a84c]/40 transition-colors duration-200">
+          <summary class="list-none flex justify-between items-start gap-3 px-5 py-4 text-sm lg:text-base font-semibold text-white group-open:text-[#c9a84c] transition-colors duration-200">
+            <span>{item.q}</span>
+            <span class="material-symbols-outlined text-base flex-shrink-0 mt-0.5 text-[#c9a84c] group-open:rotate-180 transition-transform duration-200">expand_more</span>
+          </summary>
+          <div class="px-5 pb-5 pt-1">
+            <div class="w-8 h-px bg-[#c9a84c]/50 mb-3"></div>
+            <p class="text-sm text-[#cbd5e1] leading-relaxed">{item.a}</p>
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .desc-collapsed {
+    max-height: 7rem; /* ~4 full lines */
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .desc-expanded {
+    max-height: 9999px;
+    transition: max-height 0.5s ease;
+  }
+</style>
+
+<script>
+  // Apps toggle
+  const btn = document.getElementById("toggle-apps-btn");
+  const extra = document.getElementById("extra-apps");
+  const label = document.getElementById("toggle-apps-label");
+  const icon = document.getElementById("toggle-apps-icon");
+  if (btn && extra && label && icon) {
+    const count = extra.children.length;
+    btn.addEventListener("click", () => {
+      const isHidden = extra.classList.contains("hidden");
+      extra.classList.toggle("hidden", !isHidden);
+      label.textContent = isHidden ? "View less" : `View more (${count})`;
+      icon.style.transform = isHidden ? "rotate(180deg)" : "";
+    });
+  }
+
+  // Description toggle
+  const descWrap = document.getElementById("long-desc-wrap");
+  const descFade = document.getElementById("desc-fade");
+  const descBtn = document.getElementById("desc-toggle-btn");
+  const descLabel = document.getElementById("desc-toggle-label");
+  const descIcon = document.getElementById("desc-toggle-icon");
+
+  if (descWrap && descBtn && descLabel && descIcon) {
+    let expanded = false;
+    descBtn.addEventListener("click", () => {
+      expanded = !expanded;
+      descWrap.classList.toggle("desc-collapsed", !expanded);
+      descWrap.classList.toggle("desc-expanded", expanded);
+      if (descFade) descFade.style.display = expanded ? "none" : "";
+      descLabel.textContent = expanded ? "View less" : "View more";
+      descIcon.style.transform = expanded ? "rotate(180deg)" : "";
+    });
+  }
+</script>

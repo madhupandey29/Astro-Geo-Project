@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ShippingHero from "../components/shipping/ShippingHero.astro";
+import ShippingProtection from "../components/shipping/ShippingProtection.astro";
+import ShippingPorts from "../components/shipping/ShippingPorts.astro";
+import ShippingFAQ from "../components/shipping/ShippingFAQ.astro";
+import ShippingCTA from "../components/shipping/ShippingCTA.astro";
+import { getTopicPageBySlug } from "../lib/api";
+import { resolveCanonical } from "../lib/seo/canonical";
+
+const seo = await getTopicPageBySlug("shipping");
+---
+
+<BaseLayout
+  title={seo?.metaTitle}
+  description={seo?.description ?? "Global textile logistics from Ahmedabad. FOB, CIF, DAP incoterms. Port Mundra and Kolkata connectivity. 50+ countries served since 1971."}
+  keywords={seo?.keywords ?? undefined}
+  canonical={resolveCanonical(seo?.canonicalUrl)}
+  ogType={seo?.ogType ?? "website"}
+  breadcrumbs={[
+    { name: "Home", url: "/" },
+    { name: "Shipping & Logistics" },
+  ]}
+  waMessage="Hi, I'd like to know more about your shipping and logistics options for bulk fabric orders."
+>
+  <ShippingHero image={seo?.image1CloudUrl ?? null} breadcrumbs={[{ name: "Home", href: "/" }, { name: "Shipping & Logistics" }]} />
+  <ShippingProtection />
+  <ShippingPorts />
+  <ShippingFAQ />
+  <ShippingCTA />
+</BaseLayout>

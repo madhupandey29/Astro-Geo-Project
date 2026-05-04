@@ -1,0 +1,82 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+import HeroSection from "../components/home/HeroSection.astro";
+import TrustSignals from "../components/home/TrustSignals.astro";
+import FeaturedCategories from "../components/home/FeaturedCategories.astro";
+import IndustriesSection from "../components/home/IndustriesSection.astro";
+import DynamicTopicSections from "../components/home/DynamicTopicSections.astro";
+import CapabilitiesPreview from "../components/home/CapabilitiesPreview.astro";import CertificationsPreview from "../components/home/CertificationsPreview.astro";
+import KnowledgePreview from "../components/home/KnowledgePreview.astro";
+import HomepageFAQ from "../components/home/HomepageFAQ.astro";
+import TestimonialsSection from "../components/home/TestimonialsSection.astro";
+import LocationsSection from "../components/home/LocationsSection.astro";
+import { getTopicPageBySlug, getCompanyInfo } from "../lib/api";
+// C1 FIX: use shared Cloudinary utility instead of local copy
+import { rebuildCloudinaryUrl } from "../lib/cloudinary";
+import { resolveCanonical } from "../lib/seo/canonical";
+
+const [seo, company] = await Promise.all([
+  getTopicPageBySlug("home"),
+  getCompanyInfo("AGE"),
+]);
+
+const defaultOgImage = company?.defaultOgImage ?? undefined;
+
+// Build LCP preload for the hero image
+const heroImageUrl = seo?.image1CloudUrl ?? null;
+const heroWidths = [480, 640, 800, 1024];
+const heroPreloadImage = heroImageUrl
+  ? rebuildCloudinaryUrl(heroImageUrl, "f_avif,q_auto,c_fill,g_auto,w_1024,h_1280")
+  : undefined;
+const heroPreloadSrcset = heroImageUrl
+  ? heroWidths.map((w) => `${rebuildCloudinaryUrl(heroImageUrl, `f_avif,q_auto,c_fill,g_auto,w_${w},h_${Math.round(w * 1.25)}`)} ${w}w`).join(", ")
+  : undefined;
+---
+
+<BaseLayout
+  title={seo?.metaTitle}
+  description={seo?.description ?? "Explore premium cotton, denim, knit, and woven fabrics for brands, wholesalers, and sourcing teams."}
+  keywords={seo?.keywords ?? undefined}
+  canonical={resolveCanonical(seo?.canonicalUrl)}
+  ogType={seo?.ogType ?? "website"}
+  ogImage={defaultOgImage}
+  preloadImage={heroPreloadImage}
+  preloadImageSrcset={heroPreloadSrcset}
+  waMessage="Hi, I'm interested in your fabrics. Can you share more information about what you offer?"
+>
+  <HeroSection />
+  <TrustSignals />
+  <FeaturedCategories />
+  <IndustriesSection />
+  <DynamicTopicSections />
+  <CapabilitiesPreview p1={seo?.p1} p2={seo?.p2} />
+  <CertificationsPreview />
+  <KnowledgePreview />
+  <HomepageFAQ />
+  <TestimonialsSection />
+  <LocationsSection />
+</BaseLayout>
+
+<style is:global>
+  .p2-rich-content { color: #44474d; font-size: 1rem; line-height: 1.75; }
+  .p2-rich-content h2,
+  .p2-rich-content h3,
+  .p2-rich-content h4 {
+    font-family: var(--font-headline, Georgia, serif);
+    color: #041632;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+  .p2-rich-content h2 { font-size: 1.5rem; }
+  .p2-rich-content h3 { font-size: 1.25rem; }
+  .p2-rich-content p { margin-top: 0.75rem; }
+  .p2-rich-content ul,
+  .p2-rich-content ol { margin-top: 0.75rem; padding-left: 1.5rem; }
+  .p2-rich-content ul { list-style-type: disc; }
+  .p2-rich-content ol { list-style-type: decimal; }
+  .p2-rich-content li { margin-bottom: 0.4rem; }
+  .p2-rich-content strong { color: #041632; font-weight: 600; }
+  .p2-rich-content a { color: #775a19; text-decoration: underline; }
+</style>

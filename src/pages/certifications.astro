@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CertificationsHero from "../components/certifications/CertificationsHero.astro";
+import CertificationsGrid from "../components/certifications/CertificationsGrid.astro";
+import CertificationsDocCTA from "../components/certifications/CertificationsDocCTA.astro";
+import CertificationsTrust from "../components/certifications/CertificationsTrust.astro";
+import { getCompanyInfo, getTopicPageBySlug } from "../lib/api";
+import { resolveCanonical } from "../lib/seo/canonical";
+
+const [company, seo] = await Promise.all([
+  getCompanyInfo("AGE"),
+  getTopicPageBySlug("certifications"),
+]);
+const companyName = company?.legalName ?? "";
+---
+
+<BaseLayout
+  title={seo?.metaTitle}
+  description={seo?.description ?? `ISO 9001, OEKO-TEX, GOTS, and SA 8000 certified. ${companyName} upholds the highest international standards for quality, safety, and ethical manufacturing.`}
+  keywords={seo?.keywords ?? undefined}
+  canonical={resolveCanonical(seo?.canonicalUrl)}
+  ogType={seo?.ogType ?? "website"}
+  ogImage={seo?.image1CloudUrlHero ?? seo?.image1CloudUrl ?? "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80"}
+  breadcrumbs={[
+    { name: "Home", url: "/" },
+    { name: "Certifications" },
+  ]}
+  waMessage="Hi, I'd like to know more about your certifications and quality standards for fabric manufacturing."
+>
+  <CertificationsHero heroImage={seo?.image1CloudUrlHero ?? seo?.image1CloudUrl ?? undefined} breadcrumbs={[{ name: "Home", href: "/" }, { name: "Certifications" }]} />
+  <CertificationsGrid />
+  <CertificationsDocCTA whatsapp={company?.whatsappNumber} phone={company?.phone1} />
+  <CertificationsTrust />
+</BaseLayout>

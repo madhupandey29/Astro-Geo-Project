@@ -1,0 +1,481 @@
+---
+import type { Product } from "../../data/products";
+import { getCloudinaryUrl } from "../../data/products";
+import ProductShareButton from "./ProductShareButton.astro";
+import ResponsiveImage from "../common/ResponsiveImage.astro";
+import ProductInquiryModal from "./ProductInquiryModal.astro";
+import { getCompanyInfo } from "../../lib/api";
+interface Props { product: Product }
+const { product } = Astro.props;
+const company = await getCompanyInfo("AGE");
+const SALES_EMAIL = company?.salesEmail ?? null;
+
+// Extract YouTube video ID for thumbnail
+function getYouTubeId(url: string): string | null {
+  // Normalize URL - add https:// if missing
+  let normalizedUrl = url;
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    normalizedUrl = 'https://' + url;
+  }
+  
+  const match = normalizedUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+  return match ? match[1] : null;
+}
+
+type Slot =
+  | { type: "image"; src: string; srcset: string; alt: string }
+  | { type: "youtube"; embedSrc: string; thumbSrc: string; alt: string }
+  | { type: "video"; src: string; alt: string }
+  | { type: "empty" };
+
+function makeVideoSlot(url: string, alt: string): Slot {
+  const videoId = getYouTubeId(url);
+  if (videoId) return {
+    type: "youtube",
+    embedSrc: `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1`,
+    thumbSrc: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
+    alt,
+  };
+  return { type: "video", src: url, alt };
+}
+
+const slots: Slot[] = [
+  product.image1
+    ? { type: "image", src: product.image1, srcset: product.image1Srcset, alt: product.imageAlt ?? product.name }
+    : { type: "empty" },
+  product.image2
+    ? { type: "image", src: product.image2, srcset: "", alt: product.imageAlt2 ?? product.name }
+    : { type: "empty" },
+  product.image3
+    ? { type: "image", src: product.image3, srcset: "", alt: product.imageAlt3 ?? product.name }
+    : { type: "empty" },
+  product.videoURL
+    ? makeVideoSlot(product.videoURL, product.name + " Video")
+    : { type: "empty" },
+  product.collectionImage
+    ? { type: "image", src: product.collectionImage, srcset: product.collectionImageSrcset, alt: product.collectionImageAlt ?? product.collectionName }
+    : { type: "empty" },
+  product.collectionVideoURL
+    ? makeVideoSlot(product.collectionVideoURL, "Collection Video")
+    : { type: "empty" },
+];
+
+// Main slides = only non-empty slots
+const slides = slots.filter((s): s is Exclude<Slot, { type: "empty" }> => s.type !== "empty");
+---
+
+<section class="max-w-7xl mx-auto px-4 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mt-4">
+  <!-- Gallery -->
+  <div class="lg:col-span-7">
+    <div class="relative group">
+      <!-- Main slider — only non-empty slots -->
+      <div class="zigzag-frame">
+      <div id="gallery-track" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar bg-[#f3f4f5]">
+        {slides.map((slide, i) => (
+          <div class="snap-center shrink-0 w-full" data-index={i}>
+            {slide.type === "image" ? (
+              <ResponsiveImage
+                src={getCloudinaryUrl(slide.src, slide.srcset ? "f_auto,q_auto,w_700,c_limit" : "f_auto,q_auto,w_665,c_limit")}
+                alt={slide.alt}
+                title={slide.alt}
+                width={700}
+                height={467}
+                widths={[480, 700, 960, 1200]}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 58vw"
+                crop="limit"
+                loading={i === 0 ? "eager" : "lazy"}
+                fetchpriority={i === 0 ? "high" : "auto"}
+                class="w-full h-[350px] lg:h-[600px] object-cover"
+                srcset={slide.srcset}
+              />
+            ) : slide.type === "youtube" ? (
+              <iframe
+                src={slide.embedSrc}
+                class="w-full h-[350px] lg:h-[600px]"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                loading="lazy"
+                title={slide.alt}
+              />
+            ) : (
+              <video
+                src={slide.src}
+                class="w-full h-[350px] lg:h-[600px] object-cover"
+                controls
+                muted
+                playsinline
+                preload="metadata"
+              />
+            )}
+          </div>
+        ))}
+      </div>
+      </div><!-- /zigzag-frame -->
+
+      <!-- Mobile dots -->
+      {slides.length > 1 && (
+        <div id="gallery-dots" class="flex lg:hidden justify-center space-x-2 mt-4">
+          {slides.map((_, i) => (
+            <button
+              class={`w-6 h-6 flex items-center justify-center gallery-dot`}
+              data-dot={i}
+              aria-label={`Go to slide ${i + 1}`}
+            >
+              <span class={`w-2 h-2 rounded-full transition-colors block ${i === 0 ? "bg-[#041632]" : "bg-[#e1e3e4]"}`}></span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <!-- Thumbnails (desktop) — only non-empty slots -->
+    {slides.length > 1 && (
+    <div id="gallery-thumbs" class="hidden lg:flex flex-wrap gap-3 mt-4">
+      {slides.map((slide, slideIndex) => (
+          <button
+            class={`h-20 w-20 flex-shrink-0 overflow-hidden border-2 transition-colors gallery-thumb ${slideIndex === 0 ? "border-[#041632]" : "border-transparent"} cursor-pointer`}
+            data-thumb={slideIndex}
+            aria-label={`View slide ${slideIndex + 1}`}
+          >
+            {slide.type === "image" ? (
+              <ResponsiveImage
+                src={getCloudinaryUrl(slide.src, "f_auto,q_auto,w_160,h_160,c_fill,g_auto")}
+                alt={slide.alt}
+                title={slide.alt}
+                width={80}
+                height={80}
+                widths={[80, 160, 240]}
+                sizes="80px"
+                crop="fill"
+                loading="lazy"
+                class="w-full h-full object-cover"
+              />
+            ) : slide.type === "youtube" ? (
+              <div class="relative w-full h-full">
+                <ResponsiveImage
+                  src={slide.thumbSrc}
+                  alt={slide.alt}
+                  title={slide.alt}
+                  width={80}
+                  height={80}
+                  sizes="80px"
+                  loading="lazy"
+                  class="w-full h-full object-cover"
+                />
+                <div class="absolute inset-0 flex items-center justify-center bg-black/20">
+                  <span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+                </div>
+              </div>
+            ) : (
+              <div class="w-full h-full bg-[#e7e8e9] flex items-center justify-center">
+                <span class="material-symbols-outlined text-2xl text-[#44474d]">play_circle</span>
+              </div>
+            )}
+          </button>
+      ))}
+    </div>
+    )}
+  </div>
+
+  <!-- Lead Panel -->
+  <div class="lg:col-span-5 flex flex-col space-y-6 lg:space-y-8">
+    <div>
+      <span class="font-sans text-xs uppercase tracking-widest text-[#775a19] font-bold">{product.seriesLabel}</span>
+      <div class="flex flex-wrap items-center gap-4 mb-3">
+        <div class="flex items-center space-x-1 py-1 px-2 bg-[#e7e8e9] rounded-sm">
+          <span class="material-symbols-outlined text-sm text-[#FFD700]" style="font-variation-settings: 'FILL' 1;">star</span>
+          <span class="text-xs font-bold text-[#191c1d]">
+            {product.rating} <span class="font-normal text-[#44474d]">({product.ratingCount} ratings)</span>
+          </span>
+        </div>
+        <div class="font-sans text-[#44474d] flex items-center">
+          <a href={`/category/${product.categorySlug}`} class="text-sm font-semibold hover:text-[#775a19] cursor-pointer transition-colors">{product.category}</a>
+        </div>
+      </div>
+      <h1 class="font-serif text-2xl lg:text-4xl font-extrabold mt-2 text-[#041632] leading-tight">{product.name}</h1>
+      {product.productTagline && (
+        <p class="mt-3 text-[#775a19] text-base lg:text-lg font-semibold italic">{product.productTagline}</p>
+      )}
+      <p class="mt-4 text-[#44474d] text-sm lg:text-base leading-relaxed border-l-4 border-[#775a19] pl-4">{product.shortDesc}</p>
+    </div>
+
+    <div class="bg-[#f3f4f5] p-4 lg:p-8 space-y-4 lg:space-y-6 print-hide-actions">
+      <!-- Supply Status — single line on all screens -->
+      <div class="flex items-center justify-between border-b border-[#c5c6ce]/20 pb-3">
+        <span class="text-xs font-sans uppercase tracking-wider whitespace-nowrap">Supply Status</span>
+        <span class="bg-[#775a19]/10 text-[#775a19] px-2.5 py-1 rounded-full flex items-center gap-1 whitespace-nowrap ml-2">
+          <span class="material-symbols-outlined text-sm leading-none" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+          <span class="font-bold text-xs">{product.supplyStatus}</span>
+        </span>
+      </div>
+      <div class="space-y-3">
+        <!-- Main CTA — single line -->
+        <button
+          id="inquire-modal-open"
+          type="button"
+          data-product={product.name}
+          class="w-full bg-[#041632] text-white py-3 lg:py-4 px-4 font-bold flex items-center justify-center gap-2 hover:bg-[#775a19] transition-colors cursor-pointer text-sm lg:text-base whitespace-nowrap"
+        >
+          <span class="material-symbols-outlined text-[18px]">mail</span>
+          <span>INQUIRE FOR BULK QUOTE</span>
+        </button>
+        <!-- 5 action buttons — always one row -->
+        <div class="grid grid-cols-5 gap-1.5">
+          <button
+            id="product-whatsapp-btn"
+            type="button"
+            aria-label="Get quote on WhatsApp"
+            class="flex flex-col items-center justify-center gap-1 border border-[#c5c6ce] py-2.5 px-1 hover:bg-[#e7e8e9] transition-colors cursor-pointer"
+          >
+            <svg class="shrink-0 w-5 h-5" viewBox="0 0 24 24" fill="#25D366" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            <span class="text-[10px] font-semibold">WhatsApp</span>
+          </button>
+          <a href={product.phone} class="flex flex-col items-center justify-center gap-1 border border-[#c5c6ce] py-2.5 px-1 hover:bg-[#e7e8e9] transition-colors">
+            <span class="material-symbols-outlined text-[20px]">call</span>
+            <span class="text-[10px] font-semibold">Call</span>
+          </a>
+          <a
+            id="product-email-btn"
+            href="#"
+            class="flex flex-col items-center justify-center gap-1 border border-[#c5c6ce] py-2.5 px-1 hover:bg-[#e7e8e9] transition-colors"
+            data-product={product.name}
+          >
+            <span class="material-symbols-outlined text-[#775a19] text-[20px]">mail</span>
+            <span class="text-[10px] font-semibold">Email</span>
+          </a>
+          <button
+            id="product-print-btn"
+            type="button"
+            aria-label="Print or save as PDF"
+            class="flex flex-col items-center justify-center gap-1 border border-[#c5c6ce] py-2.5 px-1 hover:bg-[#e7e8e9] transition-colors cursor-pointer"
+          >
+            <span class="material-symbols-outlined text-[20px]">download</span>
+            <span class="text-[10px] font-semibold">Print</span>
+          </button>
+          <ProductShareButton product={product} />
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Specs Strip removed — specs are now in the Technical Specifications table -->
+  </div>
+</section>
+
+<ProductInquiryModal />
+
+<script define:vars={{ SALES_EMAIL }}>
+  // ── Email & WhatsApp dynamic URLs ─────────────────────────────────────────────
+  const emailBtn   = document.getElementById('product-email-btn');
+  const waBtn      = document.getElementById('product-whatsapp-btn');
+  const printBtn   = document.getElementById('product-print-btn');
+
+  if (emailBtn) {
+    const productName = emailBtn.dataset.product ?? 'Product';
+    const pageUrl     = window.location.href;
+    const subject     = encodeURIComponent(`Bulk Quote Inquiry — ${productName}`);
+    const body        = encodeURIComponent(
+      `Hi,\n\nI am interested in getting a bulk quote for the following product:\n\n${productName}\n${pageUrl}\n\nPlease share pricing and availability.\n\nThank you.`
+    );
+    emailBtn.href = `mailto:${SALES_EMAIL}?subject=${subject}&body=${body}`;
+  }
+
+  if (waBtn) {
+    const pageUrl = window.location.href;
+    const message = encodeURIComponent(
+      `Hi, I'm interested in a bulk quote for this product:\n${pageUrl}`
+    );
+    waBtn.setAttribute('data-wa-link', `https://wa.me/919925155141?text=${message}`);
+  }
+
+  // ── Print/PDF functionality ───────────────────────────────────────────────────
+  if (printBtn) {
+    printBtn.addEventListener('click', async () => {
+      // Force load all lazy images before printing
+      const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+      lazyImages.forEach(img => {
+        img.loading = 'eager';
+        // Force browser to load the image
+        if (img.src) {
+          const tempImg = new Image();
+          tempImg.src = img.src;
+        }
+      });
+      
+      // Wait a moment for images to start loading
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      window.print();
+    });
+  }
+</script>
+
+<script>
+  const track = document.getElementById("gallery-track") as HTMLElement;
+  const dots = document.querySelectorAll<HTMLButtonElement>(".gallery-dot");
+  const thumbs = document.querySelectorAll<HTMLButtonElement>(".gallery-thumb");
+
+  function goTo(index: number) {
+    const slideWidth = track.offsetWidth;
+    track.scrollTo({ left: slideWidth * index, behavior: "smooth" });
+    dots.forEach((d, i) => {
+      const inner = d.querySelector("span");
+      if (inner) {
+        inner.classList.toggle("bg-[#041632]", i === index);
+        inner.classList.toggle("bg-[#e1e3e4]", i !== index);
+      }
+    });
+    thumbs.forEach((t, i) => {
+      t.classList.toggle("border-[#041632]", i === index);
+      t.classList.toggle("border-transparent", i !== index);
+    });
+  }
+
+  dots.forEach((dot) => {
+    dot.addEventListener("click", () => goTo(Number(dot.dataset.dot)));
+  });
+
+  thumbs.forEach((thumb) => {
+    thumb.addEventListener("click", () => {
+      const idx = Number(thumb.dataset.thumb);
+      if (idx >= 0) goTo(idx);
+    });
+  });
+
+  // Sync dots/thumbs on scroll
+  track?.addEventListener("scroll", () => {
+    const index = Math.round(track.scrollLeft / track.offsetWidth);
+    dots.forEach((d, i) => {
+      const inner = d.querySelector("span");
+      if (inner) {
+        inner.classList.toggle("bg-[#041632]", i === index);
+        inner.classList.toggle("bg-[#e1e3e4]", i !== index);
+      }
+    });
+    thumbs.forEach((t, i) => {
+      t.classList.toggle("border-[#041632]", i === index);
+      t.classList.toggle("border-transparent", i !== index);
+    });
+  });
+</script>
+
+<style>
+  /* Zigzag / pinking-shears border on all 4 sides */
+  .zigzag-frame {
+    position: relative;
+    clip-path: polygon(
+      /* TOP edge — left to right */
+      0% 0%,        2% 12px,
+      4% 0%,        6% 12px,
+      8% 0%,        10% 12px,
+      12% 0%,       14% 12px,
+      16% 0%,       18% 12px,
+      20% 0%,       22% 12px,
+      24% 0%,       26% 12px,
+      28% 0%,       30% 12px,
+      32% 0%,       34% 12px,
+      36% 0%,       38% 12px,
+      40% 0%,       42% 12px,
+      44% 0%,       46% 12px,
+      48% 0%,       50% 12px,
+      52% 0%,       54% 12px,
+      56% 0%,       58% 12px,
+      60% 0%,       62% 12px,
+      64% 0%,       66% 12px,
+      68% 0%,       70% 12px,
+      72% 0%,       74% 12px,
+      76% 0%,       78% 12px,
+      80% 0%,       82% 12px,
+      84% 0%,       86% 12px,
+      88% 0%,       90% 12px,
+      92% 0%,       94% 12px,
+      96% 0%,       98% 12px,
+      100% 0%,
+
+      /* RIGHT edge — top to bottom */
+      calc(100% - 12px) 2%,
+      100% 4%,      calc(100% - 12px) 6%,
+      100% 8%,      calc(100% - 12px) 10%,
+      100% 12%,     calc(100% - 12px) 14%,
+      100% 16%,     calc(100% - 12px) 18%,
+      100% 20%,     calc(100% - 12px) 22%,
+      100% 24%,     calc(100% - 12px) 26%,
+      100% 28%,     calc(100% - 12px) 30%,
+      100% 32%,     calc(100% - 12px) 34%,
+      100% 36%,     calc(100% - 12px) 38%,
+      100% 40%,     calc(100% - 12px) 42%,
+      100% 44%,     calc(100% - 12px) 46%,
+      100% 48%,     calc(100% - 12px) 50%,
+      100% 52%,     calc(100% - 12px) 54%,
+      100% 56%,     calc(100% - 12px) 58%,
+      100% 60%,     calc(100% - 12px) 62%,
+      100% 64%,     calc(100% - 12px) 66%,
+      100% 68%,     calc(100% - 12px) 70%,
+      100% 72%,     calc(100% - 12px) 74%,
+      100% 76%,     calc(100% - 12px) 78%,
+      100% 80%,     calc(100% - 12px) 82%,
+      100% 84%,     calc(100% - 12px) 86%,
+      100% 88%,     calc(100% - 12px) 90%,
+      100% 92%,     calc(100% - 12px) 94%,
+      100% 96%,     calc(100% - 12px) 98%,
+      100% 100%,
+
+      /* BOTTOM edge — right to left */
+      98% calc(100% - 12px),
+      96% 100%,     94% calc(100% - 12px),
+      92% 100%,     90% calc(100% - 12px),
+      88% 100%,     86% calc(100% - 12px),
+      84% 100%,     82% calc(100% - 12px),
+      80% 100%,     78% calc(100% - 12px),
+      76% 100%,     74% calc(100% - 12px),
+      72% 100%,     70% calc(100% - 12px),
+      68% 100%,     66% calc(100% - 12px),
+      64% 100%,     62% calc(100% - 12px),
+      60% 100%,     58% calc(100% - 12px),
+      56% 100%,     54% calc(100% - 12px),
+      52% 100%,     50% calc(100% - 12px),
+      48% 100%,     46% calc(100% - 12px),
+      44% 100%,     42% calc(100% - 12px),
+      40% 100%,     38% calc(100% - 12px),
+      36% 100%,     34% calc(100% - 12px),
+      32% 100%,     30% calc(100% - 12px),
+      28% 100%,     26% calc(100% - 12px),
+      24% 100%,     22% calc(100% - 12px),
+      20% 100%,     18% calc(100% - 12px),
+      16% 100%,     14% calc(100% - 12px),
+      12% 100%,     10% calc(100% - 12px),
+      8% 100%,      6% calc(100% - 12px),
+      4% 100%,      2% calc(100% - 12px),
+      0% 100%,
+
+      /* LEFT edge — bottom to top */
+      12px 98%,
+      0% 96%,       12px 94%,
+      0% 92%,       12px 90%,
+      0% 88%,       12px 86%,
+      0% 84%,       12px 82%,
+      0% 80%,       12px 78%,
+      0% 76%,       12px 74%,
+      0% 72%,       12px 70%,
+      0% 68%,       12px 66%,
+      0% 64%,       12px 62%,
+      0% 60%,       12px 58%,
+      0% 56%,       12px 54%,
+      0% 52%,       12px 50%,
+      0% 48%,       12px 46%,
+      0% 44%,       12px 42%,
+      0% 40%,       12px 38%,
+      0% 36%,       12px 34%,
+      0% 32%,       12px 30%,
+      0% 28%,       12px 26%,
+      0% 24%,       12px 22%,
+      0% 20%,       12px 18%,
+      0% 16%,       12px 14%,
+      0% 12%,       12px 10%,
+      0% 8%,        12px 6%,
+      0% 4%,        12px 2%,
+      0% 0%
+    );
+  }
+</style>

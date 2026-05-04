@@ -1,0 +1,256 @@
+---
+let _carouselCount = 0;
+
+interface Props {
+  cols?: { mobile?: number; tablet?: number; desktop?: number };
+  gap?: string;
+  showArrows?: boolean;
+  variant?: "default" | "compact" | "wide";
+  peekMobile?: boolean;
+  id?: string;
+  arrowStyle?: "default" | "outline";
+}
+
+const {
+  cols = { mobile: 1, tablet: 2, desktop: 3 },
+  gap = "gap-6",
+  showArrows = true,
+  variant = "default",
+  peekMobile = false,
+  id = `carousel-${_carouselCount++}`,
+  arrowStyle = "default",
+} = Astro.props;
+
+const variantConfigs = {
+  default: { mobile: 1, tablet: 2, desktop: 3 },
+  compact: { mobile: 1, tablet: 2, desktop: 4 },
+  wide:    { mobile: 1, tablet: 1, desktop: 3 },
+};
+
+const finalCols = variant !== "default" ? variantConfigs[variant] : cols;
+const trackId = `${id}-track`;
+
+const gapMap: Record<string, string> = {
+  "gap-0": "0px", "gap-1": "4px", "gap-2": "8px", "gap-3": "12px",
+  "gap-4": "16px", "gap-5": "20px", "gap-6": "24px", "gap-7": "28px",
+  "gap-8": "32px", "gap-10": "40px", "gap-12": "48px",
+};
+const gapTokens = gap.split(" ").map(t => t.replace(/^(sm:|md:|lg:|xl:)/, ""));
+const gapPx = gapTokens.reduce<string>((max, token) => {
+  const px = parseInt(gapMap[token] ?? "0");
+  return px > parseInt(max) ? (gapMap[token] ?? max) : max;
+}, "0px");
+
+const btnBase = arrowStyle === "outline"
+  ? "w-9 h-9 rounded-full border border-[#c3c6d1] bg-white text-[#041632] hover:bg-[#385b99] hover:text-white hover:border-[#385b99]"
+  : "w-9 h-9 rounded-full bg-white text-[#041632] hover:bg-[#f0f0f0]";
+---
+
+<div
+  class="carousel-root"
+  data-carousel-outer={id}
+  data-mobile-cols={finalCols.mobile ?? 1}
+  data-tablet-cols={finalCols.tablet ?? 2}
+  data-desktop-cols={finalCols.desktop ?? 3}
+  data-gap-px={gapPx}
+  style={`--cols-mobile:${finalCols.mobile ?? 1};--cols-tablet:${finalCols.tablet ?? 2};--cols-desktop:${finalCols.desktop ?? 3};--gap-px:${gapPx};`}
+>
+  <!-- Mobile: arrows float top-right above the track -->
+  {showArrows && (
+    <div class="c-mobile-arrows">
+      <button class:list={["c-arrow", btnBase]} aria-label="Previous" data-carousel-prev={trackId}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <button class:list={["c-arrow", btnBase]} aria-label="Next" data-carousel-next={trackId}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+    </div>
+  )}
+
+  <!-- Scrollable track -->
+  <div id={trackId} class:list={["carousel-track", gap]} data-carousel-track={id}>
+    <slot />
+  </div>
+
+  <!-- Desktop: arrows sit outside left/right of track -->
+  {showArrows && (
+    <>
+      <button class:list={["c-arrow c-desktop-prev", btnBase]} aria-label="Previous" data-carousel-prev={trackId}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <button class:list={["c-arrow c-desktop-next", btnBase]} aria-label="Next" data-carousel-next={trackId}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+    </>
+  )}
+</div>
+
+<style define:vars={{
+  "cols-mobile":  String(finalCols.mobile  ?? 1),
+  "cols-tablet":  String(finalCols.tablet  ?? 2),
+  "cols-desktop": String(finalCols.desktop ?? 3),
+  "gap-px": gapPx,
+}}>
+  .carousel-root {
+    position: relative;
+  }
+  @media (min-width: 1024px) {
+    .carousel-root {
+      margin-left: 3rem;
+      margin-right: 3rem;
+    }
+  }
+
+  /* Track */
+  .carousel-track {
+    display: flex;
+    align-items: stretch;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+  }
+  .carousel-track::-webkit-scrollbar { display: none; }
+
+  /* Cards */
+  .carousel-track > :global(*) {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    width: calc((100% - var(--gap-px) * (var(--cols-mobile) - 1)) / var(--cols-mobile));
+    min-width: calc((100% - var(--gap-px) * (var(--cols-mobile) - 1)) / var(--cols-mobile));
+  }
+  @media (min-width: 640px) {
+    .carousel-track > :global(*) {
+      width: calc((100% - var(--gap-px) * (var(--cols-tablet) - 1)) / var(--cols-tablet));
+      min-width: calc((100% - var(--gap-px) * (var(--cols-tablet) - 1)) / var(--cols-tablet));
+    }
+  }
+  @media (min-width: 1024px) {
+    .carousel-track > :global(*) {
+      width: calc((100% - var(--gap-px) * (var(--cols-desktop) - 1)) / var(--cols-desktop));
+      min-width: calc((100% - var(--gap-px) * (var(--cols-desktop) - 1)) / var(--cols-desktop));
+    }
+  }
+
+  /* Shared arrow style */
+  .c-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.18s, color 0.18s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  .c-arrow svg { display: block; pointer-events: none; }
+
+  /* ── Mobile arrow row ─────────────────────────────────────────────────────
+     Positioned absolute at top-right corner of the carousel-root.
+     Sits above the track (negative top offset = half button height = 18px).
+     Hidden on desktop.
+  ───────────────────────────────────────────────────────────────────────── */
+  .c-mobile-arrows {
+    position: absolute;
+    top: -2.75rem;   /* float above the track, aligned with last line of title */
+    right: 0;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 10;
+  }
+  @media (min-width: 1024px) {
+    .c-mobile-arrows { display: none; }
+  }
+
+  @supports selector(:has(*)) {
+    .carousel-root[data-mobile-cols="1"]:not(:has(.carousel-track > :nth-child(2))) .c-mobile-arrows,
+    .carousel-root[data-mobile-cols="2"]:not(:has(.carousel-track > :nth-child(3))) .c-mobile-arrows,
+    .carousel-root[data-mobile-cols="3"]:not(:has(.carousel-track > :nth-child(4))) .c-mobile-arrows,
+    .carousel-root[data-mobile-cols="4"]:not(:has(.carousel-track > :nth-child(5))) .c-mobile-arrows {
+      display: none;
+    }
+
+    @media (min-width: 640px) {
+      .carousel-root[data-tablet-cols="1"]:not(:has(.carousel-track > :nth-child(2))) .c-mobile-arrows,
+      .carousel-root[data-tablet-cols="2"]:not(:has(.carousel-track > :nth-child(3))) .c-mobile-arrows,
+      .carousel-root[data-tablet-cols="3"]:not(:has(.carousel-track > :nth-child(4))) .c-mobile-arrows,
+      .carousel-root[data-tablet-cols="4"]:not(:has(.carousel-track > :nth-child(5))) .c-mobile-arrows {
+        display: none;
+      }
+    }
+  }
+
+  /* ── Desktop arrows ───────────────────────────────────────────────────────
+     Absolute, outside the track. Hidden on mobile.
+  ───────────────────────────────────────────────────────────────────────── */
+  .c-desktop-prev,
+  .c-desktop-next {
+    display: none;
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    z-index: 10;
+  }
+  @media (min-width: 1024px) {
+    .c-desktop-prev { display: flex; left: -3rem; }
+    .c-desktop-next { display: flex; right: -3rem; }
+  }
+
+  @supports selector(:has(*)) {
+    @media (min-width: 1024px) {
+      .carousel-root[data-desktop-cols="1"]:not(:has(.carousel-track > :nth-child(2))) .c-desktop-prev,
+      .carousel-root[data-desktop-cols="1"]:not(:has(.carousel-track > :nth-child(2))) .c-desktop-next,
+      .carousel-root[data-desktop-cols="2"]:not(:has(.carousel-track > :nth-child(3))) .c-desktop-prev,
+      .carousel-root[data-desktop-cols="2"]:not(:has(.carousel-track > :nth-child(3))) .c-desktop-next,
+      .carousel-root[data-desktop-cols="3"]:not(:has(.carousel-track > :nth-child(4))) .c-desktop-prev,
+      .carousel-root[data-desktop-cols="3"]:not(:has(.carousel-track > :nth-child(4))) .c-desktop-next,
+      .carousel-root[data-desktop-cols="4"]:not(:has(.carousel-track > :nth-child(5))) .c-desktop-prev,
+      .carousel-root[data-desktop-cols="4"]:not(:has(.carousel-track > :nth-child(5))) .c-desktop-next {
+        display: none;
+      }
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-carousel-prev], [data-carousel-next]').forEach((btn) => {
+    const isPrev = btn.hasAttribute('data-carousel-prev');
+    const trackId = btn.getAttribute(isPrev ? 'data-carousel-prev' : 'data-carousel-next')!;
+    const track = document.getElementById(trackId);
+    const outer = track?.closest<HTMLElement>('[data-carousel-outer]');
+    if (!track || !outer) return;
+
+    const gap = parseFloat(outer.dataset.gapPx ?? '0') || 0;
+    const getVisibleCols = () => {
+      if (window.matchMedia('(min-width: 1024px)').matches) {
+        return parseInt(outer.dataset.desktopCols ?? '3', 10) || 3;
+      }
+      if (window.matchMedia('(min-width: 640px)').matches) {
+        return parseInt(outer.dataset.tabletCols ?? '2', 10) || 2;
+      }
+      return parseInt(outer.dataset.mobileCols ?? '1', 10) || 1;
+    };
+
+    btn.addEventListener('click', () => {
+      const cols = getVisibleCols();
+      const step = cols > 0 ? Math.round((track.clientWidth + gap) / cols) : track.clientWidth;
+      track.scrollBy({ left: isPrev ? -step : step, behavior: 'smooth' });
+    });
+  });
+</script>

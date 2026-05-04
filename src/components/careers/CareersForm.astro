@@ -1,0 +1,245 @@
+﻿---
+import MultiStepContactForm from "../common/MultiStepContactForm.astro";
+import { getCompanyInfo } from "../../lib/api";
+const CAREERS_LEAD_CAPTURE_URL = import.meta.env.PUBLIC_ESPO_BASE + "/LeadCapture/" + import.meta.env.PUBLIC_CAREERS_LEAD_CAPTURE_KEY;
+const ATTACHMENT_UPLOAD_URL = import.meta.env.PUBLIC_ESPO_BASE + "/Attachment";
+const company = await getCompanyInfo("AGE");
+const companyName = company?.legalName ?? "";
+---
+
+<MultiStepContactForm
+  formId="jf"
+  sectionId="apply-now"
+  sectionIcon="work"
+  badge="Join the Team"
+  heading="Apply Now"
+  subheading={`Begin your journey with ${companyName}.`}
+  steps={[{ label: "Personal" }, { label: "Experience" }, { label: "Resume" }]}
+  submitLabel="Submit Application"
+  successTitle="Application Submitted"
+  successMessage="Thank you for applying. We'll be in touch soon."
+>
+
+  <!-- STEP 1: Personal -->
+  <div id="jf-step-0" class="space-y-5">
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label for="jf-firstName" class="msf-label">First Name <span class="text-red-500">*</span></label>
+        <input id="jf-firstName" type="text" name="firstName" required class="msf-input" placeholder="First name" />
+      </div>
+      <div>
+        <label for="jf-lastName" class="msf-label">Last Name <span class="text-red-500">*</span></label>
+        <input id="jf-lastName" type="text" name="lastName" required class="msf-input" placeholder="Last name" />
+      </div>
+    </div>
+    <div>
+      <label for="jf-email" class="msf-label">Email Address <span class="text-red-500">*</span></label>
+      <input id="jf-email" type="email" name="emailAddress" required class="msf-input" placeholder="email@example.com" />
+    </div>
+    <div>
+      <label for="jf-phone" class="msf-label">Phone Number</label>
+      <input id="jf-phone" type="tel" name="phoneNumber" class="msf-input" placeholder="+91 XXXXX XXXXX" />
+    </div>
+    <div>
+      <label for="jf-street" class="msf-label">Street Address</label>
+      <input id="jf-street" type="text" name="addressStreet" class="msf-input" placeholder="Street address" />
+    </div>
+    <div>
+      <label for="jf-city" class="msf-label">City</label>
+      <input id="jf-city" type="text" name="addressCity" class="msf-input" placeholder="Your city" />
+    </div>
+    <div class="grid grid-cols-3 gap-4">
+      <div>
+        <label for="jf-state" class="msf-label">State</label>
+        <input id="jf-state" type="text" name="addressState" class="msf-input" placeholder="State" />
+      </div>
+      <div>
+        <label for="jf-country" class="msf-label">Country</label>
+        <input id="jf-country" type="text" name="addressCountry" class="msf-input" placeholder="Country" />
+      </div>
+      <div>
+        <label for="jf-postal" class="msf-label">Postal Code</label>
+        <input id="jf-postal" type="text" name="addressPostalCode" class="msf-input" placeholder="PIN / ZIP" />
+      </div>
+    </div>
+    <div class="flex justify-end pt-2">
+      <button type="button" id="jf-next-0" class="msf-btn-primary">Next Step</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Experience -->
+  <div id="jf-step-1" class="space-y-5 hidden">
+    <div>
+      <label for="jf-title" class="msf-label">Position Applied For <span class="text-red-500">*</span></label>
+      <input id="jf-title" type="text" name="title" required class="msf-input" placeholder="e.g. Production Manager" />
+    </div>
+    <div>
+      <label for="jf-experience" class="msf-label">Years of Experience</label>
+      <input id="jf-experience" type="text" name="cExperience" class="msf-input" placeholder="e.g. 5 years" />
+    </div>
+    <div>
+      <label for="jf-description" class="msf-label">Cover Letter</label>
+      <textarea id="jf-description" name="description" rows="5" class="msf-input resize-none" placeholder="Briefly describe why you are a good fit"></textarea>
+    </div>
+    <div class="flex justify-between pt-2">
+      <button type="button" id="jf-prev-1" class="msf-btn-secondary">Previous</button>
+      <button type="button" id="jf-next-1" class="msf-btn-primary">Next Step</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Resume -->
+  <div id="jf-step-2" class="space-y-5 hidden">
+    <div>
+      <label class="msf-label">Upload Resume (PDF / DOCX)</label>
+      <label class="flex flex-col items-center justify-center border-2 border-dashed border-[#c5c6ce] px-6 py-8 cursor-pointer hover:border-[#775a19] transition-colors group">
+        <span class="material-symbols-outlined text-[#44474d] text-3xl mb-2 group-hover:text-[#775a19] transition-colors">upload_file</span>
+        <span class="text-sm text-[#44474d]">
+          <span class="font-bold text-[#775a19]">Upload a file</span> or drag and drop
+        </span>
+        <span class="text-xs text-[#44474d] mt-1">PDF or DOCX · Up to 10MB</span>
+        <input id="jf-resume" type="file" accept=".pdf,.docx" class="sr-only" />
+      </label>
+      <p id="jf-resume-name" class="text-xs text-[#775a19] mt-2 hidden"></p>
+    </div>
+    <div class="flex justify-between pt-2">
+      <button type="button" id="jf-prev-2" class="msf-btn-secondary">Previous</button>
+      <button type="submit" id="jf-submit" class="msf-btn-primary">
+        <span id="jf-submit-text">Submit Application</span>
+        <span id="jf-submit-spinner" class="material-symbols-outlined animate-spin text-base" style="display:none">progress_activity</span>
+      </button>
+    </div>
+  </div>
+
+</MultiStepContactForm>
+
+<script define:vars={{ CAREERS_LEAD_CAPTURE_URL, ATTACHMENT_UPLOAD_URL }}>
+  const ENDPOINT   = CAREERS_LEAD_CAPTURE_URL;
+  const UPLOAD_URL = ATTACHMENT_UPLOAD_URL;
+  const FORM_ID    = 'jf';
+  const STEP_COUNT = 3;
+  const stepLabels = ['Personal', 'Experience', 'Resume'];
+
+  const form      = document.getElementById(FORM_ID);
+  const stepLabel = document.getElementById(`${FORM_ID}-step-label`);
+  let current = 0;
+
+  const g = (name) =>
+    form.querySelector(`[name="${name}"]`)?.value?.trim() ?? '';
+
+  function goTo(n) {
+    document.getElementById(`${FORM_ID}-step-${current}`).classList.add('hidden');
+    current = n;
+    document.getElementById(`${FORM_ID}-step-${current}`).classList.remove('hidden');
+    stepLabel.textContent = stepLabels[current] ?? `Step ${current + 1} of ${STEP_COUNT}`;
+    for (let i = 0; i < STEP_COUNT; i++) {
+      const dot = document.getElementById(`${FORM_ID}-dot-${i}`);
+      if (i <= current) {
+        dot.classList.remove('border-2', 'border-[#d1d5db]', 'text-[#9ca3af]');
+        dot.classList.add('bg-[#041632]', 'text-white');
+      } else {
+        dot.classList.add('border-2', 'border-[#d1d5db]', 'text-[#9ca3af]');
+        dot.classList.remove('bg-[#041632]', 'text-white');
+      }
+    }
+    for (let i = 0; i < STEP_COUNT - 1; i++) {
+      const line = document.getElementById(`${FORM_ID}-line-${i}`);
+      line.classList.toggle('bg-[#041632]', i < current);
+      line.classList.toggle('bg-[#d1d5db]', i >= current);
+    }
+  }
+
+  const _gaPage = () => window.location.pathname;
+  const _gaForm = 'Careers Application Form';
+
+  document.getElementById(`${FORM_ID}-resume`)?.addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    const nameEl = document.getElementById(`${FORM_ID}-resume-name`);
+    if (nameEl) { nameEl.textContent = file ? `Selected: ${file.name}` : ''; nameEl.classList.toggle('hidden', !file); }
+    if (file) window.gtag?.('event', 'careers_resume_uploaded', { file_name: file.name, page_path: _gaPage() });
+  });
+
+  document.getElementById(`${FORM_ID}-next-0`).addEventListener('click', () => {
+    if (!g('firstName') || !g('lastName') || !g('emailAddress')) { alert('Please fill in First Name, Last Name and Email.'); return; }
+    goTo(1);
+    window.gtag?.('event', 'careers_form_step2_experience', { page_path: _gaPage() });
+  });
+  document.getElementById(`${FORM_ID}-prev-1`).addEventListener('click', () => goTo(0));
+  document.getElementById(`${FORM_ID}-next-1`).addEventListener('click', () => {
+    if (!g('title')) { alert('Please enter the position you are applying for.'); return; }
+    goTo(2);
+    window.gtag?.('event', 'careers_form_step3_resume', { page_path: _gaPage() });
+  });
+  document.getElementById(`${FORM_ID}-prev-2`).addEventListener('click', () => goTo(1));
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn  = document.getElementById(`${FORM_ID}-submit`);
+    const submitText = document.getElementById(`${FORM_ID}-submit-text`);
+    const spinner    = document.getElementById(`${FORM_ID}-submit-spinner`);
+    const errorEl    = document.getElementById(`${FORM_ID}-error`);
+    const successEl  = document.getElementById(`${FORM_ID}-success`);
+
+    submitBtn.disabled = true;
+    submitText.textContent = 'Submitting...';
+    spinner.style.display = 'inline-block';
+    errorEl.classList.add('hidden');
+    window.gtag?.('event', 'careers_application_submitted', { position: g('title'), page_path: _gaPage() });
+
+    try {
+      let resumeAttachmentId;
+      const resumeFile = document.getElementById(`${FORM_ID}-resume`)?.files?.[0];
+      if (resumeFile) {
+        try {
+          const fileData = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(resumeFile);
+          });
+          const uploadRes = await fetch(UPLOAD_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: resumeFile.name, type: resumeFile.type, size: resumeFile.size, contents: fileData, relatedType: 'Lead', field: 'cResumeAttachment' }),
+          });
+          if (uploadRes.ok) { const j = await uploadRes.json(); resumeAttachmentId = j.id; }
+        } catch { /* CORS — continue without attachment */ }
+      }
+
+      const rawPhone = g('phoneNumber');
+      const descParts = [];
+      if (rawPhone) descParts.push(`Phone: ${rawPhone}`);
+      const descText = g('description');
+      if (descText) descParts.push(descText);
+      const payload = {
+        firstName: g('firstName'), lastName: g('lastName'), emailAddress: g('emailAddress'),
+        title: g('title'),
+        addressStreet: g('addressStreet'), addressCity: g('addressCity'),
+        addressState: g('addressState'), addressCountry: g('addressCountry'),
+        addressPostalCode: g('addressPostalCode'), cExperience: g('cExperience'),
+      };
+      if (descParts.length) payload.description = descParts.join('\n');
+      if (resumeAttachmentId) payload.cResumeAttachmentIds = resumeAttachmentId;
+
+      const res = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error((await res.text()) || `Error ${res.status}`);
+
+      form.reset();
+      document.getElementById(`${FORM_ID}-step-${current}`).classList.add('hidden');
+      document.getElementById(`${FORM_ID}-stepper`).classList.add('hidden');
+      stepLabel.classList.add('hidden');
+      successEl.classList.remove('hidden');
+      window.gtag?.('event', 'careers_application_success', { page_path: _gaPage() });
+    } catch (err) {
+      errorEl.textContent = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+      errorEl.classList.remove('hidden');
+      window.gtag?.('event', 'careers_application_error', { page_path: _gaPage() });
+      submitBtn.disabled = false;
+      submitText.textContent = 'Submit Application';
+      spinner.style.display = 'none';
+    }
+  });
+</script>
