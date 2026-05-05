@@ -41,19 +41,17 @@ const WELCOME    = `Welcome to ${COMPANY}! 👋\nI'm your fabric catalogue assis
   ></span>
 </button>
 
-<!-- Chat window — opens to the RIGHT of the FAB -->
+<!-- Chat window — bottom sheet on mobile, popover on desktop -->
 <div
   id="cb-window"
   role="dialog"
   aria-label={`${COMPANY} Chat`}
   aria-modal="true"
-  class="fixed z-[200] w-[92vw] md:w-[420px] max-h-[650px]
-         flex flex-col rounded-2xl overflow-hidden
-         transition-all duration-300 origin-left
+  class="fixed z-[200] flex flex-col rounded-2xl overflow-hidden
+         transition-all duration-300
          scale-95 opacity-0 pointer-events-none"
-  style="bottom:16px; left:76px;
-         background:#ffffff;
-         box-shadow:0px 32px 64px rgba(0,0,0,0.15);
+  style="background:#ffffff;
+         box-shadow:0px 32px 64px rgba(0,0,0,0.18);
          border:1px solid rgba(195,198,209,0.2);"
 >
   <!-- ── Header ── -->
@@ -134,7 +132,7 @@ const WELCOME    = `Welcome to ${COMPANY}! 👋\nI'm your fabric catalogue assis
 
 <!-- Mobile backdrop -->
 <div id="cb-backdrop"
-     class="fixed inset-0 z-[199] bg-black/30 hidden md:hidden"
+     class="fixed inset-0 z-[199] bg-black/40 hidden"
      aria-hidden="true">
 </div>
 
@@ -187,6 +185,13 @@ const WELCOME    = `Welcome to ${COMPANY}! 👋\nI'm your fabric catalogue assis
     line-height: 1.5;
   }
   .cb-chip:hover { background: #f4f3f9; border-color: #385b99; }
+
+  /* Mobile bottom sheet safe area */
+  @media (max-width: 639px) {
+    #cb-window footer {
+      padding-bottom: max(1rem, env(safe-area-inset-bottom, 1rem));
+    }
+  }
 </style>
 
 <script define:vars={{ CHAT_URL, HEALTH_URL, WELCOME, COMPANY }}>
@@ -464,6 +469,32 @@ function renderStarters() {
 }
 
 /* ── Open / close ── */
+function isMobile() {
+  return window.innerWidth < 640;
+}
+
+function applyWindowPosition() {
+  if (isMobile()) {
+    // Bottom sheet — full width, anchored to bottom
+    win.style.left         = '0';
+    win.style.right        = '0';
+    win.style.bottom       = '0';
+    win.style.top          = 'auto';
+    win.style.width        = '100%';
+    win.style.maxHeight    = '85dvh';
+    win.style.borderRadius = '20px 20px 0 0';
+  } else {
+    // Desktop popover — right of FAB
+    win.style.left         = '76px';
+    win.style.right        = '';
+    win.style.bottom       = '16px';
+    win.style.top          = 'auto';
+    win.style.width        = '380px';
+    win.style.maxHeight    = '620px';
+    win.style.borderRadius = '16px';
+  }
+}
+
 function openChat() {
   isOpen = true;
   unread = 0;
@@ -473,10 +504,13 @@ function openChat() {
   fab.setAttribute('aria-label', 'Close chat');
   iconChat.classList.add('hidden');
   iconClose.classList.remove('hidden');
-  win.style.transform = 'scale(1)';
-  win.style.opacity = '1';
+  applyWindowPosition();
+  win.style.transform   = 'scale(1)';
+  win.style.opacity     = '1';
   win.style.pointerEvents = 'auto';
   backdrop.classList.remove('hidden');
+  // Prevent body scroll on mobile when chat is open
+  if (isMobile()) document.body.style.overflow = 'hidden';
   renderAll();
   renderStarters();
   setTimeout(() => inputEl.focus(), 100);
@@ -488,10 +522,11 @@ function closeChat() {
   fab.setAttribute('aria-label', 'Open chat');
   iconChat.classList.remove('hidden');
   iconClose.classList.add('hidden');
-  win.style.transform = 'scale(0.95)';
-  win.style.opacity = '0';
+  win.style.transform     = isMobile() ? 'translateY(100%)' : 'scale(0.95)';
+  win.style.opacity       = '0';
   win.style.pointerEvents = 'none';
   backdrop.classList.add('hidden');
+  document.body.style.overflow = '';
 }
 
 fab.addEventListener('click', () => isOpen ? closeChat() : openChat());
@@ -641,23 +676,10 @@ function updateFabVisibility() {
   if (!visible && isOpen) closeChat();
 }
 
-// Keep window within viewport — opens right of FAB
-function positionWindow() {
-  const fabRight = 76 + 360; // left offset + window width
-  if (window.innerWidth < fabRight + 16) {
-    // Not enough room to the right — clamp to viewport
-    win.style.left  = '76px';
-    win.style.right = '0.5rem';
-    win.style.width = 'auto';
-  } else {
-    win.style.left  = '76px';
-    win.style.right = '';
-    win.style.width = '';
-  }
-}
-
 window.addEventListener('scroll', updateFabVisibility, { passive: true });
-window.addEventListener('resize', positionWindow);
-positionWindow();
+window.addEventListener('resize', () => {
+  if (isOpen) applyWindowPosition();
+});
+applyWindowPosition();
 updateFabVisibility();
 </script>
