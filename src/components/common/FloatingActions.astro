@@ -22,7 +22,26 @@ const emailHref = company?.primaryEmail
 ---
 
 <!-- Floating Action Buttons -->
-<div id="floating-left" class="fixed bottom-8 z-[200] flex flex-col gap-2.5 left-4 transition-opacity duration-300 opacity-0 pointer-events-none">
+
+<!-- LEFT side: Call at bottom:16px, Chatbot FAB at bottom:76px (rendered by ChatbotWidget) -->
+<div id="floating-left" class="fixed z-[200] flex flex-col gap-2.5 left-4 transition-opacity duration-300 opacity-0 pointer-events-none" style="bottom: 16px;">
+  <!-- Call -->
+  {phoneHref && (
+    <a
+      href={phoneHref}
+      aria-label="Call us"
+      class="w-12 h-12 flex items-center justify-center rounded-xl shadow-lg hover:scale-105 transition-transform"
+      style="background-color: #1a9e6e;"
+    >
+      <svg viewBox="0 0 24 24" fill="white" class="w-6 h-6" aria-hidden="true">
+        <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24 11.47 11.47 0 0 0 3.58.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.47 11.47 0 0 0 .57 3.58 1 1 0 0 1-.25 1.01z"/>
+      </svg>
+    </a>
+  )}
+</div>
+
+<!-- RIGHT side: WhatsApp (top) + Email (bottom) — anchored at bottom:16px -->
+<div id="floating-right" class="fixed z-[200] flex flex-col-reverse gap-2.5 right-4 transition-opacity duration-300 opacity-0 pointer-events-none" style="bottom: 16px;">
   <!-- WhatsApp -->
   {whatsappHref && (
     <button
@@ -37,21 +56,6 @@ const emailHref = company?.primaryEmail
       </svg>
     </button>
   )}
-
-  <!-- Call -->
-  {phoneHref && (
-    <a
-      href={phoneHref}
-      aria-label="Call us"
-      class="w-12 h-12 flex items-center justify-center rounded-xl shadow-lg hover:scale-105 transition-transform"
-      style="background-color: #1a9e6e;"
-    >
-      <span class="material-symbols-outlined text-white" style="font-size: 24px; font-variation-settings: 'FILL' 1;">call</span>
-    </a>
-  )}
-</div>
-
-<div id="floating-right" class="fixed bottom-8 z-[200] flex flex-col gap-2.5 right-4 transition-opacity duration-300 opacity-0 pointer-events-none">
   <!-- Email -->
   {emailHref && (
     <a
@@ -60,7 +64,11 @@ const emailHref = company?.primaryEmail
       class="w-12 h-12 flex items-center justify-center rounded-xl shadow-lg hover:scale-105 transition-transform"
       style="background-color: #2563eb;"
     >
-      <span class="material-symbols-outlined text-white" style="font-size: 24px; font-variation-settings: 'FILL' 1;">mail</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6" aria-hidden="true">
+        <rect x="2" y="4" width="20" height="16" rx="2"/>
+        <polyline points="2,4 12,13 22,4"/>
+      </svg>
     </a>
   )}
 </div>
@@ -71,7 +79,7 @@ const emailHref = company?.primaryEmail
     document.getElementById('floating-right'),
   ].filter(Boolean) as HTMLElement[];
 
-  // Show after user scrolls past ~80vh (past the hero)
+  // Show after user scrolls past ~80vh (past the hero) — same threshold as chatbot FAB
   const SCROLL_THRESHOLD = window.innerHeight * 0.8;
 
   function updateVisibility() {

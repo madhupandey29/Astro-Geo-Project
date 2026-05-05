@@ -194,12 +194,12 @@ const slides = slots.filter((s): s is Exclude<Slot, { type: "empty" }> => s.type
       </div>
       <h1 class="font-serif text-2xl lg:text-4xl font-extrabold mt-2 text-[#041632] leading-tight">{product.name}</h1>
       {product.productTagline && (
-        <p class="mt-3 text-[#775a19] text-base lg:text-lg font-semibold italic print-hide-tagline">{product.productTagline}</p>
+        <p class="mt-3 text-[#775a19] text-base lg:text-lg font-semibold italic">{product.productTagline}</p>
       )}
-      <p class="mt-4 text-[#44474d] text-sm lg:text-base leading-relaxed border-l-4 border-[#775a19] pl-4 print-hide-desc">{product.shortDesc}</p>
+      <p class="mt-4 text-[#44474d] text-sm lg:text-base leading-relaxed border-l-4 border-[#775a19] pl-4">{product.shortDesc}</p>
     </div>
 
-    <div class="bg-[#f3f4f5] p-4 lg:p-8 space-y-4 lg:space-y-6 print-hide-actions">
+    <div class="bg-[#f3f4f5] p-4 lg:p-8 space-y-4 lg:space-y-6">
       <!-- Supply Status — single line on all screens -->
       <div class="flex items-center justify-between border-b border-[#c5c6ce]/20 pb-3">
         <span class="text-xs font-sans uppercase tracking-wider whitespace-nowrap">Supply Status</span>
@@ -220,7 +220,7 @@ const slides = slots.filter((s): s is Exclude<Slot, { type: "empty" }> => s.type
           <span>INQUIRE FOR BULK QUOTE</span>
         </button>
         <!-- 5 action buttons — always one row -->
-        <div class="grid grid-cols-5 gap-1.5">
+        <div class="grid grid-cols-4 gap-1.5">
           <button
             id="product-whatsapp-btn"
             type="button"
@@ -245,15 +245,7 @@ const slides = slots.filter((s): s is Exclude<Slot, { type: "empty" }> => s.type
             <span class="material-symbols-outlined text-[#775a19] text-[20px]">mail</span>
             <span class="text-[10px] font-semibold">Email</span>
           </a>
-          <button
-            id="product-print-btn"
-            type="button"
-            aria-label="Print or save as PDF"
-            class="flex flex-col items-center justify-center gap-1 border border-[#c5c6ce] py-2.5 px-1 hover:bg-[#e7e8e9] transition-colors cursor-pointer"
-          >
-            <span class="material-symbols-outlined text-[20px]">download</span>
-            <span class="text-[10px] font-semibold">Print</span>
-          </button>
+
           <ProductShareButton product={product} />
         </div>
       </div>
@@ -269,7 +261,6 @@ const slides = slots.filter((s): s is Exclude<Slot, { type: "empty" }> => s.type
   // ── Email & WhatsApp dynamic URLs ─────────────────────────────────────────────
   const emailBtn   = document.getElementById('product-email-btn');
   const waBtn      = document.getElementById('product-whatsapp-btn');
-  const printBtn   = document.getElementById('product-print-btn');
 
   if (emailBtn) {
     const productName = emailBtn.dataset.product ?? 'Product';
@@ -287,27 +278,6 @@ const slides = slots.filter((s): s is Exclude<Slot, { type: "empty" }> => s.type
       `Hi, I'm interested in a bulk quote for this product:\n${pageUrl}`
     );
     waBtn.setAttribute('data-wa-link', `https://wa.me/919925155141?text=${message}`);
-  }
-
-  // ── Print/PDF functionality ───────────────────────────────────────────────────
-  if (printBtn) {
-    printBtn.addEventListener('click', async () => {
-      // Force load all lazy images before printing
-      const lazyImages = document.querySelectorAll('img[loading="lazy"]');
-      lazyImages.forEach(img => {
-        img.loading = 'eager';
-        // Force browser to load the image
-        if (img.src) {
-          const tempImg = new Image();
-          tempImg.src = img.src;
-        }
-      });
-      
-      // Wait a moment for images to start loading
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      window.print();
-    });
   }
 </script>
 

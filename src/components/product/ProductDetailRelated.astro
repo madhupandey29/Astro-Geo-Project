@@ -16,17 +16,17 @@ const phoneHref = buildPhoneHref(phone);
 const hasMore = collectionProducts.length > 4;
 ---
 
-<section class="max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-20 print-related-section">
+<section class="max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-20">
   <div class="flex justify-between items-end mb-10">
     <h2 class="font-serif text-2xl lg:text-3xl font-bold">Related Fabric Options</h2>
-    <a href="/fabric" class="text-[#775a19] font-bold text-sm lg:text-base underline print-hide">View Collection</a>
+    <a href="/fabric" class="text-[#775a19] font-bold text-sm lg:text-base underline">View Collection</a>
   </div>
 
   {collectionProducts.length > 0 ? (
     <div class="relative">
       <div
         id="related-scroll"
-        class="flex gap-4 lg:gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden print-related-grid"
+        class="flex gap-4 lg:gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {collectionProducts.map((rel) => rel.slug && (
           <a
@@ -93,7 +93,7 @@ const hasMore = collectionProducts.length > 4;
   )}
 </section>
 
-<section class="max-w-5xl mx-auto px-4 lg:px-8 py-10 mb-10 lg:mb-20 print-hide-cta">
+<section class="max-w-5xl mx-auto px-4 lg:px-8 py-10 mb-10 lg:mb-20">
   <div class="bg-[#775a19] p-8 lg:p-12 text-center text-white relative overflow-hidden">
     <div class="absolute top-0 right-0 p-8 opacity-10 hidden lg:block">
       <span class="material-symbols-outlined text-9xl" style="font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 48;">mail</span>

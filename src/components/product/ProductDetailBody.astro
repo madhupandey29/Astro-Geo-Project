@@ -19,46 +19,12 @@ const filteredTechSpecs = product.techSpecs.filter((row) => {
 });
 ---
 
-<!-- Certifications & Keywords - Combined Section -->
-<section class="max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-20 print-hide-quality print-order-1">
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
-    
-    <!-- Quality & Compliance -->
-    <div>
-      <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-8 lg:mb-10 text-center">Quality &amp; Compliance</h2>
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 lg:gap-5">
-        {product.certifications.map((cert) => (
-          <div class="bg-white p-3 lg:p-4 border border-[#c5c6ce]/10 text-center flex flex-col items-center shadow-sm">
-            <span class="material-symbols-outlined text-2xl lg:text-3xl text-[#775a19] mb-2" style="font-variation-settings: 'FILL' 1;">{cert.icon}</span>
-            <h3 class="font-bold text-sm lg:text-base">{cert.title}</h3>
-          </div>
-        ))}
-      </div>
-    </div>
-
-    <!-- Related Keywords -->
-    {product.keywords && product.keywords.length > 0 && (
-      <div class="print-hide-keywords">
-        <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-8 lg:mb-10 text-center">Related Keywords</h2>
-        <div class="flex flex-wrap gap-3 lg:gap-3">
-          {product.keywords.map((keyword) => (
-            <span class="inline-block bg-[#f3f4f5] text-[#041632] px-3 py-2 text-sm lg:text-base font-medium border border-[#c5c6ce]/20 hover:border-[#775a19] hover:bg-white transition-colors">
-              {keyword}
-            </span>
-          ))}
-        </div>
-      </div>
-    )}
-
-  </div>
-</section>
-
-<!-- Technical Specs & Applications - MOVED BELOW QUALITY FOR PRINT -->
-<section class="bg-[#f3f4f5] py-8 lg:py-12 print-order-2">
+<!-- Technical Specs & Quality - Combined Section -->
+<section class="bg-[#f3f4f5] py-8 lg:py-12">
   <div class="max-w-7xl mx-auto px-4 lg:px-8">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
 
-      <!-- Tech Specs Table -->
+      <!-- Technical Specifications -->
       <div>
         <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-6 lg:mb-8 flex items-center">
           <span class="w-10 h-px bg-[#775a19] mr-4"></span>Technical Specifications
@@ -103,9 +69,29 @@ const filteredTechSpecs = product.techSpecs.filter((row) => {
         </div>
       </div>
 
+      <!-- Quality & Compliance -->
+      <div>
+        <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-8 lg:mb-10 text-center">Quality &amp; Compliance</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 lg:gap-5">
+          {product.certifications.map((cert) => (
+            <div class="bg-white p-3 lg:p-4 border border-[#c5c6ce]/10 text-center flex flex-col items-center shadow-sm">
+              <span class="material-symbols-outlined text-2xl lg:text-3xl text-[#775a19] mb-2" style="font-variation-settings: 'FILL' 1;">{cert.icon}</span>
+              <h3 class="font-bold text-sm lg:text-base">{cert.title}</h3>
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Application Suitability & Keywords - Combined Section -->
+<section class="max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-20">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
+
       <!-- Application Suitability -->
-      <div class="print-app-suitability">
-        <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-6 lg:mb-8 flex items-center">
+      <div>        <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-6 lg:mb-8 flex items-center">
           <span class="w-10 h-px bg-[#775a19] mr-4"></span>Application Suitability
         </h2>
         {(() => {
@@ -114,9 +100,9 @@ const filteredTechSpecs = product.techSpecs.filter((row) => {
           const hidden = sorted.slice(5);
           return (
             <div>
-              <div class="space-y-2 lg:space-y-3 print-app-grid">
+              <div class="space-y-2 lg:space-y-3">
                 {visible.map((app) => (
-                  <div class="bg-white p-2 lg:p-3 shadow-sm border-l-3 border-[#041632] max-w-md print-app-card">
+                  <div class="bg-white p-2 lg:p-3 shadow-sm border-l-3 border-[#041632] max-w-md">
                     <div class="flex justify-between mb-1">
                       <span class="font-bold text-[#041632] text-xs lg:text-sm">{app.name.replace(/\b\w/g, c => c.toUpperCase())}</span>
                     </div>
@@ -129,9 +115,9 @@ const filteredTechSpecs = product.techSpecs.filter((row) => {
               </div>
               {hidden.length > 0 && (
                 <div>
-                  <div id="extra-apps" class="space-y-2 lg:space-y-3 mt-2 lg:mt-3 hidden print-app-grid">
+                  <div id="extra-apps" class="space-y-2 lg:space-y-3 mt-2 lg:mt-3 hidden">
                     {hidden.map((app) => (
-                      <div class="bg-white p-2 lg:p-3 shadow-sm border-l-3 border-[#041632] max-w-md print-app-card">
+                      <div class="bg-white p-2 lg:p-3 shadow-sm border-l-3 border-[#041632] max-w-md">
                         <div class="flex justify-between mb-1">
                           <span class="font-bold text-[#041632] text-xs lg:text-sm">{app.name.replace(/\b\w/g, c => c.toUpperCase())}</span>
                         </div>
@@ -158,12 +144,26 @@ const filteredTechSpecs = product.techSpecs.filter((row) => {
         })()}
       </div>
 
+      <!-- Related Keywords -->
+      {product.keywords && product.keywords.length > 0 && (
+        <div>
+          <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-8 lg:mb-10 text-center">Related Keywords</h2>
+          <div class="flex flex-wrap gap-3 lg:gap-3">
+            {product.keywords.map((keyword) => (
+              <span class="inline-block bg-[#f3f4f5] text-[#041632] px-3 py-2 text-sm lg:text-base font-medium border border-[#c5c6ce]/20 hover:border-[#775a19] hover:bg-white transition-colors">
+                {keyword}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
     </div>
   </div>
 </section>
 
 <!-- Long Description -->
-<section class="max-w-7xl mx-auto px-4 lg:px-8 py-12 lg:py-16 print-hide-about print-order-3">
+<section class="max-w-7xl mx-auto px-4 lg:px-8 py-12 lg:py-16">
   <h2 class="font-serif text-2xl lg:text-3xl font-bold mb-6 flex items-center justify-center">
     <span class="w-10 h-px bg-[#775a19] mr-4"></span>About this Fabric
   </h2>
@@ -190,7 +190,7 @@ const filteredTechSpecs = product.techSpecs.filter((row) => {
 </section>
 
 <!-- FAQ Section -->
-<section class="bg-[#041632] text-white py-10 lg:py-12 print-hide-faq print-order-4">
+<section class="bg-[#041632] text-white py-10 lg:py-12">
   <div class="max-w-4xl mx-auto px-4 lg:px-8">
     <h3 class="font-serif text-xl lg:text-2xl italic mb-6 text-center">Industrial FAQ</h3>
     <div class="space-y-3">
