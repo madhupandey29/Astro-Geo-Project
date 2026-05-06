@@ -1,5 +1,5 @@
 ---
-const API_BASE   = (import.meta.env.PUBLIC_API_BASE_URL as string | undefined)?.replace(/\/$/, '') ?? '';
+const API_BASE   = (import.meta.env.PUBLIC_API_BASE_URL as string | undefined)?.replace(/\/$/, '') ?? 'https://espobackend.vercel.app';
 const CHAT_URL   = `${API_BASE}/api/chat/message`;
 const HEALTH_URL = `${API_BASE}/api/chat/health`;
 const COMPANY    = "Amrita Global Enterprise";
@@ -185,13 +185,6 @@ const WELCOME    = `Welcome to ${COMPANY}! 👋\nI'm your fabric catalogue assis
     line-height: 1.5;
   }
   .cb-chip:hover { background: #f4f3f9; border-color: #385b99; }
-
-  /* Mobile bottom sheet safe area */
-  @media (max-width: 639px) {
-    #cb-window footer {
-      padding-bottom: max(1rem, env(safe-area-inset-bottom, 1rem));
-    }
-  }
 </style>
 
 <script define:vars={{ CHAT_URL, HEALTH_URL, WELCOME, COMPANY }}>
@@ -510,7 +503,12 @@ function openChat() {
   win.style.pointerEvents = 'auto';
   backdrop.classList.remove('hidden');
   // Prevent body scroll on mobile when chat is open
-  if (isMobile()) document.body.style.overflow = 'hidden';
+  if (isMobile()) {
+    document.body.style.overflow = 'hidden';
+    // Hide FAB on mobile so it doesn't overlap the bottom-sheet modal
+    fab.style.opacity       = '0';
+    fab.style.pointerEvents = 'none';
+  }
   renderAll();
   renderStarters();
   setTimeout(() => inputEl.focus(), 100);
@@ -527,6 +525,8 @@ function closeChat() {
   win.style.pointerEvents = 'none';
   backdrop.classList.add('hidden');
   document.body.style.overflow = '';
+  // Restore FAB visibility based on scroll position
+  updateFabVisibility();
 }
 
 fab.addEventListener('click', () => isOpen ? closeChat() : openChat());
